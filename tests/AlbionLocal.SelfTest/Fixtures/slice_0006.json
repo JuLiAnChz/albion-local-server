@@ -1,0 +1,183 @@
+[
+ {
+  "event": "NewBuilding",
+  "code": 45,
+  "tile": "SWAMP_GREEN_T1_BANK",
+  "pos": [
+   0.0,
+   0.0
+  ],
+  "rot": 270.0,
+  "guid": "7925feb4-f097-4d32-a025-4e65082a3992",
+  "type": 51,
+  "type_1based_datatrack": 52
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "Exit",
+  "pos": [
+   -41.5,
+   0.5
+  ],
+  "guid": "06b25940-e4fa-40b9-9afd-d100c5d82985",
+  "worldxml_pos": "-41.5 0.5",
+  "target": "982df85e-a6f5-45a7-a01f-a9ef91314007@0000",
+  "spawn": [
+   -26.5,
+   0.5
+  ]
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "Exit",
+  "pos": [
+   -0.5,
+   37.5
+  ],
+  "guid": "5e03f43b-864a-4230-8258-b49bdf19ca78",
+  "worldxml_pos": "-0.5 37.5",
+  "target": "e0a22b80-3870-4ad1-b3ef-30790923f958@0007",
+  "spawn": [
+   -0.5,
+   22.5
+  ]
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -53.8,
+   41.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   44.2,
+   42.8
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   58.0,
+   -1.1
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   43.2,
+   -49.3
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   4.5,
+   -58.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -38.6,
+   -52.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -58.5,
+   1.5
+  ],
+  "locationid": "EXPLORER",
+  "radius": 10.0
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   -1.0,
+   0.0
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -42.3,
+   131.9
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   4.9,
+   141.2
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   49.2,
+   129.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   52.4,
+   78.3
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -1.4,
+   45.9
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -86.3,
+   79.2
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   0.5,
+   -1.5
+  ],
+  "locationid": "BANK",
+  "radius": 10.0
+ }
+]

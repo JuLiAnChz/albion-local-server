@@ -1,0 +1,64 @@
+// Player bots (stage I, analysis/work/stageI/bots/SPEC.md §3.2): the tables. The switches and timings are config/albionlocal.json "Bots"
+// (on under Preset pve, off under official). Every key is optional; a key left out keeps the built-in value shown here.
+{
+  // Bots per role on a map with one human, by zone class: City = royal cities (PLAYERCITY_*), Start = start towns (STARTINGCITY), Roads =
+  // the Roads of Avalon (TUNNEL_*), then the open world by its warning type. Roles: City (stand and walk in towns), Gatherer (gather the
+  // nodes of their tier, fight back when attacked), Patrol (Red groups on the roads that attack a player they may fight on sight; only
+  // where the zone keeps a Red player), Drifter (a patrol of one in a mists zone).
+  // (stageM: about 2.5 x the first tables, 17-20 bots on an open-world map of about 1 km²; about 15 µs per active bot and 50 ms tick)
+  "Counts": {
+    "City":   { "City": 24 },
+    "Start":  { "City": 8, "Gatherer": 6 },
+    "Safe":   { "Gatherer": 14 },
+    "Yellow": { "Gatherer": 12, "Patrol": 5 },
+    "Orange": { "Gatherer": 12, "Patrol": 6 },
+    "Red":    { "Gatherer": 12, "Patrol": 8 },
+    "Black":  { "Gatherer": 10, "Patrol": 10 },
+    "Roads":  { "Gatherer": 3, "Patrol": 2 },  // the Roads of Avalon (TUNNEL_* maps): patrols in groups of Bots:Roads:PatrolGroupSize, Red gankers; Blue gatherers
+    "Mists":  { "Drifter": 1 }                   // a mists zone (stageL mists phase B): a lone Red wanderer that fights only Red players; in a private zone only while one of its players is Red (Mists:DrifterNeedsRed)
+  },
+  // The factor on the counts by the humans on the map (3 = three or more): friends share the town.
+  "Scale": { "1": 1.0, "2": 0.8, "3": 0.6 },
+  // Exclude: clusters that never get bots; Include: PvpDisabled clusters that do (islands, hideouts); Override: counts of a cluster id or
+  // world.xml type over its zone class's, e.g. { "0000": { "City": 20 }, "PLAYERCITY_BLACK_SAFEAREA_01": { "City": 0 } }.
+  "Clusters": { "Include": [], "Exclude": [], "Override": { "5002": { "City": 2 }, "5003": { "City": 4 } } }, // Brecilien's bank and market interiors thinned (stageL mists)
+  // Gear tiers of royal-city bots with their weights (start towns T1-T2; the open world the zone's tier -1..+1).
+  "CityTiers": { "4": 3, "5": 3, "6": 2, "7": 1, "8": 1 },
+  // Portraits (avatars.xml index) of Bots:Look Random; 0-10 = AVATAR_01-11 (the presets bring their own).
+  "Avatars": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  // Emotes of a dwelling city bot with weights (emotes index: 12 sit, 6 dance, 14 wave, 4 cheer, 11 salute, 8 laugh; 6, 12 and 13 loop).
+  "Emotes": { "12": 4, "6": 2, "14": 3, "4": 2, "11": 1, "8": 1 },
+  // Names: prefix + middle + suffix, letters only, 5-12 letters ("Aldric"); never a character's, a live one's or a reserved one.
+  "Names": {
+    "Prefixes": ["Al", "Bran", "Cael", "Dor", "El", "Fen", "Gar", "Hal", "Is", "Jor", "Kel", "Lor", "Mar", "Nor", "Os", "Per", "Quin", "Ros",
+                 "Sel", "Tor", "Ul", "Val", "Wen", "Yor", "Zar", "Ar", "Ber", "Cor", "Dra", "Eld", "Gwen", "Mor", "Thal", "Vin", "Ash", "Bel"],
+    "Middles": ["", "", "", "dr", "ri", "an", "el", "or", "am", "is", "ul", "ev"],
+    "Suffixes": ["ic", "wyn", "an", "eth", "ion", "ar", "ius", "ia", "wen", "mir", "dor", "ric", "ane", "ard", "eus", "ora", "ith", "rin",
+                 "ald", "iel", "ock", "ra", "us", "ys", "ven"],
+    "ReservedNames": []
+  },
+  // Gear patterns, {t} = the bot's tier (else the next lower tier items.xml has; nothing above T8 exists).
+  "Gear": {
+    "Materials": ["PLATE", "LEATHER", "CLOTH"],          // one material for head, armor and shoes (SET1-3, SET1 below T4)
+    // a MAIN_ weapon of a patrol or a city bot gets an offhand; no healer staff (its spells are heals, which a bot casts only on itself)
+    "Weapons": ["MAIN_SWORD", "2H_BOW", "MAIN_FIRESTAFF", "MAIN_SPEAR", "2H_AXE", "MAIN_CURSEDSTAFF", "2H_QUARTERSTAFF", "MAIN_DAGGER"],
+    "Offhands": ["OFF_SHIELD", "OFF_BOOK", "OFF_TORCH"],
+    "Cape": "T{t}_CAPE",
+    "CityWeaponShare": 0.5,                              // city bots carrying a weapon
+    "PatrolMount": "T{t}_MOUNT_HORSE",
+    "ArmoredMount": "T{t}_MOUNT_ARMORED_HORSE",
+    "ArmoredShare": 0.3,                                 // patrols from T5 on an armoured horse
+    "Tools": { "ORE": "T{t}_2H_TOOL_PICK", "WOOD": "T{t}_2H_TOOL_AXE", "FIBER": "T{t}_2H_TOOL_SICKLE", "HIDE": "T{t}_2H_TOOL_KNIFE", "ROCK": "T{t}_2H_TOOL_HAMMER" },
+    "GathererSet": "T{t}_{slot}_GATHERER_{kind}",        // from T4; below a LEATHER_SET1
+    "GathererBag": "T{t}_BAG",
+    "GathererMounts": ["T{t}_MOUNT_OX", "T{t}_MOUNT_HORSE"],
+    "GathererWeaponShare": 0.6,                          // gatherers with a weapon of Weapons in the bag: drawn when attacked (a tool has no spells)
+    "GathererStartCarry": "5-20"                         // raw resources of its kind a gatherer carries from its spawn (its bag's share at its defeat)
+  },
+  // What a defeated bot leaves (with its fame and a share of its gear, config/albionlocal.json Bots:Rewards): silver by its tier (× Rates:Silver),
+  // and items a patrol may add to its bag with their chance ({t} its tier, else the next lower tier that exists: potions are T2/T4/T6 only).
+  "Rewards": {
+    "Silver": { "1": 25, "2": 50, "3": 100, "4": 250, "5": 500, "6": 900, "7": 1500, "8": 2500 },
+    "PatrolExtra": [{ "Item": "T{t}_POTION_HEAL", "Chance": 0.25 }, { "Item": "T{t}_MEAL_STEW", "Chance": 0.15 }]
+  }
+}

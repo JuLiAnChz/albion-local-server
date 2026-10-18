@@ -1,0 +1,107 @@
+# albion-local-server
+
+An educational server emulator, written in C# (.NET 10), for studying how an MMO client and server talk to each other
+(Photon UDP transport, Protocol18 serialization, encrypted handshakes, world simulation). It is designed to run on your
+own machine or LAN, for one player or a few friends.
+
+## Disclaimer — please read
+
+- **Educational project.** This is a personal learning and research project about network protocols and game-server
+  architecture. It is not a commercial product and is not meant to replace, compete with or harm any official service.
+- **No affiliation.** This project has nothing to do with Albion Online, Sandbox Interactive GmbH or any of their
+  partners. It is not endorsed, sponsored or supported by them. "Albion Online" is a trademark of its owner and is
+  mentioned only to describe what the code interoperates with.
+- **No client, no client patches.** This repository does **not** contain, distribute or link to the game client, any
+  client file, any modified client, any client patch or any tool that modifies the client. It contains no game assets
+  and no game data files. At startup the server reads the GameData files of a client installation that
+  *you* already have; nothing is copied into this repository.
+- **No anti-cheat circumvention.** Nothing here bypasses, disables or interferes with any anti-cheat or protection
+  system, and such contributions will not be accepted.
+- **Never use it against official servers.** The code only *answers* a client as a server. It does not connect to,
+  automate or interfere with official servers or other players.
+- **Your responsibility.** How (and whether) you point a client at a local server is entirely your own decision and
+  responsibility; check the terms of service that apply to you. The authors provide no support for that.
+
+## What works
+
+The server implements a large part of what a PvE player meets in the game, as a local, self-contained emulation:
+
+- **Core:** login and game servers over Photon UDP (reliable channels, fragmentation, DH/AES encryption), accounts
+  with PBKDF2 passwords, several characters per account, GM levels and a chat command system, SQLite persistence with
+  schema migrations.
+- **World:** cluster loading from the client's GameData, visibility, cluster travel, paid fast travel by cargo, per-city
+  banks and markets, islands with farming and animals, stables and mounts, crafting and refining stations in every city
+  with city bonuses, enchanting, quality rolls.
+- **Combat:** auto-attacks, spells with conditions and effects, buffs and crowd control, mob AI with path finding and
+  line of sight, boss mechanics (spawn/death casts, dashes, knockbacks), knock-down and party revive, PvP flags and
+  duels (PvP only by consent in the default PvE preset).
+- **PvE content:** open-world camps and chests, elite mobs, world bosses, journals, on-demand invasions, expeditions,
+  random dungeons with the client's own layout generator and shrines, static dungeons, corrupted dungeons, hellgates,
+  Roads of Avalon, the Mists, season goals and bounties.
+- **Social:** chat server (whispers, guild, party, world), friends, mail, trading, guilds with ranks, contracts and goals,
+  emotes, loadouts, map pings.
+- **Bots:** simple player bots (city walkers, gatherers, patrols).
+
+The detailed, per-feature reference (English) is in [docs/REFERENCE.md](docs/REFERENCE.md); the architecture notes
+(Russian) are in [docs/ARCHITECTURE.ru.md](docs/ARCHITECTURE.ru.md). Both mention a private analysis workspace
+(`../analysis`, `../captures`) that is not part of this repository.
+
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| `src/AlbionLocal.Photon` | Photon UDP transport, Protocol18 serializer, encryption, message layer |
+| `src/AlbionLocal.Protocol` | Message classes (generated) and wire rules |
+| `src/AlbionLocal.Server` | Login (5055), game (5056) and chat (5057) servers, world simulation, systems, persistence |
+| `tests/AlbionLocal.SelfTest` | Offline self-test with an in-process client (no network, no real client needed to run it, but it reads the GameData files) |
+| `tools/AlbionLocal.CapDecode` | Decoder for packet captures of your own sessions |
+| `config/albionlocal.json` | Server settings (every key optional, commented) |
+| `content/` | Server-side content: spawns, kits, events, dungeons, goals, bots and other tunables |
+
+## Requirements
+
+- [.NET 10 SDK](https://dotnet.microsoft.com/)
+- Windows, Linux or macOS (developed on Windows)
+- The GameData folder of a client installation you own (`<client>/Albion-Online_Data/StreamingAssets/GameData`).
+  The server will not start without it.
+
+## Build and run
+
+```bash
+dotnet build
+```
+
+Tell the server where the GameData folder is, either in `config/albionlocal.json` (`Paths:ClientGameData`) or on the
+command line, then start it from the repository root (it keeps its database and log in `./data`):
+
+```bash
+dotnet run --project src/AlbionLocal.Server -- -v --Paths:ClientGameData="C:/Games/AlbionOnline/game/Albion-Online_Data/StreamingAssets/GameData"
+```
+
+On start it prints the database schema version and the three listening ports. By default it listens on `127.0.0.1`
+only; see the "second PC" part of [docs/REFERENCE.md](docs/REFERENCE.md) for LAN settings (`Network:BindAddress`,
+`Network:PublicAddress`) and the firewall ports.
+
+Run the self-test. It reads the GameData folder from the fixed path `../game-local/Albion-Online_Data/StreamingAssets/GameData`
+next to the repository, so put a link there to your client installation (for example a directory junction or symlink
+named `game-local` next to this folder):
+
+```bash
+dotnet run --project tests/AlbionLocal.SelfTest
+```
+
+Comparisons against generated "golden" data files are skipped, because those files are not published.
+
+## Configuration
+
+- `config/albionlocal.json` — ports, presets (`pve` by default: PvP by consent, no full loot, rate multipliers), world
+  and economy options. Any key can be overridden on the command line, e.g. `--Log:Level=Debug`.
+- `content/*.json` — gameplay content the server adds or tunes (events, bosses, dungeons, goals, bots, kits…).
+- Accounts: the first login creates the account (see "Accounts" in [docs/REFERENCE.md](docs/REFERENCE.md)); console
+  commands such as `.account create <name> <password>` manage them.
+
+## Status
+
+Work in progress and built for learning: expect gaps, guesses (marked in the docs as inferences) and breaking changes.
+Issues about protocol details or server architecture are welcome; requests involving the official game, its servers,
+its client or anti-cheat are not.

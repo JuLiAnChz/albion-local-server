@@ -1,0 +1,29 @@
+// Hellgates (analysis/work/stageL/hellgates/SPEC.md; README "Hellgates"). The switches and the factors that differ between the presets are
+// config keys (config/albionlocal.json "Hellgates"); here the tables. Every key is optional; a missing key keeps the value shown here.
+// Read at the start.
+{
+  // The weight of a map instead of hellgate.xml's (32 plain, 10 with a miniboss, 5 with a boss; 0 = never picked), e.g.
+  // { "HELLGATE-06-2v2-01": 10 }. Hellgates:BossMapFactor (pve 3) multiplies the boss maps' weight on top.
+  "Maps": {},
+  // The chat lines (System channel); {name} is filled in; "" switches a line off. A key left out keeps its built-in text.
+  "Texts": {
+    "hg.mode": "Hellgate: {mode} ({teamsize}v{teamsize}, IP {ip}). Change with .hg mode.",
+    "hg.versus": "This hellgate has an enemy team: once you have {points} points, {n} hostile adventurers arrive. Knockdowns only, nothing is lost.",
+    "hg.refused": "The hellgate refuses you: {why}.",
+    "hg.progress": "Demons slain: {points}/{required}.",
+    "hg.guardian": "The hellgate's guardian {name} has appeared.",
+    "hg.enemies": "{n} hostile adventurers have entered the hellgate.",
+    "hg.won": "The hellgate is conquered. Claim the chest and use the exit portal.",
+    "hg.lost": "Your party has fallen. The exit portal is open.",
+    "hg.closing": "The hellgate closes in {seconds} s.",
+    "hg.closed": "The hellgate has closed.",
+    "hg.waiting": "Waiting for {names} at the hellgate shrine; the party goes in without them in {seconds} s.",
+    "hg.match": "Another party has entered the hellgate: defeat it to claim the reward.",
+    "hg.beaten": "The other party has won this hellgate. Escape to leave.",
+    "hg.infamy": "Hellgate infamy ({mode}): +{gain}, {total} now.",
+    "hg.milestone": "Hellgate infamy milestone ({mode}): {value} reached.",
+    "hg.chain": "The way to the next hellgate is open (chain {chain}, chests +{bonus} %).",
+    "hg.area": "The hellgate closes in on you: stay inside the ring of fire.",
+    "hg.areafinal": "The ring of fire closes completely."
+  }
+}

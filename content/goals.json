@@ -1,0 +1,164 @@
+// Goals (PVE-DESIGN.md step 11; analysis/work/stageH/journals/SPEC.md §B, §C, §E). Every key is optional; a missing key keeps the
+// built-in value (the official season factors, the whole journal, no bounties); an unknown key or a value out of range is refused
+// (the built-in values are used then, with an error line). Read at the start.
+{
+  // The Adventurer's Challenge (the client's season window, ops 372/375, events 375/376). Points per fame gain =
+  // factor x (whole fame)^0.5 (no premium factor); crafting, PvP and tomes give none, as officially.
+  "Season": {
+    "Enabled": true,
+    "Pve": 3,                    // a PvE kill's factor (official 1.5): kills give as much as gathering
+    "Gathering": 3,              // a harvest's (official 3)
+    "Fishing": 3,                // a catch's (official 3)
+    "Dungeon": 3.5,              // a kill inside a random dungeon or an expedition (null = Pve)
+    "BossBonus": 25,             // flat points per boss / miniboss / world boss kill, to the killer and its party near it
+    "PointsFactor": 1,           // all points x this
+    "GrantPremiumRewards": true, // the main and secondary rewards (mount, loot chests) are "boughtpremium" only, which the client never
+                                 // lets a character without premium claim: the server gives them when they unlock (false = official)
+    "DailyExtra": ["T4_SILVERBAG_NONTRADABLE"]  // given with the daily goal (1200 points), straight into the inventory
+  },
+  // The Albion Journal (op 144, 514, events 362/600/601): which categories progress ([] = all; PVE and CREATURES are the bestiary).
+  // Missions the server cannot judge stay at 0 whatever the list.
+  "Journal": {
+    "Enabled": true,
+    "Categories": [],
+    "SteamMirrors": false        // the Steam-mirrored achievements (SA_*) stay at 0: the client's path to Steam for them is not traced
+  },
+  // Server bounties: Daily goals a day and Weekly a week (Mondays) from Pool, the same for every player, reset at ResetUtc. Progress and
+  // completion come as system lines in chat, the reward straight into the inventory; .bounty lists them, .bounty claim gives what did
+  // not fit. Kind: kill (MinTier, MaxTier, Mob = part of the mob name, Category = mobtypecategory, Cluster), boss (a world boss),
+  // dungeon (a boss or miniboss in a random dungeon, MinTier), expedition (completed, MinTier = its tier), gather (items harvested,
+  // MinTier, MaxTier, Mob = part of the item name), fish (catches), corrupted (a corrupted dungeon completed, MinTier = its rank's tier:
+  // Hunter 5, Stalker 6, Slayer 8), roadchest (an Avalonian road chest opened, MinTier / MaxTier the road's tier 4 / 6 / 8), portal (a Roads of
+  // Avalon portal passed, MinTier / MaxTier the tier of the cluster it leads to), pvpkill (a credited PvP kill or knockdown, see "Pvp" below: MinTier /
+  // MaxTier the victim's, Zone a pvpwarningtype safe / yellow / orange / red / black (null = any zone whose ZoneFactors is above 0), Bots
+  // any / none / only, Assists true = assists count), duel (a credited duel win). PvpDaily / PvpWeekly are extra slots for the pvpkill /
+  // duel entries on top of Daily / Weekly, which then draw PvE entries only (0 = one mixed draw; without Pvp Enabled no PvP entry is
+  // drawn). Silver and Fame are whole (rates not applied); Items "NAME" or "NAME:n".
+  "Bounties": {
+    "Enabled": true,
+    "ResetUtc": "10:00",
+    "Daily": 3,
+    "Weekly": 1,
+    "AnnounceProgress": true,    // a line at every quarter of the count
+    "AnnounceReset": true,       // a line to every player when the bounties change
+    "PvpDaily": 1,               // one PvP bounty a day on top of the 3 PvE ones
+    "PvpWeekly": 1,              // and one a week on top of the weekly one
+    "Pool": [
+      { "Id": "KILL_T4", "Kind": "kill", "Text": "Kill {count} mobs of tier 4 or higher", "Count": 60, "MinTier": 4,
+        "Silver": 15000, "Items": ["T4_SKILLBOOK_NONTRADABLE"] },
+      { "Id": "KILL_0204", "Kind": "kill", "Text": "Kill {count} mobs in the swamp 0204", "Count": 80, "Cluster": "0204",
+        "Silver": 20000, "Items": ["T4_SILVERBAG_NONTRADABLE"] },
+      { "Id": "KILL_CHAMPIONS", "Kind": "kill", "Text": "Kill {count} champions", "Count": 5, "Category": "champion",
+        "Silver": 20000, "Items": ["T5_SKILLBOOK_NONTRADABLE"] },
+      { "Id": "DUNGEON_BOSSES", "Kind": "dungeon", "Text": "Defeat {count} bosses in random dungeons", "Count": 2,
+        "Silver": 25000, "Items": ["T5_SKILLBOOK_NONTRADABLE"] },
+      { "Id": "EXPEDITION", "Kind": "expedition", "Text": "Complete {count} expedition", "Count": 1, "Silver": 15000,
+        "Items": ["T4_SILVERBAG_NONTRADABLE"] },
+      { "Id": "GATHER_T4", "Kind": "gather", "Text": "Gather {count} resources of tier 4 or higher", "Count": 300, "MinTier": 4,
+        "Silver": 10000, "Items": ["T4_JOURNAL_MERCENARY_EMPTY"] },
+      { "Id": "FISH", "Kind": "fish", "Text": "Catch {count} fish", "Count": 10, "Silver": 10000, "Items": ["T4_SKILLBOOK_NONTRADABLE"] },
+      { "Id": "CORRUPTED_1", "Kind": "corrupted", "Text": "Complete {count} corrupted dungeon", "Count": 1, "Silver": 20000,
+        "Items": ["T5_SKILLBOOK_NONTRADABLE"] },
+      { "Id": "ROAD_CHESTS", "Kind": "roadchest", "Text": "Open {count} Avalonian chests on the Roads of Avalon", "Count": 3, "Silver": 25000,
+        "Items": ["T5_SKILLBOOK_NONTRADABLE"] },
+      { "Id": "ROAD_PORTALS", "Kind": "portal", "Text": "Travel through {count} portals of the Roads of Avalon", "Count": 6, "Silver": 15000,
+        "Items": ["T4_SILVERBAG_NONTRADABLE"] },
+      { "Id": "WEEK_WORLD_BOSS", "Kind": "boss", "Weekly": true, "Text": "Defeat a world boss", "Count": 1,
+        "Silver": 100000, "Fame": 50000, "Items": ["T6_SKILLBOOK_NONTRADABLE"] },
+      { "Id": "WEEK_CORRUPTED_5", "Kind": "corrupted", "Weekly": true, "Text": "Complete {count} corrupted dungeons of Stalker or Slayer", "Count": 5,
+        "MinTier": 6, "Silver": 120000, "Fame": 40000, "Items": ["T6_SKILLBOOK_NONTRADABLE"] },
+      { "Id": "WEEK_KILL_T5", "Kind": "kill", "Weekly": true, "Text": "Kill {count} mobs of tier 5 or higher", "Count": 500, "MinTier": 5,
+        "Silver": 80000, "Items": ["T6_SKILLBOOK_NONTRADABLE", "T5_SILVERBAG_NONTRADABLE:2"] },
+      { "Id": "PVP_KILL_3", "Kind": "pvpkill", "Text": "Defeat {count} hostile players or bots in red or black zones", "Count": 3, "MinTier": 4,
+        "Silver": 30000, "Items": ["T5_SKILLBOOK_NONTRADABLE"] },
+      { "Id": "DUEL_WIN_2", "Kind": "duel", "Text": "Win {count} duels", "Count": 2, "Silver": 10000, "Items": ["T4_SKILLBOOK_NONTRADABLE"] },
+      { "Id": "WEEK_PVP_BLACK_15", "Kind": "pvpkill", "Weekly": true, "Zone": "black", "Assists": true,
+        "Text": "Defeat {count} enemies in black zones (assists count)", "Count": 15, "Silver": 150000, "Fame": 50000,
+        "Items": ["T6_SKILLBOOK_NONTRADABLE", "T6_SILVERBAG_NONTRADABLE"] }
+    ]
+  },
+  // PvP goals (analysis/work/stageI/pvp-goals/SPEC.md): every PvP kill, non-lethal knockdown (the pve preset has no PvP deaths) and duel
+  // won by a knockdown is a credit for the killer, and for each other attacker with AssistMinShare of the damage an assist. A credit gives
+  // Adventurer's Challenge points (KillPoints + KillPointsPerTier x the victim's tier, DuelWinPoints for a duel; x the zone factor, x
+  // BotFactor for a player-bot, x AssistFactor for an assist; at most DailyPointsCap a bounty day), counts for the pvpkill / duel
+  // bounties and the journal's PVP and GUILD achievements. No credit at all (journal included) for: a crime (unless CrimesCount), the same
+  // party, the same account (alts), a victim below MinVictimTier (its best combat gear), the same victim again within
+  // SameVictimCooldownMinutes or more than SameVictimPerDay times a day, a duel shorter than DuelMinSeconds, the same duel pair more than
+  // DuelSamePairPerDay times a day. A knockdown and the execute that follows it are one result (the execute adds only what is missing).
+  // Built-in values without this section: the official rules (no points, a journal kill only for a death).
+  "Pvp": {
+    "Enabled": true,
+    "KnockdownIsKill": true,          // a non-lethal knockdown counts as a kill for the journal (official: only a death)
+    "KnockdownFameFactor": 0,         // share of the kill fame a knockdown gives (0 = none, official KillRewardedNoFame)
+    "KillPoints": 20,                 // challenge points per credited kill ...
+    "KillPointsPerTier": 5,           // ... + this x the victim's tier (T6: 50)
+    "DuelWinPoints": 15,
+    "AssistFactor": 0.5,
+    "AssistMinShare": 0.15,
+    "BotFactor": 0.5,
+    "ZoneFactors": { "red": 1, "black": 1.5 },  // by the zone's pvpwarningtype (safe / yellow / orange / red / black); missing = 0:
+                                                // no points and no bounty there (the journal has its own zone rules)
+    "MinVictimTier": 4,
+    "SameVictimCooldownMinutes": 30,
+    "SameVictimPerDay": 3,
+    "DuelMinSeconds": 20,
+    "DuelSamePairPerDay": 2,
+    "DailyPointsCap": 600,            // half the daily challenge (1200): PvP helps, PvE stays the main way
+    "CrimesCount": false,
+    "JournalCountsBots": true,        // player-bot victims count for the journal's kill achievements
+    "Announce": true                  // a chat line for each PvP challenge gain
+  },
+  // Guild goals (analysis/work/stageI/guild-goals/SPEC.md). The Guild Challenge of the client's Guild Season window (guild window ->
+  // season): every Adventurer's Challenge point a member earns gives its guild ChallengeFactor challenge points (crafts
+  // CraftChallengeFactor per fame point, not x ChallengeFactor); the levels are the client's own table (99 levels) and each one reached gives its season points
+  // (20 ... 300) to the guild, with the client's "New Guild Challenge Level reached!" popup during a client season (SEASON_34 runs to
+  // 2026-11-09 11:00 UTC; afterwards local LocalSeasonDays seasons, shown in chat only). The weekly goals (Weekly): GoalsPerWeek goals a
+  // week (Monday at Bounties ResetUtc) from Pools (one per pool), the target = Target x (active members)^TargetExponent; a finished goal
+  // pays once GoalSilver x tier / 4 into the guild account, GoalXp guild xp, GoalSeasonPoints x SeasonPointsFactor season points and a
+  // guild blessing step for next week (+BlessingFame fame, +BlessingSilver mob silver, +BlessingYield gathering yield for every member,
+  // at most MaxBlessing). Kinds: killmobs (MinTier, or the guild's tier when higher), bosses, dungeons (a random dungeon run's boss or
+  // miniboss, once per run; an expedition, a world event won, a corrupted dungeon), pvpkills (credited by the PvP goals' rules, in a zone
+  // of ZoneFactors above 0; bots with CountBotKills), pvpfame (the same filter; not rolled when no PvP fame can be credited, as in the
+  // pve preset: no lethal PvP and Pvp KnockdownFameFactor 0), gather (MinTier as killmobs), fish, craftfame. Keys left out keep their
+  // built-in values; the preset ones (ChallengeFactor official 1 / pve 20, SeasonPointsFactor 1 / 5, Weekly false / true) follow the
+  // server preset unless written here. .guild season, .guild goals; the Member Logs (guild window -> logs) show the fame.
+  // The ranking (the season window's Rankings tab, .guild ranking): a boss kill gives the guilds credited BossSeasonPoints x
+  // SeasonPointsFactor season points (split between them; the client's "+N Season Points"). At a season's end each guild gets
+  // BracketSilver of its bracket (iron 1000 ... crystal 250 000 season points) into the account, and every member with at least
+  // MinParticipation (and more than 0) of the members' average challenge points or guild might the bracket's BracketItems
+  // (uniquename: count; an offline member at its next login) and the journal's bracket achievement, once. Bracket names lowercase. The guild might (the Guild Might tab): the might of the client data
+  // (PvE kill fame x 0.0016, a third in a solo random dungeon; gathering and fishing fame x 0.017; a corrupted dungeon's objective;
+  // nothing in orange zones) x MightFactor (preset: official 1, pve 10; 0 = none) per category; each level of the client's table
+  // gives its season points (PVE and GATHERING 200, CORRUPTED 50).
+  "Guild": {
+    "Enabled": true,
+    "Region": "europe",            // the client's season files of the Login region ("" = West, "asia")
+    "LocalSeasonDays": 28,
+    "CraftChallengeFactor": 0.002, // per craft fame point (both presets; 100 000 craft fame = 200 challenge points)
+    "GoalsPerWeek": 3,
+    "TargetExponent": 0.8,
+    "ActiveDays": 7,               // a member seen within this many days counts for the targets
+    "Pools": {
+      "pve": [ { "Kind": "killmobs", "Target": 300, "MinTier": 4 }, { "Kind": "bosses", "Target": 3 }, { "Kind": "dungeons", "Target": 2 } ],
+      "pvp": [ { "Kind": "pvpkills", "Target": 5 }, { "Kind": "pvpfame", "Target": 20000 } ],
+      "gathering": [ { "Kind": "gather", "Target": 1500, "MinTier": 4 }, { "Kind": "fish", "Target": 30 } ],
+      "crafting": [ { "Kind": "craftfame", "Target": 50000 } ]
+    },
+    "GoalSilver": 100000,
+    "GoalSeasonPoints": 150,
+    "GoalXp": 5000,
+    "BlessingFame": 0.05,
+    "BlessingSilver": 0.05,
+    "BlessingYield": 0.03,
+    "MaxBlessing": 3,
+    "CountBotKills": true,
+    "AnnounceProgress": true,
+    "BossSeasonPoints": { "worldboss": 20, "boss": 5, "miniboss": 2 },
+    "MinParticipation": 0.51,
+    "BracketSilver": { "iron": 500000, "bronze": 1000000, "silver": 2000000, "gold": 4000000, "crystal": 8000000 },
+    "BracketItems": {
+      "iron": { "T4_SHARD_CRYSTAL": 10 }, "bronze": { "T4_SHARD_CRYSTAL": 20 }, "silver": { "T5_SHARD_CRYSTAL": 20 },
+      "gold": { "T5_SHARD_CRYSTAL": 30 }, "crystal": { "T6_SHARD_CRYSTAL": 50 }
+    }
+  }
+}

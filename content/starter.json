@@ -1,0 +1,21 @@
+// Where a new character starts and what it carries (TC playercreateinfo; ARCHITECTURE.md §5.2).
+// Read at server start; every key is optional, a missing key keeps the built-in value shown here.
+// An item is a uniquename from items.xml, or an object as in the saves:
+//   { "Name": "T4_ORE", "Count": 10, "Quality": 1, "Durability": null, "Active": [...], "Passive": [...] }
+{
+  "Cluster": "0000",          // world.xml cluster id; 0000 = Thetford
+  "Position": [0, 0],         // Join key 9
+  "Silver": 0,                // whole silver to start with (Join key 33; repairs, shops, crafting and the market cost silver)
+  "Equipment": {              // by slot: mainhand, offhand, head, armor, shoes, bag, cape, mount, potion, food
+    "mainhand": "T4_MAIN_SWORD",
+    "head": "T4_HEAD_PLATE_SET1",
+    "armor": "T4_ARMOR_PLATE_SET1",
+    "shoes": "T4_SHOES_PLATE_SET1",
+    "bag": "T4_BAG",
+    "cape": "T4_CAPE"
+  },
+  "Inventory": [              // slots in order, null = empty slot
+    { "Name": "T4_ORE", "Count": 10 },
+    { "Name": "T4_WOOD", "Count": 10 }
+  ]
+}

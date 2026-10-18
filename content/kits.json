@@ -1,0 +1,66 @@
+// The GM's item kits: .kit <name> puts a kit into the inventory (as .item add, while free slots last), .kit list lists them.
+// Read at server start (Content/Kits; ARCHITECTURE.md §5.2). A kit is
+//   "<name>": { "Help": "...", "Kits": ["<other kit>", ...], "Items": [item, ...] }
+// "Kits" puts the named kits' own items first. An item is a uniquename from items.xml, or { "Name", "Count", "Quality" }:
+// Count is one stack (1..999), or that many pieces of equipment; Quality 1..5 is for equipment (mounts) only, at most the
+// item's maxqualitylevel (1 for the battle mounts, drakes and the frost ram).
+// An unknown item, a kind the server cannot create yet or a bad count is logged at start and skipped.
+{
+  "mounts": {
+    "Help": "8 mounts, T3-T8; the battle mounts, drake, spider and frost ram have mount spells (<mountspell>)",
+    "Items": [
+      "T3_MOUNT_HORSE",                          // riding horse, no mount spell
+      "T5_MOUNT_OX",                             // transport ox (the captured one), no mount spell
+      { "Name": "T6_MOUNT_DIREWOLF", "Quality": 3 }, // direwolf, no mount spell; quality 3 (maxqualitylevel 5, the battle mounts, drake and ram 1)
+      "T6_MOUNT_FROSTRAM_ADC",                   // frost ram: MOUNTSPELL_GIANTSTAG_LEAP (shoes)
+      "T8_MOUNT_SPIDER_HELL",                    // hell spider: MOUNTSPELL_SPIDER_HELL_JUMP (shoes)
+      "T8_MOUNT_DRAKE_FIRE",                     // fire drake: MOUNTSPELL_DRAKE_FIRE_BREATH (head)
+      "T7_MOUNT_SWAMPDRAGON_BATTLE",             // battle swamp dragon: FIREBOLT, DRAGONBREATH, SPRINT_LIZARD (toggle)
+      "T8_MOUNT_MAMMOTH_BATTLE"                  // battle mammoth: 4 active spells and SPRINT_MAMMOTH (toggle)
+    ]
+  },
+  "food": {
+    "Help": "10 foods, T1-T8: soups (health regeneration), stews (damage), sandwiches (max health), omelette (cast speed), pie (load)",
+    "Items": [
+      { "Name": "T1_MEAL_SOUP", "Count": 10 },
+      { "Name": "T3_MEAL_SOUP", "Count": 10 },
+      { "Name": "T5_MEAL_SOUP", "Count": 10 },
+      { "Name": "T4_MEAL_STEW", "Count": 10 },
+      { "Name": "T6_MEAL_STEW", "Count": 10 },
+      { "Name": "T8_MEAL_STEW", "Count": 10 },
+      { "Name": "T4_MEAL_SANDWICH", "Count": 10 },
+      { "Name": "T8_MEAL_SANDWICH", "Count": 10 },
+      { "Name": "T3_MEAL_OMELETTE", "Count": 10 },
+      { "Name": "T7_MEAL_PIE", "Count": 10 }
+    ]
+  },
+  "potions": {
+    "Help": "13 potions, T2-T8: healing, energy, resistance, gigantify, berserk, poison, acid",
+    "Items": [
+      { "Name": "T2_POTION_HEAL", "Count": 10 },
+      { "Name": "T4_POTION_HEAL", "Count": 10 },
+      { "Name": "T6_POTION_HEAL", "Count": 10 },
+      { "Name": "T2_POTION_ENERGY", "Count": 10 },
+      { "Name": "T4_POTION_ENERGY", "Count": 10 },
+      { "Name": "T6_POTION_ENERGY", "Count": 10 },
+      { "Name": "T3_POTION_STONESKIN", "Count": 10 },  // resistance
+      { "Name": "T5_POTION_STONESKIN", "Count": 10 },
+      { "Name": "T7_POTION_STONESKIN", "Count": 10 },
+      { "Name": "T5_POTION_REVIVE", "Count": 10 },     // gigantify (max health, CC immunity)
+      { "Name": "T6_POTION_BERSERK", "Count": 10 },
+      { "Name": "T6_POTION_COOLDOWN", "Count": 10 },   // poison
+      { "Name": "T5_POTION_ACID", "Count": 10 }
+    ]
+  },
+  "test": {
+    "Help": "mounts, food and potions together (31 slots)",
+    "Kits": ["mounts", "food", "potions"]
+  },
+  "invasion": {
+    "Help": "invasion tickets (stage I): 10 for an invasion, 5 for a champion hunt; '.invasion tier <n>' picks their tier",
+    "Items": [
+      { "Name": "T5_CORRUPTED_NONLETHAL_MAP", "Count": 10 },  // starts an invasion
+      { "Name": "T6_CORRUPTED_LETHAL_MAP", "Count": 5 }       // starts a champion hunt
+    ]
+  }
+}

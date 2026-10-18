@@ -1,0 +1,31 @@
+// World bosses (analysis/work/stageH/bosses/SPEC.md §4.1, §6.1; PVE-DESIGN.md §2.E). Every key is optional; a missing key keeps
+// the value shown here (ExtraSpawns: none). Read at the start.
+{
+  "Enabled": true,              // false = the WORLDBOSS spawn points stay empty and no extra spawn comes
+  "DataFile": "worldbosses",    // the client's region file: worldbosses (odd UTC hours) or worldbosses_asia (even hours)
+  "Schedule": "data",           // how the data's bosses come back after a death: data (the next spawn time of the file),
+                                // respawn (the mob's 300-600 s / Rates:Respawn) or both (whichever comes first)
+  "SpawnAtStart": true,         // a boss stands from its cluster's first map; false = it comes at its first spawn time
+  "Announce": true,             // a system chat line when a boss spawns at its time (or by .boss spawn) and when it dies
+  "AnnounceToAll": false,       // false = only to the players in the boss's cluster (SPEC §4.1); true = to every player in game
+  "AnnounceSpawn": "World boss {boss} has appeared in {cluster} at ({x}, {z})",
+  "AnnounceKill": "World boss {boss} was defeated in {cluster}; next at {next} UTC",
+  "AnnounceKillOnce": "World boss {boss} was defeated in {cluster}",  // the death line of a one-off .boss spawn (no next time)
+  "HealthFactor": 1,            // the data bosses' max health x this (0.3 for two or three friends, 0.15 alone)
+  "DamageFactor": 1,            // the damage they deal x this
+  "Loot": "shared",             // shared = one bag (one roll) every contributor may open; personal = a bag of its own roll for each
+                                // contributor (N contributors, N times the items); killer = the official bag of the killer and its party
+  "LootMinShare": 0.05,         // share of the boss's threat (damage, healing) a player needs to be a contributor; the killer always is
+  // Bosses of the server's own in the T4 clusters the players use (no world map label for them). Position is world (x, z);
+  // Schedule as above (default respawn), RespawnMinutes [min, max] / Rates:Respawn; HealthFactor and DamageFactor override the ones above.
+  "ExtraSpawns": [
+    // 0204 (Swamp, T4): the keeper seer in the west, on a toad spawn point 290 m from every exit and 90 m from the other mob
+    // spawns (walkable by the data, off the roads and the undead ruins in the middle; to check in the client)
+    { "Cluster": "0204", "Boss": "WORLD_BOSS_DAILY_T5_KEEPER", "Position": [-135, 140], "Direction": 90,
+      "Schedule": "respawn", "RespawnMinutes": [20, 40], "HealthFactor": 0.3, "DamageFactor": 0.5 },
+    // 1207 (Forest, T4): the keeper earthmother in the south-east, on a rabbit spawn point 450 m from every exit and 200 m from
+    // the other mob spawns (walkable by the data, off the roads; to check in the client)
+    { "Cluster": "1207", "Boss": "WORLD_BOSS_T5_KEEPER", "Position": [277, -216], "Direction": 90,
+      "Schedule": "respawn", "RespawnMinutes": [20, 40], "HealthFactor": 0.3, "DamageFactor": 0.5 }
+  ]
+}

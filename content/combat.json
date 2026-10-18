@@ -1,0 +1,51 @@
+// Combat tunables the client data and the captures leave open (stage 5b-5d, analysis/work/stage5/SPEC.md; Content/CombatSettings).
+// Read at server start; every key is optional, a missing key keeps the built-in value shown here. A bad file is logged and
+// the built-in values are used.
+{
+  // m/s of a ranged or magic auto-attack's projectile: its damage comes at request + attackdamagetime + distance / this.
+  // Not in the client data; the captured fire staff hits came 240-760 ms after the request (SPEC §5b.5), 626 ms at about
+  // 5 m (0.36 s + 5.3 / 20).
+  "AutoAttackProjectileSpeed": 20,
+
+  // Damage factor per auto-attack combo index (AttackStart key 2: 0, 1, 2) by item uniquename pattern ('?' one character,
+  // '*' any run; the first match wins; default 1). Measured once: the third hit of a T4_MAIN_FIRESTAFF_CRYSTAL@1 did 58
+  // after 26 and 26 (SPEC §5b.2, §9 Q9: weapon data or a passive is open).
+  "ComboDamage": {
+    "T?_MAIN_FIRESTAFF*": [1, 1, 2.2]
+  },
+
+  // Seconds a mob's loot bag stays on the map before it vanishes with what is left in it (SPEC §5c.4).
+  "LootBagSeconds": 120,
+
+  // Metres added to characters.xml useobjectrange (2, from the bag's edge in the client) for the server's check of a loot
+  // bag's opening and taking, from the bag's centre and the player's extrapolated position (as the harvest's 3 m).
+  "LootRangeSlack": 3,
+
+  // Mob AI (stage 5d, SPEC §5d). Seconds between two event 3 of a walking mob, sent from where it has got to: the client
+  // dead-reckons one sample for at most 1 s; official mobs send about every 100 ms, the SPEC re-aims a chase every 0.5 s.
+  "MobMoveResendSeconds": 0.5,
+
+  // Metres the chased player may move from the mob's last aim point before the mob aims again (SPEC §5d.1).
+  "MobReaimDistance": 0.5,
+
+  // Seconds from a mob's combat entry to its first swing at the earliest, plus the mob's meleeattackdamagetime (SPEC §5d.1:
+  // the first captured mob Attack came about 1.8 s after the player's first hit; "1.0 s + the swing windup").
+  "MobReactionSeconds": 1,
+
+  // Seconds since the mob's last swing started, while its target is out of reach, after which it resets and walks home
+  // (SPEC §9 Q3: the captured resets started 3.8-4.0 s after the mob's last Attack).
+  "MobLeashNoHitSeconds": 4,
+
+  // Seconds from the reset's regeneration combo (event 95) to the MOB_RETURNHOME ActiveSpellEffectsUpdate (captured 0.17-0.21).
+  "MobReturnBuffDelaySeconds": 0.2,
+
+  // Seconds from a mob's two regeneration combos at home to the clear ActiveSpellEffectsUpdate (captured 0.12-0.2).
+  "MobHomeClearDelaySeconds": 0.15,
+
+  // Mob spells (stageD mobspells SPEC §5): whether mobs cast the spells of their mobs.xml <AI> (.mob spells on|off), how often
+  // a fighting mob evaluates its rotation while free (the captured triggers fired 2-120 ms after they became possible), and
+  // how long an IfChance roll holds (one roll per node per second fits the captured chance-gated casts, SPEC R5, §9 Q1).
+  "MobSpells": true,
+  "MobAiThinkSeconds": 0.1,
+  "MobAiChanceRerollSeconds": 1
+}

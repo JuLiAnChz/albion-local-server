@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\AlbionLocal.Photon\AlbionLocal.Photon.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Albion message classes and wire rules; the namespace stays AlbionLocal.Server.Protocol. -->
+    <RootNamespace>AlbionLocal.Server.Protocol</RootNamespace>
+  </PropertyGroup>
+
+</Project>

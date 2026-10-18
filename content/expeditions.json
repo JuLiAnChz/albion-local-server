@@ -1,0 +1,39 @@
+// Expeditions (analysis/work/stageH/expeditions/SPEC.md, PVE-DESIGN.md steps 8 and 9). Every key is optional; a missing key keeps the
+// value shown here. Read at the start.
+{
+  "Enabled": true,               // ExpeditionRegister at the agents is accepted
+  "RegisterRange": 8,            // m to the agent for ExpeditionRegister
+  "EnterRange": 8,               // m to the agent for the Join click (EnteringExpeditionStart)
+  "EnteringSeconds": 10,         // the Join channel (gamedata enteringduration)
+  "ReadyTimeoutSeconds": 60,     // ready without a Join click this long: the registration ends (gamedata startrequesttimeout)
+  "ExitUseSeconds": 5,           // the channel of an expedition exit (gamedata useexittimeinsec)
+  "ExitRange": 7,                // m to an exit for ExitEnterStart
+  "CancelDistance": 1,           // a channel is cancelled when the player moves farther than this (m)
+  "EmptyCloseSeconds": 60,       // an instance nobody is in closes after this
+  "FinishedLingerSeconds": 600,  // a completed instance closes this long after the completion (players still inside go out)
+  "CheckItemPower": false,       // the server checks minitempoweraverage too (the client always does, with the real item power)
+  "SoloGroupCategories": true,   // Veteran/Hardcore may be run by one player (off: a group that ends up alone is refused, a62 16)
+  "InviteRange": 30,             // a party leader's group registration covers the members within this of the agent (m)
+  "PartyAutoAccept": true,       // party members at the agent are registered at once (off: the 262 invitation window, accept/decline)
+  "HardcorePartyCarry": true,    // a party member may run the leader's hardcore level above its own (completing it opens the next for it)
+  "InvitationTimeoutSeconds": 30, // an invited member who does not answer declines (gamedata invitationrequesttimeout)
+  "GroupQueueSeconds": 5,        // a group category registered without a party waits this long for others of the same category/level
+  "GroupScaling": true,          // group instances: mob health (and damage) x min(ScalingMax, ScalingBase + ScalingPerPlayer x players)
+  "ScalingBase": 0.40,
+  "ScalingPerPlayer": 0.15,      // 1 player 0.55, 2 0.70, 3 0.85, 4-5 1.0
+  "ScalingMax": 1.0,
+  "ScaleDamage": true,           // the factor applies to the mobs' damage too (off: health only)
+  "HardcoreLadder": true,        // hardcore level n needs n-1 completed (level 1 always open; off: every level open, no level sent = the recorded one or 1)
+  "HardcoreUnlockInBonusTime": true, // the next level opens only when the run ends within the bonus time
+  "HardcoreTokens": true,        // a level gives a token of its tokenlootlist; a token D<n> opens level n of its expedition (taken at the entry)
+  "LeavePenalty": false,         // leaving before the completion blocks a new registration for PenaltySeconds (a62 8)
+  "PenaltySeconds": 180,         // gamedata penaltyduration
+  "DailyBonus": "Expedition",    // bonus rewards: Off = every run in the bonus time, Expedition = daily per expedition, Character = daily
+  "BonusResetUtc": "10:00",      // the daily bonus reset (gamedata ExpeditionBonusRewardTimer)
+  "EveryRunItems": ["T4_LOOTBAG_EXPEDITION_ROYAL_SIGIL"], // given on every completion unless the reward list has it already
+  "Substitutes": {},             // a reward item the server cannot create -> the item given instead (none needed today)
+  "CheckpointRespawn": true,     // a death inside respawns at the active checkpoint of the same instance (off: in the city, out of the run)
+  "SpawnAliases": {},            // expedition spawn name mobs.xml lacks -> mob, over the 4 built-in ones (SPEC 4.3); "" drops one
+  "LockSpell": "EXPEDITION_LOCK", // cast when the Join channel ends ("" = none)
+  "FallbackCluster": "0000"      // where a character goes whose instance is gone and that has no saved way back
+}

@@ -1,0 +1,24 @@
+# Build output
+bin/
+obj/
+*.user
+.vs/
+
+# Saves and runtime state (not versioned, see ARCHITECTURE.md §5.3)
+data/characters.json
+data/characters.json.migrated*
+data/*.db
+data/*.db-*
+data/characters/
+data/*.log*
+data/clientdata.json
+
+# Generated data stays versioned: data/items.tsv (analysis/tools/gen_items.py), data/gamedata.json
+# (analysis/tools/gen_gamedata.py) and data/spells.json (gen_item_spells.py) as the self-test's golden references
+# (the server reads the client's GameData itself), Protocol/Generated (gen_protocol_cs.py).
+
+# Data generated from the game client is never published
+data/gamedata.json
+data/spells.json
+data/items.tsv
+data/journal-ids.tsv

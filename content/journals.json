@@ -1,0 +1,11 @@
+// Labourer journals (analysis/work/stageH/journals/SPEC.md §A, PVE-DESIGN.md step 4). Every key is optional; a missing key
+// keeps the value shown here. Read at the start.
+{
+  "Fill": true,                 // _EMPTY journals in the inventory fill with the fame of their kind (kills, gathering, crafting, fishing)
+  "MerchantMarkets": ["0000"],  // the cities whose marketplace has the journal merchant's standing orders (0000 = Thetford; [] = none)
+  "SellFactor": 1,              // an _EMPTY journal costs this x its labourer price (T2 500 ... T8 32000 silver)
+  "BuyBackFactor": 1.5,         // the merchant buys a _FULL journal for this x that price (0 = it buys none)
+  "MerchantStock": 999,         // the amount each merchant order shows (it never runs out)
+  "MinTier": 2,                 // the journal tiers the merchant trades
+  "MaxTier": 8
+}

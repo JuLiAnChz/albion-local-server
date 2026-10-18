@@ -1,0 +1,183 @@
+[
+ {
+  "event": "NewBuilding",
+  "code": 45,
+  "tile": "SWAMP_GREEN_MARKETPLACE_CENTERCITY",
+  "pos": [
+   -1.0,
+   108.0
+  ],
+  "rot": 0.0,
+  "guid": "39f48ad1-6367-449e-a1f2-498bf1c67bc1",
+  "type": 124,
+  "type_1based_datatrack": 125
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "Exit",
+  "pos": [
+   -41.5,
+   89.5
+  ],
+  "guid": "9c1b401a-4833-4986-80cd-7a07bd78caea",
+  "worldxml_pos": "-41.5 89.5",
+  "target": "399399b1-2fa3-43e7-86e7-037590a33673@0000",
+  "spawn": [
+   -21.5,
+   90.0
+  ]
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "Exit",
+  "pos": [
+   -0.5,
+   42.5
+  ],
+  "guid": "e0a22b80-3870-4ad1-b3ef-30790923f958",
+  "worldxml_pos": "-0.5 42.5",
+  "target": "5e03f43b-864a-4230-8258-b49bdf19ca78@0006",
+  "spawn": [
+   -0.5,
+   57.5
+  ]
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -53.5,
+   92.5
+  ],
+  "locationid": "ARTIFACTFOUNDRY",
+  "radius": 10.0
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   0.0,
+   108.0
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   52.4,
+   78.3
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -53.8,
+   41.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -1.4,
+   45.9
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   44.2,
+   42.8
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   58.0,
+   -1.1
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   43.2,
+   -49.3
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   4.5,
+   -58.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   49.2,
+   129.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -38.6,
+   -52.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   4.9,
+   141.2
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -42.3,
+   131.9
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -86.3,
+   79.2
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -0.5,
+   103.5
+  ],
+  "locationid": "MARKETPLACE",
+  "radius": 10.0
+ }
+]

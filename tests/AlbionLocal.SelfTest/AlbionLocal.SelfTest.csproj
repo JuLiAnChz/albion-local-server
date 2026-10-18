@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AlbionLocal.Photon\AlbionLocal.Photon.csproj" />
+    <ProjectReference Include="..\..\src\AlbionLocal.Server\AlbionLocal.Server.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Golden references, world objects only: the client data slices (analysis/work/stage2/spec/slice_*.json) and the
+         fixtures; capture-derived ones are not published. -->
+    <None Include="Fixtures\*.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

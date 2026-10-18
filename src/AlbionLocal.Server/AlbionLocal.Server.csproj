@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\AlbionLocal.Photon\AlbionLocal.Photon.csproj" />
+    <ProjectReference Include="..\AlbionLocal.Protocol\AlbionLocal.Protocol.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The one NuGet package (ARCHITECTURE.md §5.5), restored offline from the local cache (server/nuget.config). -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.8" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

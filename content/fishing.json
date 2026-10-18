@@ -1,0 +1,79 @@
+// Fishing tunables (analysis/work/stageG/fishing/SPEC.md; Content/FishingSettings). The official values live in the
+// server-only fishing.xml, which the client can parse but does not ship: what is measured in the capture 20261016_002835 is
+// marked so, everything else is an [assume] to tune. Read at server start; every key is optional, a missing key keeps the
+// built-in value shown here. A bad file is logged and the built-in values are used.
+{
+  // fishing.xml <fishingsettings catchTimeout>: seconds from the bite (float dips) to the miss. Measured: misses cancelled
+  // 0.80-0.82 s after the bite. A strike may come StrikeSlackSeconds later (the round trip; strikes seen up to 0.87 s):
+  // the server's miss (FishingCancel 5) comes at CatchTimeout + StrikeSlack.
+  "CatchTimeoutSeconds": 0.8,
+  "StrikeSlackSeconds": 0.1,
+
+  // The client reports a minigame success only after gamedata <Fishing safety="3"/> seconds (the game data's value wins
+  // when it is loaded); a success earlier than safety - tolerance counts as a fail [assume tolerance].
+  "SafetySeconds": 3,
+  "SafetyToleranceSeconds": 0.5,
+
+  // The float lands FlightBase + FlightPerPower x power seconds after the Cast (power = charge time / 1 s; fit of 16
+  // captured casts, residuals <= 0.08 s).
+  "FlightBaseSeconds": 0.44,
+  "FlightPerPowerSeconds": 0.30,
+
+  // The farthest cast is 3 + 12 x power = 15 m (client); the server's checks of the clicked and the landing point allow
+  // RangeSlack more.
+  "CastRange": 15,
+  "RangeSlack": 3,
+
+  // [assume] The server ends a session itself when the client's FishingCancel does not come this long after Success,
+  // Fail or GroundFail (captured: 1.75-1.81 s after Success, 1.08 s after GroundFail), and fails a minigame without
+  // FishingFinish after MiniGameTimeoutSeconds.
+  "EndFallbackSeconds": 5,
+  "MiniGameTimeoutSeconds": 120,
+
+  // A Move whose stop point lies more than this from the fishing spot ends the session (as a harvest).
+  "WalkOffTolerance": 0.5,
+
+  // [assume] The return code of a refused request (the client only tests != 0), the rod's durability loss per catch, and
+  // the distance within which the nearest OCEAN_ zone makes a landing point in no zone ocean water.
+  "Refusal": 1,
+  "RodWear": 1,
+  "OceanNearby": 50,
+
+  // The zone kinds by tiles.xml fishingzone@zone. Captured: MaxCharges (charges + key 3 = 15 / 5 / 1 in all 84 events) and
+  // Prefab (NewFishingZoneObject key 4); Priority: a spot with charges wins over the enclosing base zone, an empty one is
+  // skipped (10 strikes in 0204). [assume] BiteSeconds (uniform, / (1 + the rod's fishingspeed); captured swarm 6.0-7.0 s,
+  // base 1.9-12.9 s and casts with no bite for 9.5-19.3 s), ChargeSeconds (one charge back per uniform(min, max) s, /
+  // Rates:Regrowth; a swarm at 0 stayed >= 98 s, a base zone showed no regrowth for >= 123 s), DelayAtZeroSeconds (first
+  // wait at 0 charges), ChanceToHit (a bite at all, else "caught nothing"). Loot: BASE (the cluster's base list), TREASURE
+  // (T<tier>_FISHING_ZONE_TREASURE), DEFAULT (T<tier>_FISHING_ZONE_DEFAULT_<water>_LOOT) or a loot.xml list name.
+  "Zones": {
+    "FRESHWATER_BASE":             { "MaxCharges": 15, "Prefab": "",                 "Priority": 0, "BiteSeconds": [2, 25], "ChargeSeconds": [120, 300], "DelayAtZeroSeconds": 90, "ChanceToHit": 1, "Loot": "BASE" },
+    "OCEAN_BASE":                  { "MaxCharges": 15, "Prefab": "",                 "Priority": 0, "BiteSeconds": [2, 25], "ChargeSeconds": [120, 300], "DelayAtZeroSeconds": 90, "ChanceToHit": 1, "Loot": "BASE" },
+    "FRESHWATER_SPOT_FISH":        { "MaxCharges": 1,  "Prefab": "FishingNodeFish",  "Priority": 2, "BiteSeconds": [6, 7],  "ChargeSeconds": [120, 180], "DelayAtZeroSeconds": 90, "ChanceToHit": 1, "Loot": "BASE" },
+    "FRESHWATER_SPOT_SWARM":       { "MaxCharges": 5,  "Prefab": "FishingNodeSwarm", "Priority": 1, "BiteSeconds": [6, 7],  "ChargeSeconds": [120, 180], "DelayAtZeroSeconds": 90, "ChanceToHit": 1, "Loot": "BASE" },
+    "FRESHWATER_SPOT_SMALL_SWARM": { "MaxCharges": 5,  "Prefab": "FishingNodeSwarm", "Priority": 1, "BiteSeconds": [6, 7],  "ChargeSeconds": [120, 180], "DelayAtZeroSeconds": 90, "ChanceToHit": 1, "Loot": "BASE" },
+    "OCEAN_SPOT_SWARM":            { "MaxCharges": 5,  "Prefab": "FishingNodeSwarm", "Priority": 1, "BiteSeconds": [6, 7],  "ChargeSeconds": [120, 180], "DelayAtZeroSeconds": 90, "ChanceToHit": 1, "Loot": "BASE" },
+    "OCEAN_SPOT_SMALL_SWARM":      { "MaxCharges": 5,  "Prefab": "FishingNodeSwarm", "Priority": 1, "BiteSeconds": [6, 7],  "ChargeSeconds": [120, 180], "DelayAtZeroSeconds": 90, "ChanceToHit": 1, "Loot": "BASE" },
+    "FRESHWATER_SPOT_TREASURE":    { "MaxCharges": 1,  "Prefab": "FishingNodeChest", "Priority": 3, "BiteSeconds": [6, 7],  "ChargeSeconds": [120, 180], "DelayAtZeroSeconds": 90, "ChanceToHit": 1, "Loot": "TREASURE" },
+    "OCEAN_SPOT_TREASURE":         { "MaxCharges": 1,  "Prefab": "FishingNodeChest", "Priority": 3, "BiteSeconds": [6, 7],  "ChargeSeconds": [120, 180], "DelayAtZeroSeconds": 90, "ChanceToHit": 1, "Loot": "TREASURE" },
+    // The boss spot's prefab was never captured (no ocean cluster seen): no VFX until it is known.
+    "OCEAN_SPOT_BOSS":             { "MaxCharges": 1,  "Prefab": "",                 "Priority": 3, "BiteSeconds": [6, 7],  "ChargeSeconds": [120, 180], "DelayAtZeroSeconds": 90, "ChanceToHit": 1, "Loot": "FISHING_ZONE_OCEAN_SPOT_BOSS" }
+  },
+
+  // The water outside every zone object (fishing.xml defaultzonefreshwater / defaultzoneocean): unlimited charges.
+  "Freshwater": { "MaxCharges": 0, "BiteSeconds": [2, 25], "ChanceToHit": 1, "Loot": "DEFAULT" },
+  "Ocean":      { "MaxCharges": 0, "BiteSeconds": [2, 25], "ChanceToHit": 1, "Loot": "DEFAULT" },
+
+  // fishing.xml <fishinggamesetting> by items.xml fishingminigamesetting (FishingMiniGame keys 3-15, SPEC §5.1). Only one
+  // setting was captured (a T4 common, so probably "T3"); [assume] it for all nine names until more are known. A name
+  // gives only what differs from DEFAULT.
+  "MiniGames": {
+    "DEFAULT": {
+      "ProgressBarAcceleration": 2, "ProgressBarDeceleation": 1, "ProgressBarNegativeModiferAboveZero": 4, "ProgressBarSpeedMultiplier": 0.3,
+      "ProgressBarStartPosition": 1.1, "ProgressbarMaxSpeed": 4.5, "ProgressbarMinSpeed": -1, "TensionBarFishAcceleration": 1,
+      "TensionBarFishMaxSpeed": 6, "TensionBarLetGoSpeed": 2.5, "TensionBarPlayerMaxSpeed": 10, "TensionBarStartSpeed": 0,
+      "TensionBarPlayerAcceleration": 7
+    },
+    "T1": {}, "T3": {}, "T5": {}, "T7": {}, "T3_Rare": {}, "T5_Rare": {}, "T7_Rare": {}, "Boss_Shark": {}
+  }
+}

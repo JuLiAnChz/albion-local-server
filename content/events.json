@@ -1,0 +1,100 @@
+// World events: invasions and champion hunts in the open world (PVE-DESIGN.md §2.H, §3 step 7; stage I: started by the players,
+// analysis/work/stageI/invasions/SPEC.md). Every key is optional; a missing key keeps the value shown here (a given Events list
+// replaces the built-in one; a Tiers entry changes only the keys it gives of its row). Read at the start.
+{
+  "Enabled": true,              // false = no events at all (neither scheduled nor .event start nor .invasion and tickets)
+  "Scheduled": false,           // true = the server starts them by itself too (every IntervalMinutes); false = players (.invasion, tickets) and GMs only
+  "IntervalMinutes": [30, 60],  // from the server start and from the end of an event to the next scheduled one (uniform)
+  "MinPlayers": 1,              // players a cluster's map needs for a scheduled event there
+  "MaxRunning": 1,              // scheduled events at once (one per map in any case)
+  "Clusters": [],               // only these clusters get scheduled events; empty = every open-world cluster with mob spawn blocks
+  "AnnounceToAll": false,       // false = the lines go to the players in the event's cluster (and a starter's party); true = to every player in game
+  // The lines (system chat, SystemMessage). {event} the title, {tier} the difficulty, {cluster}, {x} {z} the point; the start line per
+  // player with its {distance} (m) and {direction} (north, north-east, …); {wave} {waves}; {count} the wave's mobs or the rewarded
+  // players; {mob}; AnnounceCalled {player} the starter (sent before the start line of a player's invasion).
+  "AnnounceStart": "{event} in {cluster}: {distance} m {direction} of you at ({x}, {z}); {waves} waves, {minutes} min",
+  "AnnounceWave": "{event}: wave {wave} of {waves}, {count} x {mob}",
+  "AnnounceWon": "{event} beaten! Reward chests at ({x}, {z}) for {count} player(s)",
+  "AnnounceFailed": "{event}: the invaders have retreated",
+  "AnnounceStopped": "{event} was called off",
+  "AnnounceCalled": "{player} called {event}",
+  // The kinds. Title: {faction} is the faction of the mobs (the spawn block nearest the point: Undead, Keeper, …), {tier} the
+  // difficulty (the cluster's tier for a scheduled one). Weight: the scheduled pick (0 = only .event start and the players). Waves in
+  // order: Kind standard / champion / miniboss / boss (the cluster's mobs of that mobs.xml category and of its tier; a kind the cluster
+  // lacks falls back to the next lower one), Count [min, max], HealthFactor, DamageFactor. DurationMinutes: then it fails and its mobs
+  // go. WaveDelaySeconds: after a wave's last death. Distance [min, max]: the point (a mob spawn point) from a random player (a
+  // scheduled or GM one). SpreadMeters: the ring the mobs stand on. RewardMinShare: the share of the damage a player needs for the
+  // reward. RewardFactor: x on the chest's loot. RewardFame: fame each (x Rates:Fame; a player's invasion takes its tier's Fame).
+  // Chest: the lootchests.xml LootChestSpawnpoint of the personal reward chest (DEFAULT_TREASURE_VETERAN: the veteran treasure chests,
+  // T4-T8, every biome; a player's invasion takes its tier's Chest). ChestMinutes: how long it stands.
+  "Events": [
+    { "Name": "invasion", "Title": "{faction} invasion T{tier}", "Weight": 1,
+      "Waves": [ { "Kind": "standard", "Count": [6, 10] }, { "Kind": "standard", "Count": [6, 10] },
+                 { "Kind": "champion", "Count": [1, 2], "HealthFactor": 1.5 } ],
+      "DurationMinutes": 10, "WaveDelaySeconds": 10, "Distance": [40, 120], "SpreadMeters": 6,
+      "RewardMinShare": 0.05, "RewardFactor": 2, "RewardFame": 2000, "Chest": "DEFAULT_TREASURE_VETERAN", "ChestMinutes": 10 },
+    // one strong miniboss (a champion where the cluster has none) to hunt down
+    { "Name": "champion", "Title": "{faction} champion hunt T{tier}", "Weight": 0.5,
+      "Waves": [ { "Kind": "miniboss", "Count": [1, 1], "HealthFactor": 3 } ],
+      "DurationMinutes": 10, "Distance": [40, 120],
+      "RewardMinShare": 0.05, "RewardFactor": 2, "RewardFame": 1000, "Chest": "DEFAULT_TREASURE_VETERAN", "ChestMinutes": 10 }
+  ],
+  // Stage I: the invasions players start, by '.invasion <1-10> [kind]' (every account level) or by using a ticket from the bag
+  // (its tier: '.invasion tier <n>', else the zone's tier). Only on open-world maps of ClusterTypes (world.xml type prefixes; no city,
+  // island, dungeon or expedition), one event per map, one led invasion per character.
+  "Player": {
+    "Enabled": true,             // false = no player invasions
+    "Command": true,             // false = tickets only
+    "CommandSilver": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],   // whole silver a command start costs, T1..T10 (0 = free)
+    // The tickets: Item (items.xml uniquename) starts Kind; Tier 0 = the player's chosen tier, 1-10 = always that tier (1 used).
+    // The corrupted dungeon maps do nothing else on this server (their dungeons are not made).
+    "Items": [ { "Item": "T5_CORRUPTED_NONLETHAL_MAP", "Kind": "invasion", "Tier": 0 },
+               { "Item": "T6_CORRUPTED_LETHAL_MAP", "Kind": "champion", "Tier": 0 } ],
+    "ItemCost": [1, 1, 1, 1, 1, 1, 1, 1, 2, 3],        // tickets used per start, T1..T10
+    "CooldownMinutes": 10,       // per character after a command start (a failed or stopped invasion keeps it)
+    "ItemCooldownMinutes": 2,    // after a ticket start
+    "DailyLimit": 0,             // starts per character per UTC day; 0 = no cap
+    "MaxRunning": 5,             // player invasions at once on the server
+    "MinTier": 1, "MaxTier": 10,
+    "Distance": [15, 45],        // the point (a mob spawn point) from the starter, m
+    "ClusterTypes": ["SAFEAREA", "STARTAREA", "OPENPVP_", "TUNNEL_", "PASSAGE_"],
+    "ExcludeTypes": ["SAFEAREA_TUTORIAL"],
+    "Factions": ["HERETIC", "UNDEAD", "KEEPER", "MORGANA", "AVALON"],   // mob factions (and their _CAMP) an invasion takes; none near: HERETIC
+    "MaxRewarded": 20,           // most players rewarded (most damage first)
+    "PartyShare": true,          // a party member of a rewarded player within PartyShareMeters of the point is rewarded too
+    "PartyShareMeters": 60,
+    "GroupCountPerPlayer": 0.25, // a wave's mobs x min(GroupCountMax, 1 + this x (players within 60 m of the point - 1))
+    "GroupCountMax": 2
+  },
+  // Stage I: the difficulties. MobTier 1-8 (mobs.xml has none above T8; a faction without that tier: HERETIC for T1-T3, else the
+  // nearest tier x1.15 per tier), Faction (null = the zone's), LevelBuff (spells.xml; +36 % / +84 % health and damage for T9 / T10),
+  // HealthFactor, DamageFactor, FameFactor (kill fame), CountFactor, ExtraWaves (as Waves) with ExtraMinutes each; the reward: Chest
+  // (LootChestSpawnpoints, the first that has a chest for the biome), LootTier (the chest's roll), ItemTier (items moved to that tier
+  // where items.xml has them), Enchant (+levels where the variant exists), LootFactor (x RewardFactor), Silver and Fame each
+  // (x Rates:Silver / Rates:Fame), ChestMinutes.
+  "Tiers": [
+    { "Tier": 1, "MobTier": 1, "Chest": ["DEFAULT_TREASURE_SOLO"], "LootTier": 4, "ItemTier": 2, "LootFactor": 0.5, "Silver": 1000, "Fame": 250 },
+    { "Tier": 2, "MobTier": 2, "Chest": ["DEFAULT_TREASURE_SOLO"], "LootTier": 4, "ItemTier": 2, "LootFactor": 0.6, "Silver": 2000, "Fame": 500 },
+    { "Tier": 3, "MobTier": 3, "Chest": ["DEFAULT_TREASURE_SOLO"], "LootTier": 4, "ItemTier": 3, "LootFactor": 0.8, "Silver": 4000, "Fame": 1000 },
+    { "Tier": 4, "MobTier": 4, "Chest": ["DEFAULT_TREASURE_VETERAN"], "LootTier": 4, "LootFactor": 1.0, "Silver": 7500, "Fame": 2000 },
+    { "Tier": 5, "MobTier": 5, "Chest": ["DEFAULT_TREASURE_VETERAN"], "LootTier": 5, "LootFactor": 1.1, "Silver": 12000, "Fame": 3500 },
+    { "Tier": 6, "MobTier": 6, "Chest": ["DEFAULT_TREASURE_VETERAN"], "LootTier": 6, "LootFactor": 1.2, "Silver": 20000, "Fame": 6000 },
+    { "Tier": 7, "MobTier": 7, "Chest": ["DEFAULT_TREASURE_ELITE", "DEFAULT_TREASURE_VETERAN"], "LootTier": 7, "LootFactor": 1.3, "Silver": 32000, "Fame": 10000 },
+    { "Tier": 8, "MobTier": 8, "Chest": ["DEFAULT_TREASURE_ELITE", "DEFAULT_TREASURE_VETERAN"], "LootTier": 8, "LootFactor": 1.4, "Silver": 50000, "Fame": 16000 },
+    { "Tier": 9, "MobTier": 8, "LevelBuff": "MOB_RANDOM_DUNGEON_BUFF_02", "FameFactor": 1.5,
+      "ExtraWaves": [ { "Kind": "champion", "Count": [1, 2], "HealthFactor": 1.5 } ],
+      "Chest": ["DEFAULT_TREASURE_ELITE", "DEFAULT_TREASURE_VETERAN"], "LootTier": 8, "Enchant": 1, "LootFactor": 1.6, "Silver": 80000, "Fame": 25000 },
+    { "Tier": 10, "MobTier": 8, "LevelBuff": "MOB_RANDOM_DUNGEON_BUFF_04", "FameFactor": 2,
+      "ExtraWaves": [ { "Kind": "champion", "Count": [1, 2], "HealthFactor": 1.5 }, { "Kind": "miniboss", "Count": [1, 1], "HealthFactor": 2 } ],
+      "Chest": ["DEFAULT_TREASURE_ELITE", "DEFAULT_TREASURE_VETERAN"], "LootTier": 8, "Enchant": 2, "LootFactor": 2, "Silver": 120000, "Fame": 40000 }
+  ],
+  // Stage I: NPC sell orders of the tickets on these cities' markets (whole silver each; never run out, Stock shown).
+  "Merchant": {
+    "Markets": ["0000"],
+    "Prices": { "T5_CORRUPTED_NONLETHAL_MAP": 15000, "T6_CORRUPTED_LETHAL_MAP": 30000 },
+    "Stock": 999
+  },
+  // Stage I: ticket drops (x Rates:Loot): an open-world boss / miniboss kill (never a dungeon's, an expedition's or an event's own
+  // mob), and for each rewarded player of a won player invasion a ticket of its kind in the reward chest.
+  "Drops": { "Boss": 0.20, "Miniboss": 0.05, "Won": 0.25, "Item": "T5_CORRUPTED_NONLETHAL_MAP" }
+}

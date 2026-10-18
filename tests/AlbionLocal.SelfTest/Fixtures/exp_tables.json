@@ -1,0 +1,6380 @@
+{
+ "categories": [
+  {
+   "index": 0,
+   "uniquename": "TEST",
+   "tier": 3,
+   "grouptype": "STANDARD",
+   "minitempoweraverage": 200.0,
+   "unlockedtoregister": true,
+   "roles": [],
+   "difficulties": [],
+   "rewards": [
+    {
+     "itemid": "T3_FARM_WHEAT_SEED",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "points": "1000",
+     "kind": "famepoints"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "T3_POTION_STONESKIN",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "points": "2000",
+     "kind": "famepoints"
+    }
+   ]
+  },
+  {
+   "index": 1,
+   "uniquename": "TEST2",
+   "tier": 3,
+   "grouptype": "VETERAN",
+   "minitempoweraverage": 200.0,
+   "unlockedtoregister": true,
+   "roles": [
+    {
+     "itemroleid": "TANK",
+     "min": "1",
+     "max": "2"
+    },
+    {
+     "itemroleid": "HEAL",
+     "min": "1",
+     "max": "2"
+    },
+    {
+     "itemroleid": "DPS",
+     "min": "1",
+     "max": "3"
+    }
+   ],
+   "difficulties": [],
+   "rewards": [
+    {
+     "itemid": "T3_FARM_WHEAT_SEED",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "T3_POTION_STONESKIN",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    }
+   ]
+  },
+  {
+   "index": 2,
+   "uniquename": "TEST3",
+   "tier": 3,
+   "grouptype": "ELITE",
+   "minitempoweraverage": 200.0,
+   "unlockedtoregister": true,
+   "roles": [
+    {
+     "itemroleid": "TANK",
+     "min": "1",
+     "max": "2"
+    },
+    {
+     "itemroleid": "HEAL",
+     "min": "1",
+     "max": "2"
+    },
+    {
+     "itemroleid": "DPS",
+     "min": "1",
+     "max": "3"
+    }
+   ],
+   "difficulties": [],
+   "rewards": [
+    {
+     "itemid": "T3_FARM_WHEAT_SEED",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "points": "1000",
+     "kind": "famepoints"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "T3_POTION_STONESKIN",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "points": "2000",
+     "kind": "famepoints"
+    }
+   ]
+  },
+  {
+   "index": 3,
+   "uniquename": "T3_STANDARD",
+   "tier": 3,
+   "grouptype": "STANDARD",
+   "minitempoweraverage": 250.0,
+   "unlockedtoregister": true,
+   "roles": [],
+   "difficulties": [],
+   "rewards": [
+    {
+     "absolute": "1000",
+     "kind": "silver"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "T4_LOOTBAG_EXPEDITION_ROYAL_SIGIL",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "itemid": "T3_SKILLBOOK_NONTRADABLE",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "absolute": "3000",
+     "kind": "silver"
+    }
+   ]
+  },
+  {
+   "index": 4,
+   "uniquename": "T4_STANDARD",
+   "tier": 4,
+   "grouptype": "STANDARD",
+   "minitempoweraverage": 350.0,
+   "unlockedtoregister": true,
+   "roles": [],
+   "difficulties": [],
+   "rewards": [
+    {
+     "absolute": "2500",
+     "kind": "silver"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "T4_LOOTBAG_EXPEDITION_ROYAL_SIGIL",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "itemid": "T4_SKILLBOOK_NONTRADABLE",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "absolute": "7500",
+     "kind": "silver"
+    }
+   ]
+  },
+  {
+   "index": 5,
+   "uniquename": "T5_STANDARD",
+   "tier": 5,
+   "grouptype": "STANDARD",
+   "minitempoweraverage": 650.0,
+   "unlockedtoregister": true,
+   "roles": [],
+   "difficulties": [],
+   "rewards": [
+    {
+     "absolute": "5000",
+     "kind": "silver"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "T4_LOOTBAG_EXPEDITION_ROYAL_SIGIL",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "itemid": "T5_SKILLBOOK_NONTRADABLE",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "absolute": "15000",
+     "kind": "silver"
+    }
+   ]
+  },
+  {
+   "index": 6,
+   "uniquename": "T6_STANDARD",
+   "tier": 6,
+   "grouptype": "STANDARD",
+   "minitempoweraverage": 900.0,
+   "unlockedtoregister": true,
+   "roles": [],
+   "difficulties": [],
+   "rewards": [
+    {
+     "absolute": "5000",
+     "kind": "silver"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "T4_LOOTBAG_EXPEDITION_ROYAL_SIGIL",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "itemid": "T5_SKILLBOOK_NONTRADABLE",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "absolute": "15000",
+     "kind": "silver"
+    }
+   ]
+  },
+  {
+   "index": 7,
+   "uniquename": "T4_VETERAN",
+   "tier": 4,
+   "grouptype": "VETERAN",
+   "minitempoweraverage": 300.0,
+   "unlockedtoregister": true,
+   "roles": [
+    {
+     "itemroleid": "TANK",
+     "min": "1",
+     "max": "1"
+    },
+    {
+     "itemroleid": "HEAL",
+     "min": "1",
+     "max": "1"
+    },
+    {
+     "itemroleid": "DPS",
+     "min": "3",
+     "max": "3"
+    }
+   ],
+   "difficulties": [],
+   "rewards": [
+    {
+     "absolute": "5000",
+     "kind": "silver"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "T4_LOOTBAG_EXPEDITION_ROYAL_SIGIL",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "itemid": "T4_SKILLBOOK_NONTRADABLE",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "absolute": "15000",
+     "kind": "silver"
+    }
+   ]
+  },
+  {
+   "index": 8,
+   "uniquename": "T5_VETERAN",
+   "tier": 5,
+   "grouptype": "VETERAN",
+   "minitempoweraverage": 500.0,
+   "unlockedtoregister": true,
+   "roles": [
+    {
+     "itemroleid": "TANK",
+     "min": "1",
+     "max": "1"
+    },
+    {
+     "itemroleid": "HEAL",
+     "min": "1",
+     "max": "1"
+    },
+    {
+     "itemroleid": "DPS",
+     "min": "3",
+     "max": "3"
+    }
+   ],
+   "difficulties": [],
+   "rewards": [
+    {
+     "absolute": "10000",
+     "kind": "silver"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "T4_LOOTBAG_EXPEDITION_ROYAL_SIGIL",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "itemid": "T5_SKILLBOOK_NONTRADABLE",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "absolute": "30000",
+     "kind": "silver"
+    }
+   ]
+  },
+  {
+   "index": 9,
+   "uniquename": "T6_VETERAN",
+   "tier": 6,
+   "grouptype": "VETERAN",
+   "minitempoweraverage": 700.0,
+   "unlockedtoregister": true,
+   "roles": [
+    {
+     "itemroleid": "TANK",
+     "min": "1",
+     "max": "1"
+    },
+    {
+     "itemroleid": "HEAL",
+     "min": "1",
+     "max": "1"
+    },
+    {
+     "itemroleid": "DPS",
+     "min": "3",
+     "max": "3"
+    }
+   ],
+   "difficulties": [],
+   "rewards": [
+    {
+     "absolute": "15000",
+     "kind": "silver"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "T4_LOOTBAG_EXPEDITION_ROYAL_SIGIL",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "itemid": "T6_SKILLBOOK_NONTRADABLE",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "absolute": "50000",
+     "kind": "silver"
+    }
+   ]
+  },
+  {
+   "index": 10,
+   "uniquename": "T6_HARDCORE",
+   "tier": 6,
+   "grouptype": "HARDCORE",
+   "minitempoweraverage": 0.0,
+   "unlockedtoregister": true,
+   "roles": [],
+   "difficulties": [
+    {
+     "level": "1",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_01",
+     "silverfactor": "1.935",
+     "lootfactor": "1.935",
+     "mobfamefactor": "1.276",
+     "tokenlootlist": "L2_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "2",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_02",
+     "silverfactor": "2.516",
+     "lootfactor": "2.516",
+     "mobfamefactor": "1.636",
+     "tokenlootlist": "L3_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "3",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_03",
+     "silverfactor": "3.242",
+     "lootfactor": "3.242",
+     "mobfamefactor": "2.091",
+     "tokenlootlist": "L4_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "4",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_04",
+     "silverfactor": "4.159",
+     "lootfactor": "4.159",
+     "mobfamefactor": "2.674",
+     "tokenlootlist": "L5_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "5",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_05",
+     "silverfactor": "5.323",
+     "lootfactor": "5.323",
+     "mobfamefactor": "3.425",
+     "tokenlootlist": "L6_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "6",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_06",
+     "silverfactor": "6.746",
+     "lootfactor": "6.746",
+     "mobfamefactor": "4.36",
+     "tokenlootlist": "L7_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "7",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_07",
+     "silverfactor": "8.551",
+     "lootfactor": "8.551",
+     "mobfamefactor": "5.569",
+     "tokenlootlist": "L8_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "8",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_08",
+     "silverfactor": "10.8",
+     "lootfactor": "10.8",
+     "mobfamefactor": "7.105",
+     "tokenlootlist": "L9_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "9",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_09",
+     "silverfactor": "13.617",
+     "lootfactor": "13.617",
+     "mobfamefactor": "9.078",
+     "tokenlootlist": "L10_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "10",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_10",
+     "silverfactor": "17.172",
+     "lootfactor": "17.172",
+     "mobfamefactor": "11.62",
+     "tokenlootlist": "L11_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "11",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_11",
+     "silverfactor": "21.528",
+     "lootfactor": "21.528",
+     "mobfamefactor": "14.82",
+     "tokenlootlist": "L12_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "12",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_12",
+     "silverfactor": "26.955",
+     "lootfactor": "26.955",
+     "mobfamefactor": "18.91",
+     "tokenlootlist": "L13_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "13",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_13",
+     "silverfactor": "33.651",
+     "lootfactor": "33.651",
+     "mobfamefactor": "24.1",
+     "tokenlootlist": "L14_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "14",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_14",
+     "silverfactor": "41.976",
+     "lootfactor": "41.976",
+     "mobfamefactor": "30.73",
+     "tokenlootlist": "L15_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "15",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_15",
+     "silverfactor": "52.308",
+     "lootfactor": "52.308",
+     "mobfamefactor": "39.2",
+     "tokenlootlist": "L16_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "16",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_16",
+     "silverfactor": "54.936",
+     "lootfactor": "54.936",
+     "mobfamefactor": "41.17",
+     "tokenlootlist": "L17_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "17",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_17",
+     "silverfactor": "57.654",
+     "lootfactor": "57.654",
+     "mobfamefactor": "43.21",
+     "tokenlootlist": "L18_REWARD_EXPEDITION_TOKEN"
+    },
+    {
+     "level": "18",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_18",
+     "silverfactor": "60.534",
+     "lootfactor": "60.534",
+     "mobfamefactor": "45.36",
+     "tokenlootlist": "L19_REWARD_EXPEDITION_TOKEN",
+     "spawnbonuslootchest": "true"
+    }
+   ],
+   "rewards": [
+    {
+     "absolute": "15000",
+     "kind": "silver"
+    },
+    {
+     "itemid": "T4_LOOTBAG_EXPEDITION_ROYAL_SIGIL",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "T4_LOOTBAG_EXPEDITION_ROYAL_SIGIL",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "itemid": "T6_SKILLBOOK_NONTRADABLE",
+     "enchantmentlevel": "0",
+     "count": "1",
+     "kind": "itemreward"
+    },
+    {
+     "absolute": "50000",
+     "kind": "silver"
+    }
+   ]
+  },
+  {
+   "index": 11,
+   "uniquename": "T6_EVENT",
+   "tier": 6,
+   "grouptype": "HARDCORE",
+   "minitempoweraverage": 0.0,
+   "unlockedtoregister": true,
+   "roles": [],
+   "difficulties": [
+    {
+     "level": "1",
+     "mobmodifier": "MOB_HARDCORE_EXPEDITION_BUFF_00",
+     "silverfactor": "2.1525",
+     "lootfactor": "2.1525",
+     "mobfamefactor": "1.276",
+     "tokenlootlist": ""
+    }
+   ],
+   "rewards": [
+    {
+     "absolute": "2000",
+     "kind": "silver"
+    },
+    {
+     "itemid": "UNIQUE_CONSUMABLE_EVENT_WINTER_2017",
+     "enchantmentlevel": "0",
+     "count": "100",
+     "kind": "itemreward"
+    }
+   ],
+   "bonusrewards": [
+    {
+     "itemid": "UNIQUE_CONSUMABLE_EVENT_WINTER_2017",
+     "enchantmentlevel": "0",
+     "count": "300",
+     "kind": "itemreward"
+    }
+   ]
+  }
+ ],
+ "agents": [
+  {
+   "index": 0,
+   "uniquename": "TEST",
+   "namegenerator": "ROYALARMY_T2",
+   "categories": [
+    {
+     "name": "TEST",
+     "index": 0
+    },
+    {
+     "name": "TEST2",
+     "index": 1
+    },
+    {
+     "name": "TEST3",
+     "index": 2
+    },
+    {
+     "name": "T4_STANDARD",
+     "index": 4
+    },
+    {
+     "name": "T5_STANDARD",
+     "index": 5
+    },
+    {
+     "name": "T4_VETERAN",
+     "index": 7
+    },
+    {
+     "name": "T5_VETERAN",
+     "index": 8
+    }
+   ]
+  },
+  {
+   "index": 1,
+   "uniquename": "T3_EXPAGENT_ROYAL_CITY",
+   "namegenerator": "ROYALARMY_T2",
+   "categories": [
+    {
+     "name": "T3_STANDARD",
+     "index": 3
+    }
+   ]
+  },
+  {
+   "index": 2,
+   "uniquename": "T4_EXPAGENT_ROYAL_CITY",
+   "namegenerator": "ROYALARMY_T2",
+   "categories": [
+    {
+     "name": "T3_STANDARD",
+     "index": 3
+    },
+    {
+     "name": "T4_STANDARD",
+     "index": 4
+    },
+    {
+     "name": "T4_VETERAN",
+     "index": 7
+    }
+   ]
+  },
+  {
+   "index": 3,
+   "uniquename": "T5_EXPAGENT_ROYAL_CITY",
+   "namegenerator": "ROYALARMY_T2",
+   "categories": [
+    {
+     "name": "T3_STANDARD",
+     "index": 3
+    },
+    {
+     "name": "T4_STANDARD",
+     "index": 4
+    },
+    {
+     "name": "T4_VETERAN",
+     "index": 7
+    },
+    {
+     "name": "T5_VETERAN",
+     "index": 8
+    }
+   ]
+  },
+  {
+   "index": 4,
+   "uniquename": "T6_EXPAGENT_ROYAL_CITY",
+   "namegenerator": "ROYALARMY_T2",
+   "categories": [
+    {
+     "name": "T3_STANDARD",
+     "index": 3
+    },
+    {
+     "name": "T4_STANDARD",
+     "index": 4
+    },
+    {
+     "name": "T5_STANDARD",
+     "index": 5
+    },
+    {
+     "name": "T4_VETERAN",
+     "index": 7
+    },
+    {
+     "name": "T5_VETERAN",
+     "index": 8
+    },
+    {
+     "name": "T6_VETERAN",
+     "index": 9
+    },
+    {
+     "name": "T6_HARDCORE",
+     "index": 10
+    },
+    {
+     "name": "T6_EVENT",
+     "index": 11
+    }
+   ]
+  }
+ ],
+ "expeditions": [
+  {
+   "index": 0,
+   "uniquename": "T1_TEST",
+   "cluster_attr": "MALTE",
+   "cluster": "MALTE",
+   "category": "TEST",
+   "category_index": 0,
+   "timeout": 3600,
+   "bonustimeout": 3600,
+   "title": "@EXPEDITION_TITLE_TEST",
+   "steps": [
+    [
+     {
+      "mobid": "T3_MOB_DEMON_IMP_VETERAN",
+      "count": 1,
+      "mob_exists": false
+     }
+    ],
+    [
+     {
+      "mobid": "T3_MOB_DEMON_IMP_VETERAN",
+      "count": 1,
+      "mob_exists": false
+     }
+    ]
+   ]
+  },
+  {
+   "index": 1,
+   "uniquename": "T2_TEST",
+   "cluster_attr": "MALTE",
+   "cluster": "MALTE",
+   "category": "TEST2",
+   "category_index": 1,
+   "timeout": 3600,
+   "bonustimeout": 3600,
+   "title": "@EXPEDITION_TITLE_TEST",
+   "steps": [
+    [
+     {
+      "mobid": "T3_MOB_DEMON_IMP_VETERAN",
+      "count": 2,
+      "mob_exists": false
+     }
+    ],
+    [
+     {
+      "mobid": "T3_MOB_DEMON_IMP_VETERAN",
+      "count": 2,
+      "mob_exists": false
+     }
+    ]
+   ]
+  },
+  {
+   "index": 2,
+   "uniquename": "T3_TEST",
+   "cluster_attr": "MALTE",
+   "cluster": "MALTE",
+   "category": "TEST3",
+   "category_index": 2,
+   "timeout": 3600,
+   "bonustimeout": 3600,
+   "title": "@EXPEDITION_TITLE_TEST",
+   "steps": [
+    [
+     {
+      "mobid": "T3_MOB_DEMON_IMP_VETERAN",
+      "count": 3,
+      "mob_exists": false
+     }
+    ]
+   ]
+  },
+  {
+   "index": 3,
+   "uniquename": "T3_EXP_STD_HERETIC_MINE",
+   "cluster_attr": "Mine-SOLO_EXP_DL_T3_HER",
+   "cluster": "Mine-SOLO",
+   "category": "T3_STANDARD",
+   "category_index": 3,
+   "timeout": 3600,
+   "bonustimeout": 3600,
+   "title": "@EXP_TITLE_T3_EXP_STD_HERETIC_MINE",
+   "steps": [
+    [
+     {
+      "mobid": "T2_MOB_EXP_HERETIC_ARCHER",
+      "count": 4,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T2_MOB_EXP_HERETIC_MAGE",
+      "count": 5,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T2_MOB_EXP_HERETIC_OVERSEER_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "Mine-SOLO_EXP_FR_GREEN_T3_HER.cluster.xml",
+    "type": "T3_EXPEDITION_STANDARD",
+    "displayname": "Curious Excavation",
+    "startpoints": [
+     {
+      "id": "843e8acc-379e-4749-b2dc-1c65727fb1c5",
+      "pos": [
+       119.0,
+       -170.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T2_MOB_EXP_HERETIC_ARCHER": 5,
+     "T2_MOB_EXP_HERETIC_HEALER": 5,
+     "T2_MOB_EXP_HERETIC_MAGE": 11,
+     "T2_MOB_EXP_HERETIC_MAGE_MINIBOSS": 1,
+     "T2_MOB_EXP_HERETIC_OVERSEER_BOSS": 1,
+     "T2_MOB_EXP_HERETIC_SCAVENGER": 22,
+     "T2_MOB_EXP_HERETIC_TANK": 3,
+     "T2_MOB_EXP_HERETIC_THIEF": 9,
+     "T3_MOB_EXP_HERETIC_CHEST": 1,
+     "T3_MOB_EXP_HERETIC_FOULRAT": 8
+    },
+    "templates": [
+     {
+      "ref": "Mine_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "52f53477-ef06-499b-ac8a-0e1b9b3a1cc9"
+      ],
+      "file": "templates/GREEN/Mine_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         119.0,
+         -170.0
+        ],
+        "height": -16.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -184.0,
+         120.0
+        ],
+        "height": -68.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         115.0,
+         -165.0
+        ],
+        "height": -16.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         111.0,
+         -170.0
+        ],
+        "height": -16.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -188.0,
+         115.0
+        ],
+        "height": -68.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -184.0,
+         68.0
+        ],
+        "height": -56.0,
+        "roty": 135.0,
+        "maxcolliderdist": 25.02
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -48.0,
+         92.0
+        ],
+        "height": -44.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63978
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         90.0,
+         95.0
+        ],
+        "height": -44.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         141.0,
+         -54.0
+        ],
+        "height": -24.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T3_MOB_EXP_HERETIC_FOULRAT": 8,
+       "T2_MOB_EXP_HERETIC_MAGE": 11,
+       "T2_MOB_EXP_HERETIC_THIEF": 9,
+       "T2_MOB_EXP_HERETIC_ARCHER": 5,
+       "T2_MOB_EXP_HERETIC_MAGE_MINIBOSS": 1,
+       "T2_MOB_EXP_HERETIC_TANK": 3,
+       "T2_MOB_EXP_HERETIC_OVERSEER_BOSS": 1,
+       "T2_MOB_EXP_HERETIC_SCAVENGER": 22,
+       "T2_MOB_EXP_HERETIC_HEALER": 5,
+       "T3_MOB_EXP_HERETIC_CHEST": 1
+      },
+      "spawns_inactive": {},
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "52f53477-ef06-499b-ac8a-0e1b9b3a1cc9",
+        "name": "Mobs_T3_Solo",
+        "active": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 4,
+   "uniquename": "T4_EXP_STD_UNDEAD_RECRUITMENT",
+   "cluster_attr": "RecruitmentOfTheDead-SOLO_EXP_SW_T4_UND",
+   "cluster": "RecruitmentOfTheDead-SOLO",
+   "category": "T4_STANDARD",
+   "category_index": 4,
+   "timeout": 3600,
+   "bonustimeout": 3600,
+   "title": "@EXP_TITLE_T4_EXP_STD_UNDEAD_RECRUITMENT",
+   "steps": [
+    [
+     {
+      "mobid": "T4_MOB_EXP_UNDEAD_TRASH_SKELETON",
+      "count": 40,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T4_MOB_EXP_UNDEAD_MAGE",
+      "count": 5,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T4_MOB_EXP_UNDEAD_MAGE_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "RecruitmentOfTheDead-SOLO_EXP_SW_GREEN_T4_UND.cluster.xml",
+    "type": "T4_EXPEDITION_SURFACE",
+    "displayname": "Preaching to the Dead",
+    "startpoints": [
+     {
+      "id": "869f701d-4932-4d60-9833-66a91266fbf5",
+      "pos": [
+       -2.0,
+       -17.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T4_MOB_EXP_UNDEAD_ARCHER": 12,
+     "T4_MOB_EXP_UNDEAD_ARCHER_MINIBOSS": 1,
+     "T4_MOB_EXP_UNDEAD_CHEST": 1,
+     "T4_MOB_EXP_UNDEAD_MAGE": 6,
+     "T4_MOB_EXP_UNDEAD_MAGE_BOSS": 1,
+     "T4_MOB_EXP_UNDEAD_SOLDIER": 10,
+     "T4_MOB_EXP_UNDEAD_TRASH_SKELETON": 56
+    },
+    "templates": [
+     {
+      "ref": "RecruitmentOfTheDead_Main",
+      "pos": [
+       0.0,
+       -8.0,
+       0.0
+      ],
+      "active_layers": [
+       "28e79016-bb63-40df-a704-56bfc039ef5d"
+      ],
+      "file": "templates/GREEN/RecruitmentOfTheDead_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         -2.0,
+         -17.0
+        ],
+        "height": -12.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -227.0,
+         258.0
+        ],
+        "height": 2.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -5.0,
+         -9.0
+        ],
+        "height": -12.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         -9.0,
+         -14.0
+        ],
+        "height": -12.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -231.0,
+         253.0
+        ],
+        "height": 2.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -62.0,
+         115.0
+        ],
+        "height": -8.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -148.0,
+         118.0
+        ],
+        "height": -8.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -228.0,
+         159.0
+        ],
+        "height": -6.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T4_MOB_EXP_UNDEAD_TRASH_SKELETON": 56,
+       "T4_MOB_EXP_UNDEAD_SOLDIER": 10,
+       "T4_MOB_EXP_UNDEAD_ARCHER": 12,
+       "T4_MOB_EXP_UNDEAD_MAGE": 6,
+       "T4_MOB_EXP_UNDEAD_CHEST": 1,
+       "T4_MOB_EXP_UNDEAD_ARCHER_MINIBOSS": 1,
+       "T4_MOB_EXP_UNDEAD_MAGE_BOSS": 1
+      },
+      "spawns_inactive": {
+       "T4_MOB_EXP_UNDEAD_TRASH_SKELETON_VETERAN": 97,
+       "T4_MOB_EXP_UNDEAD_ARCHER_VETERAN": 16,
+       "T4_MOB_EXP_UNDEAD_CHEST_VETERAN": 1,
+       "T4_MOB_EXP_UNDEAD_MAGE_VETERAN": 6,
+       "T4_MOB_EXP_UNDEAD_SOLDIER_VETERAN": 14,
+       "T4_MOB_EXP_UNDEAD_PULLER_VETERAN": 4,
+       "T4_MOB_EXP_UNDEAD_ARCHER_VETERAN_MINIBOSS": 1,
+       "T4_MOB_EXP_UNDEAD_MAGE_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN": 14,
+       "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN": 17,
+       "T6_MOB_HRD_UNDEAD_TRASH_SKELETON_VETERAN": 88,
+       "T6_MOB_HRD_UNDEAD_PULLER_VETERAN": 4,
+       "T6_MOB_HRD_UNDEAD_MAGE_VETERAN": 12,
+       "T6_MOB_HRD_UNDEAD_KNIGHT_VETERAN": 3,
+       "T6_MOB_HRD_UNDEAD_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_UNDEAD_MAGE_VETERAN_BOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "28e79016-bb63-40df-a704-56bfc039ef5d",
+        "name": "Regular_T4",
+        "active": true
+       },
+       {
+        "id": "aeacf936-06b2-4a01-bee6-5fb988578fba",
+        "name": "Veteran_T4",
+        "active": false
+       },
+       {
+        "id": "Layer_01",
+        "name": "Hardcore_T6",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 5,
+   "uniquename": "T4_EXP_STD_HERETIC_FISHYBUSINESS",
+   "cluster_attr": "FishyBusiness-SOLO_EXP_DL_T4_HER",
+   "cluster": "FishyBusiness-SOLO",
+   "category": "T4_STANDARD",
+   "category_index": 4,
+   "timeout": 3600,
+   "bonustimeout": 3600,
+   "title": "@EXP_TITLE_T4_EXP_STD_HERETIC_FISHYBUSINESS",
+   "steps": [
+    [
+     {
+      "mobid": "T4_MOB_EXP_HERETIC_TANK",
+      "count": 5,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T4_MOB_EXP_HERETIC_GIBSON_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "FishyBusiness-SOLO_EXP_FR_GREEN_T4_HER.cluster.xml",
+    "type": "T4_EXPEDITION_STANDARD",
+    "displayname": "Fishy Business",
+    "startpoints": [
+     {
+      "id": "56d06454-2e91-4272-b45c-ad5434c667cc",
+      "pos": [
+       -124.0,
+       -201.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T4_MOB_EXP_HERETIC_ARCHER": 11,
+     "T4_MOB_EXP_HERETIC_CHEST": 1,
+     "T4_MOB_EXP_HERETIC_FOULRAT": 44,
+     "T4_MOB_EXP_HERETIC_GIBSON_BOSS": 1,
+     "T4_MOB_EXP_HERETIC_GIBSON_STOOGE": 1,
+     "T4_MOB_EXP_HERETIC_HEALER": 5,
+     "T4_MOB_EXP_HERETIC_MAGE": 5,
+     "T4_MOB_EXP_HERETIC_MORTAR": 4,
+     "T4_MOB_EXP_HERETIC_OVERSEER_MINIBOSS": 1,
+     "T4_MOB_EXP_HERETIC_SCAVENGER": 12,
+     "T4_MOB_EXP_HERETIC_TANK": 10,
+     "T4_MOB_EXP_HERETIC_THIEF": 8
+    },
+    "templates": [
+     {
+      "ref": "FishyBusiness_Main",
+      "pos": [
+       0.0,
+       0.0,
+       -8.0
+      ],
+      "active_layers": [
+       "52f53477-ef06-499b-ac8a-0e1b9b3a1cc9"
+      ],
+      "file": "templates/GREEN/FishyBusiness_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         -124.0,
+         -201.0
+        ],
+        "height": -4.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -128.0,
+         -198.0
+        ],
+        "height": -4.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -169.0,
+         206.0
+        ],
+        "height": -8.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -173.0,
+         201.0
+        ],
+        "height": -8.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         -132.0,
+         -203.0
+        ],
+        "height": -4.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -137.0,
+         -25.0
+        ],
+        "height": -24.0,
+        "roty": 130.0,
+        "maxcolliderdist": 24.9592
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -122.0,
+         116.0
+        ],
+        "height": -20.0,
+        "roty": 335.0,
+        "maxcolliderdist": 24.06675
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -40.0,
+         -110.0
+        ],
+        "height": -16.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T4_MOB_EXP_HERETIC_GIBSON_STOOGE": 1,
+       "T4_MOB_EXP_HERETIC_MORTAR": 4,
+       "T4_MOB_EXP_HERETIC_SCAVENGER": 12,
+       "T4_MOB_EXP_HERETIC_THIEF": 8,
+       "T4_MOB_EXP_HERETIC_TANK": 10,
+       "T4_MOB_EXP_HERETIC_ARCHER": 11,
+       "T4_MOB_EXP_HERETIC_FOULRAT": 44,
+       "T4_MOB_EXP_HERETIC_OVERSEER_MINIBOSS": 1,
+       "T4_MOB_EXP_HERETIC_MAGE": 5,
+       "T4_MOB_EXP_HERETIC_CHEST": 1,
+       "T4_MOB_EXP_HERETIC_HEALER": 5,
+       "T4_MOB_EXP_HERETIC_GIBSON_BOSS": 1
+      },
+      "spawns_inactive": {
+       "T4_MOB_EXP_HERETIC_FOULRAT_VETERAN": 62,
+       "T4_MOB_EXP_HERETIC_TANK_VETERAN": 11,
+       "T4_MOB_EXP_HERETIC_SCAVENGER_VETERAN": 19,
+       "T4_MOB_EXP_HERETIC_MAGE_VETERAN": 7,
+       "T4_MOB_EXP_HERETIC_ARCHER_VETERAN": 11,
+       "T4_MOB_EXP_HERETIC_GIBSON_VETERAN_BOSS": 1,
+       "T4_MOB_EXP_HERETIC_THIEF_VETERAN": 10,
+       "T4_MOB_EXP_HERETIC_CHEST_VETERAN": 1,
+       "T4_MOB_EXP_HERETIC_GIBSON_STOOGE_VETERAN": 1,
+       "T4_MOB_EXP_HERETIC_MORTAR_VETERAN": 4,
+       "T4_MOB_EXP_HERETIC_HEALER_VETERAN": 5,
+       "T4_MOB_EXP_HERETIC_OVERSEER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_HERETIC_FOULRAT_VETERAN": 62,
+       "T6_MOB_HRD_HERETIC_SCAVENGER_VETERAN": 19,
+       "T6_MOB_HRD_HERETIC_ARCHER_VETERAN": 11,
+       "T6_MOB_HRD_HERETIC_THIEF_VETERAN": 10,
+       "T6_MOB_HRD_HERETIC_HEALER_VETERAN": 5,
+       "T6_MOB_HRD_HERETIC_MAGE_VETERAN": 7,
+       "T6_MOB_HRD_HERETIC_MORTAR_VETERAN": 4,
+       "T6_MOB_HRD_HERETIC_OVERSEER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_HERETIC_TANK_VETERAN": 11,
+       "T6_MOB_HRD_HERETIC_GIBSON_STOOGE_VETERAN": 1,
+       "T6_MOB_HRD_HERETIC_GIBSON_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_HERETIC_CHEST_VETERAN": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "52f53477-ef06-499b-ac8a-0e1b9b3a1cc9",
+        "name": "Mobs_T4_Solo",
+        "active": true
+       },
+       {
+        "id": "83d00616-6c86-4161-b2ee-37882d00a3de",
+        "name": "Mobs_T4_Veteran",
+        "active": false
+       },
+       {
+        "id": "Layer_01",
+        "name": "Mobs_T6_Hardcore",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 6,
+   "uniquename": "T5_EXP_STD_KEEPER_STONEWARS",
+   "cluster_attr": "StoneWars-SOLO_EXP_HL_T5_KPR",
+   "cluster": "StoneWars-SOLO",
+   "category": "T5_STANDARD",
+   "category_index": 5,
+   "timeout": 3600,
+   "bonustimeout": 3600,
+   "title": "@EXP_TITLE_T5_EXP_STD_KEEPER_STONEWARS",
+   "steps": [
+    [
+     {
+      "mobid": "T5_MOB_EXP_KEEPER_BERSERK",
+      "count": 6,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_KEEPER_GIANT",
+      "count": 2,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_KEEPER_CHIEFTAIN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "StoneWars-SOLO_EXP_HL_GREEN_T5_KPR.cluster.xml",
+    "type": "T5_EXPEDITION_SURFACE",
+    "displayname": "Stone Wars",
+    "startpoints": [
+     {
+      "id": "873a6edb-70f6-4fce-b6b8-ac36cc596a04",
+      "pos": [
+       150.0,
+       43.0
+      ],
+      "roty": 90.0
+     }
+    ],
+    "mobcounts": {
+     "T5_MOB_EXP_KEEPER_AXE_THROWER": 5,
+     "T5_MOB_EXP_KEEPER_AXE_THROWER_MINIBOSS": 1,
+     "T5_MOB_EXP_KEEPER_BERSERK": 9,
+     "T5_MOB_EXP_KEEPER_CHEST": 2,
+     "T5_MOB_EXP_KEEPER_CHIEFTAIN_BOSS": 1,
+     "T5_MOB_EXP_KEEPER_DRUID": 6,
+     "T5_MOB_EXP_KEEPER_GIANT": 3,
+     "T5_MOB_EXP_KEEPER_UNPROVEN_FEMALE": 21,
+     "T5_MOB_EXP_KEEPER_UNPROVEN_MALE": 26
+    },
+    "templates": [
+     {
+      "ref": "StoneWars_Main",
+      "pos": [
+       -5.0,
+       0.0,
+       -5.0
+      ],
+      "active_layers": [
+       "46056780-0902-4a07-80b4-e690a498ba7b"
+      ],
+      "file": "templates/GREEN/StoneWars_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         150.0,
+         43.0
+        ],
+        "height": -40.0,
+        "roty": 90.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         141.0,
+         44.0
+        ],
+        "height": -40.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -86.0,
+         53.0
+        ],
+        "height": 0.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         137.0,
+         39.0
+        ],
+        "height": -40.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -90.0,
+         48.0
+        ],
+        "height": 0.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         22.0,
+         -72.0
+        ],
+        "height": -24.0,
+        "roty": 125.0,
+        "maxcolliderdist": 31.81384
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         122.0,
+         20.0
+        ],
+        "height": -16.0,
+        "roty": 180.0,
+        "maxcolliderdist": 26.94439
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         50.0,
+         58.0
+        ],
+        "height": -12.0,
+        "roty": 315.0,
+        "maxcolliderdist": 32.08665
+       }
+      ],
+      "spawns_active": {
+       "T5_MOB_EXP_KEEPER_AXE_THROWER": 5,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_FEMALE": 21,
+       "T5_MOB_EXP_KEEPER_CHEST": 2,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_MALE": 26,
+       "T5_MOB_EXP_KEEPER_BERSERK": 9,
+       "T5_MOB_EXP_KEEPER_GIANT": 3,
+       "T5_MOB_EXP_KEEPER_DRUID": 6,
+       "T5_MOB_EXP_KEEPER_CHIEFTAIN_BOSS": 1,
+       "T5_MOB_EXP_KEEPER_AXE_THROWER_MINIBOSS": 1
+      },
+      "spawns_inactive": {
+       "T5_MOB_EXP_KEEPER_AXE_THROWER_VETERAN": 9,
+       "T5_MOB_EXP_KEEPER_BERSERK_VETERAN": 12,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_MALE_VETERAN": 33,
+       "T5_MOB_EXP_KEEPER_CHEST_VETERAN": 2,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_FEMALE_VETERAN": 25,
+       "T5_MOB_EXP_KEEPER_GIANT_VETERAN": 4,
+       "T5_MOB_EXP_KEEPER_DRUID_VETERAN": 8,
+       "T5_MOB_EXP_KEEPER_CHIEFTAIN_VETERAN_BOSS": 1,
+       "T5_MOB_EXP_KEEPER_AXE_THROWER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_KEEPER_UNPROVEN_FEMALE_VETERAN": 25,
+       "T6_MOB_HRD_KEEPER_UNPROVEN_MALE_VETERAN": 33,
+       "T6_MOB_HRD_KEEPER_DRUID_VETERAN": 8,
+       "T6_MOB_HRD_KEEPER_AXE_THROWER_VETERAN": 9,
+       "T6_MOB_HRD_KEEPER_BERSERK_VETERAN": 12,
+       "T6_MOB_HRD_KEEPER_GIANT_VETERAN": 4,
+       "T6_MOB_HRD_KEEPER_CHIEFTAIN_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_KEEPER_CHEST_VETERAN": 2,
+       "T6_MOB_HRD_KEEPER_AXE_THROWER_VETERAN_MINIBOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "46056780-0902-4a07-80b4-e690a498ba7b",
+        "name": "Regular_T5",
+        "active": true
+       },
+       {
+        "id": "c00f0ac2-46ce-49be-b8aa-0c339580e9b0",
+        "name": "Veteran_T5",
+        "active": false
+       },
+       {
+        "id": "Layer_01",
+        "name": "Hardcore_T6",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 7,
+   "uniquename": "T5_EXP_STD_HERETIC_LUMBERCAMP",
+   "cluster_attr": "LumberCampSOLO_EXP_FR_T5_HER",
+   "cluster": "LumberCampSOLO",
+   "category": "T5_STANDARD",
+   "category_index": 5,
+   "timeout": 3600,
+   "bonustimeout": 3600,
+   "title": "@EXP_TITLE_T5_EXP_STD_HERETIC_LUMBERCAMP",
+   "steps": [
+    [
+     {
+      "mobid": "T5_MOB_EXP_HERETIC_THIEF",
+      "count": 4,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_HERETIC_MAGE",
+      "count": 3,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_HERETIC_HEALER",
+      "count": 2,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_HERETIC_ARCHER",
+      "count": 3,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_HERETIC_BALLISTA_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "LumberCampSOLO_EXP_FR_RED_T5_HER.cluster.xml",
+    "type": "T5_EXPEDITION_SURFACE",
+    "displayname": "Lumber Lunacy",
+    "startpoints": [
+     {
+      "id": "0aca8cba-d5a2-4dfa-9e52-da6a6d42ba65",
+      "pos": [
+       0.0,
+       0.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "MOB_FOX": 1,
+     "MOB_HERETIC_LOCATOR": 1,
+     "MOB_RABBIT": 3,
+     "T5_MOB_EXP_HERETIC_ARCHER": 6,
+     "T5_MOB_EXP_HERETIC_BALLISTA": 4,
+     "T5_MOB_EXP_HERETIC_BALLISTA_BOSS": 1,
+     "T5_MOB_EXP_HERETIC_CHEST": 1,
+     "T5_MOB_EXP_HERETIC_FOULRAT": 40,
+     "T5_MOB_EXP_HERETIC_HEALER": 4,
+     "T5_MOB_EXP_HERETIC_LUMBERJACK_MINIBOSS": 1,
+     "T5_MOB_EXP_HERETIC_MAGE": 7,
+     "T5_MOB_EXP_HERETIC_TANK": 3,
+     "T5_MOB_EXP_HERETIC_THIEF": 9,
+     "T5_MOB_EXP_HERETIC_WOODGATHERER": 15
+    },
+    "templates": [
+     {
+      "ref": "LumberCamp_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_03"
+      ],
+      "file": "templates/RED/LumberCamp_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         0.0,
+         0.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -10.0,
+         0.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -194.0,
+         164.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -198.0,
+         159.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         -14.0,
+         -5.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -97.0,
+         188.0
+        ],
+        "height": 0.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -122.0,
+         50.0
+        ],
+        "height": -12.0,
+        "roty": 224.0,
+        "maxcolliderdist": 25.01756
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -102.0,
+         105.0
+        ],
+        "height": -16.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T5_MOB_EXP_HERETIC_ARCHER": 6,
+       "T5_MOB_EXP_HERETIC_WOODGATHERER": 15,
+       "T5_MOB_EXP_HERETIC_LUMBERJACK_MINIBOSS": 1,
+       "T5_MOB_EXP_HERETIC_TANK": 3,
+       "T5_MOB_EXP_HERETIC_THIEF": 9,
+       "T5_MOB_EXP_HERETIC_FOULRAT": 40,
+       "T5_MOB_EXP_HERETIC_MAGE": 7,
+       "T5_MOB_EXP_HERETIC_CHEST": 1,
+       "MOB_HERETIC_LOCATOR": 1,
+       "T5_MOB_EXP_HERETIC_BALLISTA_BOSS": 1,
+       "T5_MOB_EXP_HERETIC_HEALER": 4,
+       "T5_MOB_EXP_HERETIC_BALLISTA": 4
+      },
+      "spawns_inactive": {
+       "T5_MOB_EXP_HERETIC_ARCHER_VETERAN": 6,
+       "T5_MOB_EXP_HERETIC_WOODGATHERER_VETERAN": 21,
+       "T5_MOB_EXP_HERETIC_LUMBERJACK_VETERAN_MINIBOSS": 1,
+       "T5_MOB_EXP_HERETIC_FOULRAT_VETERAN": 44,
+       "T5_MOB_EXP_HERETIC_THIEF_VETERAN": 14,
+       "T5_MOB_EXP_HERETIC_MAGE_VETERAN": 7,
+       "T5_MOB_EXP_HERETIC_HEALER_VETERAN": 7,
+       "T5_MOB_EXP_HERETIC_TANK_VETERAN": 6,
+       "T5_MOB_EXP_HERETIC_CHEST_VETERAN": 1,
+       "MOB_HERETIC_LOCATOR": 2,
+       "T5_MOB_EXP_HERETIC_BALLISTA_VETERAN_BOSS": 1,
+       "T5_MOB_EXP_HERETIC_BALLISTA_VETERAN": 4,
+       "T6_MOB_HRD_HERETIC_MAGE_VETERAN": 7,
+       "T6_MOB_HRD_HERETIC_FOULRAT_VETERAN": 44,
+       "T6_MOB_HRD_HERETIC_TANK_VETERAN": 5,
+       "T6_MOB_HRD_HERETIC_THIEF_VETERAN": 13,
+       "T6_MOB_HRD_HERETIC_LUMBERJACK_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_HERETIC_WOODGATHERER_VETERAN": 20,
+       "T6_MOB_HRD_HERETIC_ARCHER_VETERAN": 6,
+       "T6_MOB_HRD_HERETIC_HEALER_VETERAN": 7,
+       "T6_MOB_HRD_HERETIC_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_HERETIC_BALLISTA_VETERAN": 4,
+       "T6_MOB_HRD_HERETIC_BALLISTA_VETERAN_BOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {
+       "RABBIT": 3,
+       "FOX": 1
+      },
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T5_Veteran",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "T6_Hardcore",
+        "active": false
+       },
+       {
+        "id": "Layer_03",
+        "name": "T5_Solo",
+        "active": true
+       },
+       {
+        "id": "Layer_04",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 8,
+   "uniquename": "T5_EXP_STD_UNDEAD_SEWERSCRYPT",
+   "cluster_attr": "SewersMaintenance-SOLO_EXP_DL_T5_UND",
+   "cluster": "SewersMaintenance-SOLO",
+   "category": "T5_STANDARD",
+   "category_index": 5,
+   "timeout": 3600,
+   "bonustimeout": 3600,
+   "title": "@EXP_TITLE_T5_EXP_STD_UNDEAD_SEWERSCRYPT",
+   "steps": [
+    [
+     {
+      "mobid": "T5_MOB_EXP_UNDEAD_PULLER",
+      "count": 3,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_UNDEAD_GHOUL_MINIBOSS",
+      "count": 2,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_UNDEAD_GHOUL_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "SewersMaintenance-SOLO_EXP_FR_GREEN_T5_UND.cluster.xml",
+    "type": "T5_EXPEDITION_STANDARD",
+    "displayname": "Lurking Underneath",
+    "startpoints": [
+     {
+      "id": "e47e18c5-9b1a-4665-a0d3-91e58c3d54bb",
+      "pos": [
+       38.0,
+       -156.0
+      ],
+      "roty": 90.0
+     }
+    ],
+    "mobcounts": {
+     "T5_MOB_EXP_UNDEAD_ARCHER": 6,
+     "T5_MOB_EXP_UNDEAD_CHEST": 1,
+     "T5_MOB_EXP_UNDEAD_GHOUL": 9,
+     "T5_MOB_EXP_UNDEAD_GHOUL_BOSS": 1,
+     "T5_MOB_EXP_UNDEAD_GHOUL_MINIBOSS": 2,
+     "T5_MOB_EXP_UNDEAD_PULLER": 3,
+     "T5_MOB_EXP_UNDEAD_RAT": 23,
+     "T5_MOB_EXP_UNDEAD_SOLDIER": 4,
+     "T5_MOB_EXP_UNDEAD_TRASH_SKELETON": 50
+    },
+    "templates": [
+     {
+      "ref": "SewersMaintenance_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_02"
+      ],
+      "file": "templates/GREEN/SewersMaintenance_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         38.0,
+         -156.0
+        ],
+        "height": 0.0,
+        "roty": 90.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -4.0,
+         230.0
+        ],
+        "height": -4.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         32.0,
+         -149.0
+        ],
+        "height": 0.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -8.0,
+         225.0
+        ],
+        "height": -4.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         28.0,
+         -154.0
+        ],
+        "height": 0.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         40.0,
+         107.0
+        ],
+        "height": 0.0,
+        "roty": 53.0,
+        "maxcolliderdist": 24.86468
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         118.0,
+         -78.0
+        ],
+        "height": -12.0,
+        "roty": 41.0,
+        "maxcolliderdist": 24.98106
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         75.0,
+         10.0
+        ],
+        "height": 1.0,
+        "roty": 45.0,
+        "maxcolliderdist": 25.01999
+       }
+      ],
+      "spawns_active": {
+       "T5_MOB_EXP_UNDEAD_RAT": 23,
+       "T5_MOB_EXP_UNDEAD_TRASH_SKELETON": 50,
+       "T5_MOB_EXP_UNDEAD_ARCHER": 6,
+       "T5_MOB_EXP_UNDEAD_GHOUL": 9,
+       "T5_MOB_EXP_UNDEAD_GHOUL_MINIBOSS": 2,
+       "T5_MOB_EXP_UNDEAD_PULLER": 3,
+       "T5_MOB_EXP_UNDEAD_CHEST": 1,
+       "T5_MOB_EXP_UNDEAD_SOLDIER": 4,
+       "T5_MOB_EXP_UNDEAD_GHOUL_BOSS": 1
+      },
+      "spawns_inactive": {
+       "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN": 10,
+       "T5_MOB_EXP_UNDEAD_ARCHER_VETERAN": 9,
+       "T5_MOB_EXP_UNDEAD_TRASH_SKELETON_VETERAN": 61,
+       "T5_MOB_EXP_UNDEAD_RAT_VETERAN": 25,
+       "T5_MOB_EXP_UNDEAD_PULLER_VETERAN": 3,
+       "T5_MOB_EXP_UNDEAD_SOLDIER_VETERAN": 4,
+       "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN_MINIBOSS": 2,
+       "T5_MOB_EXP_UNDEAD_CHEST_VETERAN": 1,
+       "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_UNDEAD_TRASH_SKELETON_VETERAN": 73,
+       "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN_MINIBOSS": 2,
+       "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN": 11,
+       "T6_MOB_HRD_UNDEAD_RAT_VETERAN": 35,
+       "T6_MOB_HRD_UNDEAD_PULLER_VETERAN": 3,
+       "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN": 16,
+       "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN": 6,
+       "T6_MOB_HRD_UNDEAD_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN_BOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T5_Veteran",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "T5_Solo",
+        "active": true
+       },
+       {
+        "id": "Layer_03",
+        "name": "T6_Hardcore",
+        "active": false
+       },
+       {
+        "id": "Layer_04",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 9,
+   "uniquename": "T4_EXP_VET_UNDEAD_RECRUITMENT",
+   "cluster_attr": "RecruitmentOfTheDead-GROUP_EXP_SW_T4_UND",
+   "cluster": "RecruitmentOfTheDead-GROUP",
+   "category": "T4_VETERAN",
+   "category_index": 7,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T4_EXP_VET_UNDEAD_RECRUITMENT",
+   "steps": [
+    [
+     {
+      "mobid": "T4_MOB_EXP_UNDEAD_SOLDIER_VETERAN",
+      "count": 8,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T4_MOB_EXP_UNDEAD_MAGE_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "RecruitmentOfTheDead-GROUP_EXP_SW_GREEN_T4_UND.cluster.xml",
+    "type": "T4_EXPEDITION_SURFACE",
+    "displayname": "Preaching to the Dead",
+    "startpoints": [
+     {
+      "id": "a897ed07-11ea-4a4e-b979-54a2a09ef3af",
+      "pos": [
+       -2.0,
+       -17.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T4_MOB_EXP_UNDEAD_ARCHER_VETERAN": 16,
+     "T4_MOB_EXP_UNDEAD_ARCHER_VETERAN_MINIBOSS": 1,
+     "T4_MOB_EXP_UNDEAD_CHEST_VETERAN": 1,
+     "T4_MOB_EXP_UNDEAD_MAGE_VETERAN": 6,
+     "T4_MOB_EXP_UNDEAD_MAGE_VETERAN_BOSS": 1,
+     "T4_MOB_EXP_UNDEAD_PULLER_VETERAN": 4,
+     "T4_MOB_EXP_UNDEAD_SOLDIER_VETERAN": 14,
+     "T4_MOB_EXP_UNDEAD_TRASH_SKELETON_VETERAN": 97
+    },
+    "templates": [
+     {
+      "ref": "RecruitmentOfTheDead_Main",
+      "pos": [
+       0.0,
+       -8.0,
+       0.0
+      ],
+      "active_layers": [
+       "aeacf936-06b2-4a01-bee6-5fb988578fba"
+      ],
+      "file": "templates/GREEN/RecruitmentOfTheDead_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         -2.0,
+         -17.0
+        ],
+        "height": -12.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -227.0,
+         258.0
+        ],
+        "height": 2.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -5.0,
+         -9.0
+        ],
+        "height": -12.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         -9.0,
+         -14.0
+        ],
+        "height": -12.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -231.0,
+         253.0
+        ],
+        "height": 2.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -62.0,
+         115.0
+        ],
+        "height": -8.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -148.0,
+         118.0
+        ],
+        "height": -8.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -228.0,
+         159.0
+        ],
+        "height": -6.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T4_MOB_EXP_UNDEAD_TRASH_SKELETON_VETERAN": 97,
+       "T4_MOB_EXP_UNDEAD_ARCHER_VETERAN": 16,
+       "T4_MOB_EXP_UNDEAD_CHEST_VETERAN": 1,
+       "T4_MOB_EXP_UNDEAD_MAGE_VETERAN": 6,
+       "T4_MOB_EXP_UNDEAD_SOLDIER_VETERAN": 14,
+       "T4_MOB_EXP_UNDEAD_PULLER_VETERAN": 4,
+       "T4_MOB_EXP_UNDEAD_ARCHER_VETERAN_MINIBOSS": 1,
+       "T4_MOB_EXP_UNDEAD_MAGE_VETERAN_BOSS": 1
+      },
+      "spawns_inactive": {
+       "T4_MOB_EXP_UNDEAD_TRASH_SKELETON": 56,
+       "T4_MOB_EXP_UNDEAD_SOLDIER": 10,
+       "T4_MOB_EXP_UNDEAD_ARCHER": 12,
+       "T4_MOB_EXP_UNDEAD_MAGE": 6,
+       "T4_MOB_EXP_UNDEAD_CHEST": 1,
+       "T4_MOB_EXP_UNDEAD_ARCHER_MINIBOSS": 1,
+       "T4_MOB_EXP_UNDEAD_MAGE_BOSS": 1,
+       "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN": 14,
+       "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN": 17,
+       "T6_MOB_HRD_UNDEAD_TRASH_SKELETON_VETERAN": 88,
+       "T6_MOB_HRD_UNDEAD_PULLER_VETERAN": 4,
+       "T6_MOB_HRD_UNDEAD_MAGE_VETERAN": 12,
+       "T6_MOB_HRD_UNDEAD_KNIGHT_VETERAN": 3,
+       "T6_MOB_HRD_UNDEAD_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_UNDEAD_MAGE_VETERAN_BOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "28e79016-bb63-40df-a704-56bfc039ef5d",
+        "name": "Regular_T4",
+        "active": false
+       },
+       {
+        "id": "aeacf936-06b2-4a01-bee6-5fb988578fba",
+        "name": "Veteran_T4",
+        "active": true
+       },
+       {
+        "id": "Layer_01",
+        "name": "Hardcore_T6",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 10,
+   "uniquename": "T4_EXP_VET_HERETIC_FISHYBUSINESS",
+   "cluster_attr": "FishyBusiness-GROUP_EXP_DL_T4_HER",
+   "cluster": "FishyBusiness-GROUP",
+   "category": "T4_VETERAN",
+   "category_index": 7,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T4_EXP_VET_HERETIC_FISHYBUSINESS",
+   "steps": [
+    [
+     {
+      "mobid": "T4_MOB_EXP_HERETIC_TANK_VETERAN",
+      "count": 5,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T4_MOB_EXP_HERETIC_GIBSON_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "FishyBusiness-GROUP_EXP_FR_GREEN_T4_HER.cluster.xml",
+    "type": "T4_EXPEDITION_STANDARD",
+    "displayname": "Fishy Business",
+    "startpoints": [
+     {
+      "id": "d510c0be-98ea-4e61-9576-9804ab20dcad",
+      "pos": [
+       -124.0,
+       -201.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T4_MOB_EXP_HERETIC_ARCHER_VETERAN": 11,
+     "T4_MOB_EXP_HERETIC_CHEST_VETERAN": 1,
+     "T4_MOB_EXP_HERETIC_FOULRAT_VETERAN": 62,
+     "T4_MOB_EXP_HERETIC_GIBSON_STOOGE_VETERAN": 1,
+     "T4_MOB_EXP_HERETIC_GIBSON_VETERAN_BOSS": 1,
+     "T4_MOB_EXP_HERETIC_HEALER_VETERAN": 5,
+     "T4_MOB_EXP_HERETIC_MAGE_VETERAN": 7,
+     "T4_MOB_EXP_HERETIC_MORTAR_VETERAN": 4,
+     "T4_MOB_EXP_HERETIC_OVERSEER_VETERAN_MINIBOSS": 1,
+     "T4_MOB_EXP_HERETIC_SCAVENGER_VETERAN": 19,
+     "T4_MOB_EXP_HERETIC_TANK_VETERAN": 11,
+     "T4_MOB_EXP_HERETIC_THIEF_VETERAN": 10
+    },
+    "templates": [
+     {
+      "ref": "FishyBusiness_Main",
+      "pos": [
+       0.0,
+       0.0,
+       -8.0
+      ],
+      "active_layers": [
+       "83d00616-6c86-4161-b2ee-37882d00a3de"
+      ],
+      "file": "templates/GREEN/FishyBusiness_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         -124.0,
+         -201.0
+        ],
+        "height": -4.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -128.0,
+         -198.0
+        ],
+        "height": -4.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -169.0,
+         206.0
+        ],
+        "height": -8.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -173.0,
+         201.0
+        ],
+        "height": -8.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         -132.0,
+         -203.0
+        ],
+        "height": -4.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -137.0,
+         -25.0
+        ],
+        "height": -24.0,
+        "roty": 130.0,
+        "maxcolliderdist": 24.9592
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -122.0,
+         116.0
+        ],
+        "height": -20.0,
+        "roty": 335.0,
+        "maxcolliderdist": 24.06675
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -40.0,
+         -110.0
+        ],
+        "height": -16.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T4_MOB_EXP_HERETIC_FOULRAT_VETERAN": 62,
+       "T4_MOB_EXP_HERETIC_TANK_VETERAN": 11,
+       "T4_MOB_EXP_HERETIC_SCAVENGER_VETERAN": 19,
+       "T4_MOB_EXP_HERETIC_MAGE_VETERAN": 7,
+       "T4_MOB_EXP_HERETIC_ARCHER_VETERAN": 11,
+       "T4_MOB_EXP_HERETIC_GIBSON_VETERAN_BOSS": 1,
+       "T4_MOB_EXP_HERETIC_THIEF_VETERAN": 10,
+       "T4_MOB_EXP_HERETIC_CHEST_VETERAN": 1,
+       "T4_MOB_EXP_HERETIC_GIBSON_STOOGE_VETERAN": 1,
+       "T4_MOB_EXP_HERETIC_MORTAR_VETERAN": 4,
+       "T4_MOB_EXP_HERETIC_HEALER_VETERAN": 5,
+       "T4_MOB_EXP_HERETIC_OVERSEER_VETERAN_MINIBOSS": 1
+      },
+      "spawns_inactive": {
+       "T4_MOB_EXP_HERETIC_GIBSON_STOOGE": 1,
+       "T4_MOB_EXP_HERETIC_MORTAR": 4,
+       "T4_MOB_EXP_HERETIC_SCAVENGER": 12,
+       "T4_MOB_EXP_HERETIC_THIEF": 8,
+       "T4_MOB_EXP_HERETIC_TANK": 10,
+       "T4_MOB_EXP_HERETIC_ARCHER": 11,
+       "T4_MOB_EXP_HERETIC_FOULRAT": 44,
+       "T4_MOB_EXP_HERETIC_OVERSEER_MINIBOSS": 1,
+       "T4_MOB_EXP_HERETIC_MAGE": 5,
+       "T4_MOB_EXP_HERETIC_CHEST": 1,
+       "T4_MOB_EXP_HERETIC_HEALER": 5,
+       "T4_MOB_EXP_HERETIC_GIBSON_BOSS": 1,
+       "T6_MOB_HRD_HERETIC_FOULRAT_VETERAN": 62,
+       "T6_MOB_HRD_HERETIC_SCAVENGER_VETERAN": 19,
+       "T6_MOB_HRD_HERETIC_ARCHER_VETERAN": 11,
+       "T6_MOB_HRD_HERETIC_THIEF_VETERAN": 10,
+       "T6_MOB_HRD_HERETIC_HEALER_VETERAN": 5,
+       "T6_MOB_HRD_HERETIC_MAGE_VETERAN": 7,
+       "T6_MOB_HRD_HERETIC_MORTAR_VETERAN": 4,
+       "T6_MOB_HRD_HERETIC_OVERSEER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_HERETIC_TANK_VETERAN": 11,
+       "T6_MOB_HRD_HERETIC_GIBSON_STOOGE_VETERAN": 1,
+       "T6_MOB_HRD_HERETIC_GIBSON_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_HERETIC_CHEST_VETERAN": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "52f53477-ef06-499b-ac8a-0e1b9b3a1cc9",
+        "name": "Mobs_T4_Solo",
+        "active": false
+       },
+       {
+        "id": "83d00616-6c86-4161-b2ee-37882d00a3de",
+        "name": "Mobs_T4_Veteran",
+        "active": true
+       },
+       {
+        "id": "Layer_01",
+        "name": "Mobs_T6_Hardcore",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 11,
+   "uniquename": "T5_EXP_VET_KEEPER_STONEWARS",
+   "cluster_attr": "StoneWars-GROUP_EXP_HL_T5_KPR",
+   "cluster": "StoneWars-GROUP",
+   "category": "T5_VETERAN",
+   "category_index": 8,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T5_EXP_VET_KEEPER_STONEWARS",
+   "steps": [
+    [
+     {
+      "mobid": "T5_MOB_EXP_KEEPER_BERSERK_VETERAN",
+      "count": 8,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_KEEPER_GIANT_VETERAN",
+      "count": 3,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_KEEPER_CHIEFTAIN_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "StoneWars-GROUP_EXP_HL_GREEN_T5_KPR.cluster.xml",
+    "type": "T5_EXPEDITION_SURFACE",
+    "displayname": "Stone Wars",
+    "startpoints": [
+     {
+      "id": "232bd4dc-eab3-4958-83e4-64b676806250",
+      "pos": [
+       150.0,
+       43.0
+      ],
+      "roty": 90.0
+     }
+    ],
+    "mobcounts": {
+     "T5_MOB_EXP_KEEPER_AXE_THROWER_VETERAN": 9,
+     "T5_MOB_EXP_KEEPER_AXE_THROWER_VETERAN_MINIBOSS": 1,
+     "T5_MOB_EXP_KEEPER_BERSERK_VETERAN": 12,
+     "T5_MOB_EXP_KEEPER_CHEST_VETERAN": 2,
+     "T5_MOB_EXP_KEEPER_CHIEFTAIN_VETERAN_BOSS": 1,
+     "T5_MOB_EXP_KEEPER_DRUID_VETERAN": 8,
+     "T5_MOB_EXP_KEEPER_GIANT_VETERAN": 4,
+     "T5_MOB_EXP_KEEPER_UNPROVEN_FEMALE_VETERAN": 25,
+     "T5_MOB_EXP_KEEPER_UNPROVEN_MALE_VETERAN": 33
+    },
+    "templates": [
+     {
+      "ref": "StoneWars_Main",
+      "pos": [
+       -5.0,
+       0.0,
+       -5.0
+      ],
+      "active_layers": [
+       "c00f0ac2-46ce-49be-b8aa-0c339580e9b0"
+      ],
+      "file": "templates/GREEN/StoneWars_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         150.0,
+         43.0
+        ],
+        "height": -40.0,
+        "roty": 90.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         141.0,
+         44.0
+        ],
+        "height": -40.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -86.0,
+         53.0
+        ],
+        "height": 0.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         137.0,
+         39.0
+        ],
+        "height": -40.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -90.0,
+         48.0
+        ],
+        "height": 0.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         22.0,
+         -72.0
+        ],
+        "height": -24.0,
+        "roty": 125.0,
+        "maxcolliderdist": 31.81384
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         122.0,
+         20.0
+        ],
+        "height": -16.0,
+        "roty": 180.0,
+        "maxcolliderdist": 26.94439
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         50.0,
+         58.0
+        ],
+        "height": -12.0,
+        "roty": 315.0,
+        "maxcolliderdist": 32.08665
+       }
+      ],
+      "spawns_active": {
+       "T5_MOB_EXP_KEEPER_AXE_THROWER_VETERAN": 9,
+       "T5_MOB_EXP_KEEPER_BERSERK_VETERAN": 12,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_MALE_VETERAN": 33,
+       "T5_MOB_EXP_KEEPER_CHEST_VETERAN": 2,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_FEMALE_VETERAN": 25,
+       "T5_MOB_EXP_KEEPER_GIANT_VETERAN": 4,
+       "T5_MOB_EXP_KEEPER_DRUID_VETERAN": 8,
+       "T5_MOB_EXP_KEEPER_CHIEFTAIN_VETERAN_BOSS": 1,
+       "T5_MOB_EXP_KEEPER_AXE_THROWER_VETERAN_MINIBOSS": 1
+      },
+      "spawns_inactive": {
+       "T5_MOB_EXP_KEEPER_AXE_THROWER": 5,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_FEMALE": 21,
+       "T5_MOB_EXP_KEEPER_CHEST": 2,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_MALE": 26,
+       "T5_MOB_EXP_KEEPER_BERSERK": 9,
+       "T5_MOB_EXP_KEEPER_GIANT": 3,
+       "T5_MOB_EXP_KEEPER_DRUID": 6,
+       "T5_MOB_EXP_KEEPER_CHIEFTAIN_BOSS": 1,
+       "T5_MOB_EXP_KEEPER_AXE_THROWER_MINIBOSS": 1,
+       "T6_MOB_HRD_KEEPER_UNPROVEN_FEMALE_VETERAN": 25,
+       "T6_MOB_HRD_KEEPER_UNPROVEN_MALE_VETERAN": 33,
+       "T6_MOB_HRD_KEEPER_DRUID_VETERAN": 8,
+       "T6_MOB_HRD_KEEPER_AXE_THROWER_VETERAN": 9,
+       "T6_MOB_HRD_KEEPER_BERSERK_VETERAN": 12,
+       "T6_MOB_HRD_KEEPER_GIANT_VETERAN": 4,
+       "T6_MOB_HRD_KEEPER_CHIEFTAIN_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_KEEPER_CHEST_VETERAN": 2,
+       "T6_MOB_HRD_KEEPER_AXE_THROWER_VETERAN_MINIBOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "46056780-0902-4a07-80b4-e690a498ba7b",
+        "name": "Regular_T5",
+        "active": false
+       },
+       {
+        "id": "c00f0ac2-46ce-49be-b8aa-0c339580e9b0",
+        "name": "Veteran_T5",
+        "active": true
+       },
+       {
+        "id": "Layer_01",
+        "name": "Hardcore_T6",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 12,
+   "uniquename": "T5_EXP_VET_HERETIC_LUMBERCAMP",
+   "cluster_attr": "LumberCampGROUP_EXP_FR_T5_HER",
+   "cluster": "LumberCampGROUP",
+   "category": "T5_VETERAN",
+   "category_index": 8,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T5_EXP_VET_HERETIC_LUMBERCAMP",
+   "steps": [
+    [
+     {
+      "mobid": "T5_MOB_EXP_HERETIC_MAGE_VETERAN",
+      "count": 5,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_HERETIC_BALLISTA_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "LumberCampGROUP_EXP_FR_RED_T5_HER.cluster.xml",
+    "type": "T5_EXPEDITION_SURFACE",
+    "displayname": "Lumber Lunacy",
+    "startpoints": [
+     {
+      "id": "28b31353-35f4-4443-8adb-47466cc6bb67",
+      "pos": [
+       0.0,
+       0.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "MOB_FOX": 1,
+     "MOB_HERETIC_LOCATOR": 1,
+     "MOB_RABBIT": 3,
+     "T5_MOB_EXP_HERETIC_ARCHER_VETERAN": 6,
+     "T5_MOB_EXP_HERETIC_BALLISTA_VETERAN": 4,
+     "T5_MOB_EXP_HERETIC_BALLISTA_VETERAN_BOSS": 1,
+     "T5_MOB_EXP_HERETIC_CHEST_VETERAN": 1,
+     "T5_MOB_EXP_HERETIC_FOULRAT_VETERAN": 44,
+     "T5_MOB_EXP_HERETIC_HEALER_VETERAN": 7,
+     "T5_MOB_EXP_HERETIC_LUMBERJACK_VETERAN_MINIBOSS": 1,
+     "T5_MOB_EXP_HERETIC_MAGE_VETERAN": 7,
+     "T5_MOB_EXP_HERETIC_TANK_VETERAN": 6,
+     "T5_MOB_EXP_HERETIC_THIEF_VETERAN": 14,
+     "T5_MOB_EXP_HERETIC_WOODGATHERER_VETERAN": 21
+    },
+    "templates": [
+     {
+      "ref": "LumberCamp_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_01"
+      ],
+      "file": "templates/RED/LumberCamp_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         0.0,
+         0.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -10.0,
+         0.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -194.0,
+         164.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -198.0,
+         159.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         -14.0,
+         -5.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -97.0,
+         188.0
+        ],
+        "height": 0.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -122.0,
+         50.0
+        ],
+        "height": -12.0,
+        "roty": 224.0,
+        "maxcolliderdist": 25.01756
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -102.0,
+         105.0
+        ],
+        "height": -16.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T5_MOB_EXP_HERETIC_ARCHER_VETERAN": 6,
+       "T5_MOB_EXP_HERETIC_WOODGATHERER_VETERAN": 21,
+       "T5_MOB_EXP_HERETIC_LUMBERJACK_VETERAN_MINIBOSS": 1,
+       "T5_MOB_EXP_HERETIC_FOULRAT_VETERAN": 44,
+       "T5_MOB_EXP_HERETIC_THIEF_VETERAN": 14,
+       "T5_MOB_EXP_HERETIC_MAGE_VETERAN": 7,
+       "T5_MOB_EXP_HERETIC_HEALER_VETERAN": 7,
+       "T5_MOB_EXP_HERETIC_TANK_VETERAN": 6,
+       "T5_MOB_EXP_HERETIC_CHEST_VETERAN": 1,
+       "MOB_HERETIC_LOCATOR": 1,
+       "T5_MOB_EXP_HERETIC_BALLISTA_VETERAN_BOSS": 1,
+       "T5_MOB_EXP_HERETIC_BALLISTA_VETERAN": 4
+      },
+      "spawns_inactive": {
+       "T6_MOB_HRD_HERETIC_MAGE_VETERAN": 7,
+       "T6_MOB_HRD_HERETIC_FOULRAT_VETERAN": 44,
+       "T6_MOB_HRD_HERETIC_TANK_VETERAN": 5,
+       "T6_MOB_HRD_HERETIC_THIEF_VETERAN": 13,
+       "T6_MOB_HRD_HERETIC_LUMBERJACK_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_HERETIC_WOODGATHERER_VETERAN": 20,
+       "T6_MOB_HRD_HERETIC_ARCHER_VETERAN": 6,
+       "T6_MOB_HRD_HERETIC_HEALER_VETERAN": 7,
+       "T6_MOB_HRD_HERETIC_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_HERETIC_BALLISTA_VETERAN": 4,
+       "T6_MOB_HRD_HERETIC_BALLISTA_VETERAN_BOSS": 1,
+       "MOB_HERETIC_LOCATOR": 2,
+       "T5_MOB_EXP_HERETIC_ARCHER": 6,
+       "T5_MOB_EXP_HERETIC_WOODGATHERER": 15,
+       "T5_MOB_EXP_HERETIC_LUMBERJACK_MINIBOSS": 1,
+       "T5_MOB_EXP_HERETIC_TANK": 3,
+       "T5_MOB_EXP_HERETIC_THIEF": 9,
+       "T5_MOB_EXP_HERETIC_FOULRAT": 40,
+       "T5_MOB_EXP_HERETIC_MAGE": 7,
+       "T5_MOB_EXP_HERETIC_CHEST": 1,
+       "T5_MOB_EXP_HERETIC_BALLISTA_BOSS": 1,
+       "T5_MOB_EXP_HERETIC_HEALER": 4,
+       "T5_MOB_EXP_HERETIC_BALLISTA": 4,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {
+       "RABBIT": 3,
+       "FOX": 1
+      },
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T5_Veteran",
+        "active": true
+       },
+       {
+        "id": "Layer_02",
+        "name": "T6_Hardcore",
+        "active": false
+       },
+       {
+        "id": "Layer_03",
+        "name": "T5_Solo",
+        "active": false
+       },
+       {
+        "id": "Layer_04",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 13,
+   "uniquename": "T5_EXP_VET_UNDEAD_SEWERSCRYPT",
+   "cluster_attr": "SewersMaintenance-GROUP_EXP_DL_T5_UND",
+   "cluster": "SewersMaintenance-GROUP",
+   "category": "T5_VETERAN",
+   "category_index": 8,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T5_EXP_VET_UNDEAD_SEWERSCRYPT",
+   "steps": [
+    [
+     {
+      "mobid": "T5_MOB_EXP_UNDEAD_PULLER_VETERAN",
+      "count": 3,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN_MINIBOSS",
+      "count": 2,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T5_MOB_EXP_UNDEAD_GHOUL_BOSS_VETERAN",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "SewersMaintenance-GROUP_EXP_FR_GREEN_T5_UND.cluster.xml",
+    "type": "T5_EXPEDITION_STANDARD",
+    "displayname": "Lurking Underneath",
+    "startpoints": [
+     {
+      "id": "ea70e6e9-d26a-4cbf-a18e-16543ea26193",
+      "pos": [
+       38.0,
+       -156.0
+      ],
+      "roty": 90.0
+     }
+    ],
+    "mobcounts": {
+     "T5_MOB_EXP_UNDEAD_ARCHER_VETERAN": 9,
+     "T5_MOB_EXP_UNDEAD_CHEST_VETERAN": 1,
+     "T5_MOB_EXP_UNDEAD_GHOUL_BOSS_VETERAN": 1,
+     "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN": 10,
+     "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN_MINIBOSS": 2,
+     "T5_MOB_EXP_UNDEAD_PULLER_VETERAN": 3,
+     "T5_MOB_EXP_UNDEAD_RAT_VETERAN": 25,
+     "T5_MOB_EXP_UNDEAD_SOLDIER_VETERAN": 4,
+     "T5_MOB_EXP_UNDEAD_TRASH_SKELETON_VETERAN": 61
+    },
+    "templates": [
+     {
+      "ref": "SewersMaintenance_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_01"
+      ],
+      "file": "templates/GREEN/SewersMaintenance_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         38.0,
+         -156.0
+        ],
+        "height": 0.0,
+        "roty": 90.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -4.0,
+         230.0
+        ],
+        "height": -4.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         32.0,
+         -149.0
+        ],
+        "height": 0.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -8.0,
+         225.0
+        ],
+        "height": -4.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         28.0,
+         -154.0
+        ],
+        "height": 0.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         40.0,
+         107.0
+        ],
+        "height": 0.0,
+        "roty": 53.0,
+        "maxcolliderdist": 24.86468
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         118.0,
+         -78.0
+        ],
+        "height": -12.0,
+        "roty": 41.0,
+        "maxcolliderdist": 24.98106
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         75.0,
+         10.0
+        ],
+        "height": 1.0,
+        "roty": 45.0,
+        "maxcolliderdist": 25.01999
+       }
+      ],
+      "spawns_active": {
+       "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN": 10,
+       "T5_MOB_EXP_UNDEAD_ARCHER_VETERAN": 9,
+       "T5_MOB_EXP_UNDEAD_TRASH_SKELETON_VETERAN": 61,
+       "T5_MOB_EXP_UNDEAD_RAT_VETERAN": 25,
+       "T5_MOB_EXP_UNDEAD_PULLER_VETERAN": 3,
+       "T5_MOB_EXP_UNDEAD_SOLDIER_VETERAN": 4,
+       "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN_MINIBOSS": 2,
+       "T5_MOB_EXP_UNDEAD_CHEST_VETERAN": 1,
+       "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN_BOSS": 1
+      },
+      "spawns_inactive": {
+       "T5_MOB_EXP_UNDEAD_RAT": 23,
+       "T5_MOB_EXP_UNDEAD_TRASH_SKELETON": 50,
+       "T5_MOB_EXP_UNDEAD_ARCHER": 6,
+       "T5_MOB_EXP_UNDEAD_GHOUL": 9,
+       "T5_MOB_EXP_UNDEAD_GHOUL_MINIBOSS": 2,
+       "T5_MOB_EXP_UNDEAD_PULLER": 3,
+       "T5_MOB_EXP_UNDEAD_CHEST": 1,
+       "T5_MOB_EXP_UNDEAD_SOLDIER": 4,
+       "T5_MOB_EXP_UNDEAD_GHOUL_BOSS": 1,
+       "T6_MOB_HRD_UNDEAD_TRASH_SKELETON_VETERAN": 73,
+       "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN_MINIBOSS": 2,
+       "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN": 11,
+       "T6_MOB_HRD_UNDEAD_RAT_VETERAN": 35,
+       "T6_MOB_HRD_UNDEAD_PULLER_VETERAN": 3,
+       "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN": 16,
+       "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN": 6,
+       "T6_MOB_HRD_UNDEAD_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN_BOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T5_Veteran",
+        "active": true
+       },
+       {
+        "id": "Layer_02",
+        "name": "T5_Solo",
+        "active": false
+       },
+       {
+        "id": "Layer_03",
+        "name": "T6_Hardcore",
+        "active": false
+       },
+       {
+        "id": "Layer_04",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 14,
+   "uniquename": "T6_EXP_VET_KEEPER_MUSHROOM",
+   "cluster_attr": "MushroomCave-GROUP_EXP_DL_T6_KPR",
+   "cluster": "MushroomCave-GROUP",
+   "category": "T6_VETERAN",
+   "category_index": 9,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T6_EXP_VET_KEEPER_MUSHROOM",
+   "steps": [
+    [
+     {
+      "mobid": "T6_MOB_EXP_KEEPER_BERSERK_VETERAN",
+      "count": 8,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_KEEPER_AXE_THROWER_VETERAN",
+      "count": 5,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_KEEPER_DRUID_VETERAN",
+      "count": 6,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_KEEPER_SEER_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "MushroomCave-GROUP_EXP_FR_GREEN_T6_KPR.cluster.xml",
+    "type": "T6_EXPEDITION_STANDARD",
+    "displayname": "Mushroom Cave",
+    "startpoints": [
+     {
+      "id": "ef58e36e-88ac-42c0-9a5a-2311df1d964a",
+      "pos": [
+       45.0,
+       5.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_EXP_KEEPER_AXE_THROWER_VETERAN": 9,
+     "T6_MOB_EXP_KEEPER_BERSERK_VETERAN": 14,
+     "T6_MOB_EXP_KEEPER_BERSERK_VETERAN_MINIBOSS": 1,
+     "T6_MOB_EXP_KEEPER_CHEST_VETERAN": 1,
+     "T6_MOB_EXP_KEEPER_DRUID_VETERAN": 11,
+     "T6_MOB_EXP_KEEPER_MUSHROOM_THROWER_VETERAN": 8,
+     "T6_MOB_EXP_KEEPER_SEER_VETERAN_BOSS": 1,
+     "T6_MOB_EXP_KEEPER_SPECIAL_SNIPER_VETERAN": 4,
+     "T6_MOB_EXP_KEEPER_UNPROVEN_FEMALE_VETERAN": 12,
+     "T6_MOB_EXP_KEEPER_UNPROVEN_MALE_VETERAN": 11
+    },
+    "templates": [
+     {
+      "ref": "MushroomCave_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_01"
+      ],
+      "file": "templates/GREEN/MushroomCave_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         45.0,
+         5.0
+        ],
+        "height": -4.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -247.0,
+         345.0
+        ],
+        "height": -77.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         53.0,
+         13.0
+        ],
+        "height": -4.0,
+        "roty": 30.0,
+        "spawnatstartup": true
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         47.0,
+         11.0
+        ],
+        "height": -4.0,
+        "roty": 120.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -251.0,
+         340.0
+        ],
+        "height": -77.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -145.0,
+         320.0
+        ],
+        "height": -52.0,
+        "roty": 45.0,
+        "maxcolliderdist": 25.02
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -113.0,
+         182.0
+        ],
+        "height": -28.0,
+        "roty": 180.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -118.0,
+         52.0
+        ],
+        "height": -16.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_EXP_KEEPER_AXE_THROWER_VETERAN": 9,
+       "T6_MOB_EXP_KEEPER_UNPROVEN_MALE_VETERAN": 11,
+       "T6_MOB_EXP_KEEPER_MUSHROOM_THROWER_VETERAN": 8,
+       "T6_MOB_EXP_KEEPER_SPECIAL_SNIPER_VETERAN": 4,
+       "T6_MOB_EXP_KEEPER_DRUID_VETERAN": 11,
+       "T6_MOB_EXP_KEEPER_BERSERK_VETERAN": 14,
+       "T6_MOB_EXP_KEEPER_SEER_VETERAN_BOSS": 1,
+       "T6_MOB_EXP_KEEPER_UNPROVEN_FEMALE_VETERAN": 12,
+       "T6_MOB_EXP_KEEPER_CHEST_VETERAN": 1,
+       "T6_MOB_EXP_KEEPER_BERSERK_VETERAN_MINIBOSS": 1
+      },
+      "spawns_inactive": {
+       "T6_MOB_HRD_KEEPER_AXE_THROWER_VETERAN": 9,
+       "T6_MOB_HRD_KEEPER_DRUID_VETERAN": 11,
+       "T6_MOB_HRD_KEEPER_MUSHROOM_THROWER_VETERAN": 8,
+       "T6_MOB_HRD_KEEPER_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_KEEPER_UNPROVEN_MALE_VETERAN": 19,
+       "T6_MOB_HRD_KEEPER_BERSERK_VETERAN": 16,
+       "T6_MOB_HRD_KEEPER_SPECIAL_SNIPER_VETERAN": 4,
+       "T6_MOB_HRD_KEEPER_UNPROVEN_FEMALE_VETERAN": 18,
+       "T6_MOB_HRD_KEEPER_SEER_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_KEEPER_BERSERK_VETERAN_MINIBOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T6_Veteran",
+        "active": true
+       },
+       {
+        "id": "Layer_02",
+        "name": "T6_Hardcore",
+        "active": false
+       },
+       {
+        "id": "Layer_03",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 15,
+   "uniquename": "T6_EXP_VET_MORGANA_TRHEESISTERS",
+   "cluster_attr": "ThreeSisters-GROUP_EXP_MN_RED_T6_MOR",
+   "cluster": "ThreeSisters-GROUP",
+   "category": "T6_VETERAN",
+   "category_index": 9,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T6_EXP_VET_MORGANA_TRHEESISTERS",
+   "steps": [
+    [
+     {
+      "mobid": "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN",
+      "count": 5,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_MORGANA_INFESTOR_VETERAN",
+      "count": 3,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_A",
+      "count": 1,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_B",
+      "count": 1,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_C",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "ThreeSisters-GROUP_EXP_MN_RED_T6_MOR.cluster.xml",
+    "type": "T6_EXPEDITION_SURFACE",
+    "displayname": "Three Sisters",
+    "startpoints": [
+     {
+      "id": "374221a5-0235-449e-ab61-f20db1670a3d",
+      "pos": [
+       176.0,
+       -210.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_EXP_MORGANA_BAT_VETERAN": 19,
+     "T6_MOB_EXP_MORGANA_BLOODHOUND_VETERAN": 8,
+     "T6_MOB_EXP_MORGANA_BOMBARDIER_VETERAN": 7,
+     "T6_MOB_EXP_MORGANA_CHEST_VETERAN": 1,
+     "T6_MOB_EXP_MORGANA_CROSSBOWMAN_VETERAN": 10,
+     "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_A": 1,
+     "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_B": 1,
+     "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_C": 1,
+     "T6_MOB_EXP_MORGANA_INFESTOR_VETERAN": 7,
+     "T6_MOB_EXP_MORGANA_KNIGHT_VETERAN": 4,
+     "T6_MOB_EXP_MORGANA_RECRUIT_RANGE_VETERAN": 15,
+     "T6_MOB_EXP_MORGANA_ROYALKNIGHT_VETERAN": 1,
+     "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN": 12,
+     "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN_MINIBOSS": 1
+    },
+    "templates": [
+     {
+      "ref": "ThreeSisters_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_01"
+      ],
+      "file": "templates/RED/ThreeSisters_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         176.0,
+         -210.0
+        ],
+        "height": -25.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         172.0,
+         -207.0
+        ],
+        "height": -26.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -40.0,
+         222.0
+        ],
+        "height": -12.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         168.0,
+         -212.0
+        ],
+        "height": -26.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -44.0,
+         217.0
+        ],
+        "height": -12.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         29.0,
+         -112.0
+        ],
+        "height": -34.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         54.0,
+         12.0
+        ],
+        "height": -20.0,
+        "roty": 315.0,
+        "maxcolliderdist": 25.01999
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -46.0,
+         118.0
+        ],
+        "height": -18.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_EXP_MORGANA_BLOODHOUND_VETERAN": 8,
+       "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN": 12,
+       "T6_MOB_EXP_MORGANA_INFESTOR_VETERAN": 7,
+       "T6_MOB_EXP_MORGANA_CROSSBOWMAN_VETERAN": 10,
+       "T6_MOB_EXP_MORGANA_BOMBARDIER_VETERAN": 7,
+       "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_EXP_MORGANA_BAT_VETERAN": 19,
+       "T6_MOB_EXP_MORGANA_KNIGHT_VETERAN": 4,
+       "T6_MOB_EXP_MORGANA_CHEST_VETERAN": 1,
+       "T6_MOB_EXP_MORGANA_RECRUIT_RANGE_VETERAN": 15,
+       "T6_MOB_EXP_MORGANA_ROYALKNIGHT_VETERAN": 1,
+       "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_B": 1,
+       "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_A": 1,
+       "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_C": 1
+      },
+      "spawns_inactive": {
+       "T6_MOB_HRD_MORGANA_CROSSBOWMAN_VETERAN": 9,
+       "T6_MOB_HRD_MORGANA_KNIGHT_VETERAN": 6,
+       "T6_MOB_HRD_MORGANA_BAT_VETERAN": 19,
+       "T6_MOB_HRD_MORGANA_SOLDIER_VETERAN": 10,
+       "T6_MOB_HRD_MORGANA_RECRUIT_RANGE_VETERAN": 14,
+       "T6_MOB_HRD_MORGANA_BLOODHOUND_VETERAN": 7,
+       "T6_MOB_HRD_MORGANA_INFESTOR_VETERAN": 8,
+       "T6_MOB_HRD_MORGANA_SOLDIER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_MORGANA_BOMBARDIER_VETERAN": 7,
+       "T6_MOB_HRD_MORGANA_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_B": 1,
+       "T6_MOB_HRD_MORGANA_ROYALKNIGHT_VETERAN": 1,
+       "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_C": 1,
+       "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_A": 1,
+       "T6_MOB_EXP_MORGANA_BLOODHOUND_VETERAN": 7,
+       "T6_MOB_EXP_MORGANA_BOMBARDIER_VETERAN": 7,
+       "T6_MOB_EXP_MORGANA_BAT_VETERAN": 19,
+       "T6_MOB_EXP_MORGANA_RECRUIT_RANGE_VETERAN": 14,
+       "T6_MOB_EXP_MORGANA_CROSSBOWMAN_VETERAN": 9,
+       "T6_MOB_EXP_MORGANA_KNIGHT_VETERAN": 6,
+       "T6_MOB_EXP_MORGANA_CHEST_VETERAN": 1,
+       "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN": 10,
+       "T6_MOB_EXP_MORGANA_INFESTOR_VETERAN": 7,
+       "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_C": 1,
+       "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_A": 1,
+       "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_B": 1,
+       "T6_MOB_EXP_MORGANA_ROYALKNIGHT_VETERAN": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "Veteran_T6",
+        "active": true
+       },
+       {
+        "id": "Layer_02",
+        "name": "Hardcore_T6",
+        "active": false
+       },
+       {
+        "id": "Layer_03",
+        "name": "Mobs_Veteran_T6",
+        "active": false
+       },
+       {
+        "id": "Layer_04",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 16,
+   "uniquename": "T6_EXP_VET_HERETIC_FISTFULOFSILVER",
+   "cluster_attr": "FistfulOfSilver-GROUP_EXP_ST_RED_T6_HER",
+   "cluster": "FistfulOfSilver-GROUP",
+   "category": "T6_VETERAN",
+   "category_index": 9,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T6_EXP_VET_HERETIC_FISTFULOFSILVER",
+   "steps": [
+    [
+     {
+      "mobid": "T6_MOB_EXP_HERETIC_THIEF_VETERAN",
+      "count": 10,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_HERETIC_DYNAMITE_VETERAN_MINIBOSS",
+      "count": 1,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_HERETIC_BRAWLER_VETERAN_MINIBOSS",
+      "count": 1,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_HERETIC_SHADOWMASK_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "FistfulOfSilver-GROUP_EXP_ST_RED_T6_HER.cluster.xml",
+    "type": "T6_EXPEDITION_SURFACE",
+    "displayname": "A Fistful of Silver",
+    "startpoints": [
+     {
+      "id": "159cb800-77a2-49fe-9ca2-6b8ec99db22a",
+      "pos": [
+       174.0,
+       -165.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T5_MOB_EXP_HERETIC_CHEST": 5,
+     "T5_MOB_EXP_HERETIC_FOULRAT": 5,
+     "T5_MOB_EXP_HERETIC_THIEF_VETERAN": 1,
+     "T6_MOB_EXP_HERETIC_ALARMTRAP_VETERAN": 10,
+     "T6_MOB_EXP_HERETIC_ARCHER_VETERAN": 12,
+     "T6_MOB_EXP_HERETIC_BRAWLER_VETERAN": 11,
+     "T6_MOB_EXP_HERETIC_BRAWLER_VETERAN_MINIBOSS": 1,
+     "T6_MOB_EXP_HERETIC_DYNAMITE_VETERAN_MINIBOSS": 1,
+     "T6_MOB_EXP_HERETIC_HEALER_VETERAN": 8,
+     "T6_MOB_EXP_HERETIC_MAGE_VETERAN": 9,
+     "T6_MOB_EXP_HERETIC_SCAVENGER_VETERAN": 47,
+     "T6_MOB_EXP_HERETIC_SHADOWMASK_VETERAN_BOSS": 1,
+     "T6_MOB_EXP_HERETIC_THIEF_VETERAN": 14
+    },
+    "templates": [
+     {
+      "ref": "FistfulOfSilver_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_01"
+      ],
+      "file": "templates/RED/FistfulOfSilver_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         174.0,
+         -165.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -110.0,
+         212.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         170.0,
+         -157.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -114.0,
+         207.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         166.0,
+         -162.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         84.0,
+         32.0
+        ],
+        "height": -12.0,
+        "roty": 45.0,
+        "maxcolliderdist": 25.01999
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -115.0,
+         17.0
+        ],
+        "height": -12.0,
+        "roty": 315.0,
+        "maxcolliderdist": 25.01999
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         213.0,
+         -58.0
+        ],
+        "height": -12.0,
+        "roty": 53.0,
+        "maxcolliderdist": 24.86468
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_EXP_HERETIC_ARCHER_VETERAN": 12,
+       "T5_MOB_EXP_HERETIC_FOULRAT": 5,
+       "T6_MOB_EXP_HERETIC_HEALER_VETERAN": 8,
+       "T5_MOB_EXP_HERETIC_CHEST": 5,
+       "T6_MOB_EXP_HERETIC_TRAP_VETERAN": 10,
+       "T6_MOB_EXP_HERETIC_SCAVENGER_VETERAN": 47,
+       "T6_MOB_EXP_HERETIC_THIEF_VETERAN": 14,
+       "T6_MOB_EXP_HERETIC_MAGE_VETERAN": 9,
+       "T6_MOB_EXP_HERETIC_BRAWLER_VETERAN": 11,
+       "T5_MOB_EXP_HERETIC_THIEF_VETERAN": 1,
+       "T6_MOB_EXP_HERETIC_GRENADE_VETERAN_MINIBOSS": 1,
+       "T6_MOB_EXP_HERETIC_BRAWLER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_EXP_HERETIC_SHADOWMASK_VETERAN_BOSS": 1
+      },
+      "spawns_inactive": {
+       "T5_MOB_EXP_HERETIC_CHEST": 5,
+       "T6_MOB_HRD_HERETIC_SCAVENGER_VETERAN": 52,
+       "T6_MOB_HRD_HERETIC_THIEF_VETERAN": 21,
+       "T6_MOB_HRD_HERETIC_ALARMTRAP_VETERAN": 10,
+       "T6_MOB_HRD_HERETIC_SHADOWMASK_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_HERETIC_BRAWLER_VETERAN": 11,
+       "T6_MOB_HRD_HERETIC_ARCHER_VETERAN": 13,
+       "T5_MOB_EXP_HERETIC_FOULRAT": 5,
+       "T6_MOB_HRD_HERETIC_BRAWLER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_HERETIC_HEALER_VETERAN": 9,
+       "T6_MOB_HRD_HERETIC_MAGE_VETERAN": 9,
+       "T6_MOB_HRD_HERETIC_DYNAMITE_VETERAN_MINIBOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T6_Veteran",
+        "active": true
+       },
+       {
+        "id": "Layer_02",
+        "name": "T6_Hardcore",
+        "active": false
+       },
+       {
+        "id": "Layer_03",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 17,
+   "uniquename": "T6_EXP_VET_UNDEAD_ETERNALBATTLE",
+   "cluster_attr": "EternalBattle-GROUP_EXP_HL_RED_T6_UND",
+   "cluster": "EternalBattle-GROUP",
+   "category": "T6_VETERAN",
+   "category_index": 9,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T6_EXP_VET_UNDEAD_ETERNALBATTLE",
+   "steps": [
+    [
+     {
+      "mobid": "T6_MOB_EXP_UNDEAD_SKELETON_VETERAN",
+      "count": 15,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_UNDEAD_SOLDIER_VETERAN",
+      "count": 8,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_UNDEAD_GOVERNOR_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "EternalBattle-GROUP_EXP_HL_RED_T6_UND.cluster.xml",
+    "type": "T6_EXPEDITION_SURFACE",
+    "displayname": "Eternal Battle",
+    "startpoints": [
+     {
+      "id": "082e7087-8f6a-411b-ad3f-20a49498a692",
+      "pos": [
+       25.0,
+       -275.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_EXP_UNDEAD_ARCHER_VETERAN": 10,
+     "T6_MOB_EXP_UNDEAD_CHEST_VETERAN": 1,
+     "T6_MOB_EXP_UNDEAD_GOVERNOR_VETERAN_BOSS": 1,
+     "T6_MOB_EXP_UNDEAD_KNIGHT_VETERAN": 7,
+     "T6_MOB_EXP_UNDEAD_MAGE_VETERAN": 8,
+     "T6_MOB_EXP_UNDEAD_PULLER_VETERAN": 3,
+     "T6_MOB_EXP_UNDEAD_SKELETON_RANGED_VETERAN": 17,
+     "T6_MOB_EXP_UNDEAD_SKELETON_VETERAN": 22,
+     "T6_MOB_EXP_UNDEAD_SOLDIER_VETERAN": 14,
+     "T6_MOB_EXP_UNDEAD_SOLDIER_VETERAN_MINIBOSS": 1,
+     "T6_MOB_EXP_UNDEAD_TRASH_SKELETON_VETERAN": 42
+    },
+    "templates": [
+     {
+      "ref": "EternalBattle_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_02"
+      ],
+      "file": "templates/RED/EternalBattle_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         25.0,
+         -275.0
+        ],
+        "height": -32.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         21.0,
+         -270.0
+        ],
+        "height": -32.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -25.0,
+         270.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -29.0,
+         265.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         17.0,
+         -275.0
+        ],
+        "height": -32.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -35.0,
+         34.0
+        ],
+        "height": -20.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -15.0,
+         160.0
+        ],
+        "height": 0.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         65.0,
+         -32.0
+        ],
+        "height": -28.0,
+        "roty": 315.0,
+        "maxcolliderdist": 25.01999
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_EXP_UNDEAD_SKELETON_VETERAN": 22,
+       "T6_MOB_EXP_UNDEAD_MAGE_VETERAN": 8,
+       "T6_MOB_EXP_UNDEAD_SOLDIER_VETERAN": 14,
+       "T6_MOB_EXP_UNDEAD_KNIGHT_VETERAN": 7,
+       "T6_MOB_EXP_UNDEAD_SKELETON_RANGED_VETERAN": 17,
+       "T6_MOB_EXP_UNDEAD_ARCHER_VETERAN": 10,
+       "T6_MOB_EXP_UNDEAD_TRASH_SKELETON_VETERAN": 42,
+       "T6_MOB_EXP_UNDEAD_CHEST_VETERAN": 1,
+       "T6_MOB_EXP_UNDEAD_SOLDIER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_EXP_UNDEAD_PULLER_VETERAN": 3,
+       "T6_MOB_EXP_UNDEAD_GOVERNOR_VETERAN_BOSS": 1
+      },
+      "spawns_inactive": {
+       "T6_MOB_HRD_UNDEAD_TRASH_SKELETON_VETERAN": 41,
+       "T6_MOB_HRD_UNDEAD_SKELETON_VETERAN": 23,
+       "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN": 13,
+       "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN": 11,
+       "T6_MOB_HRD_UNDEAD_GOVERNOR_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_UNDEAD_SKELETON_RANGED_VETERAN": 18,
+       "T6_MOB_HRD_UNDEAD_MAGE_VETERAN": 7,
+       "T6_MOB_HRD_UNDEAD_KNIGHT_VETERAN": 7,
+       "T6_MOB_HRD_UNDEAD_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_UNDEAD_PULLER_VETERAN": 3,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "Hardcore_T6",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "Veteran_T6",
+        "active": true
+       },
+       {
+        "id": "Layer_03",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 18,
+   "uniquename": "T6_EXP_VET_MORGANA_TORTURER",
+   "cluster_attr": "Torturer-GROUP_EXP_FR_RED_T6_MOR",
+   "cluster": "Torturer-GROUP",
+   "category": "T6_VETERAN",
+   "category_index": 9,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T6_EXP_HRD_MORGANA_TORTURER",
+   "steps": [
+    [
+     {
+      "mobid": "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN",
+      "count": 7,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_MORGANA_TORTURER_VETERAN",
+      "count": 7,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_EXP_MORGANA_TORTURER_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "Torturer-GROUP_EXP_FR_RED_T6_MOR.cluster.xml",
+    "type": "T6_EXPEDITION_STANDARD",
+    "displayname": "In the Raven's Claws",
+    "startpoints": [
+     {
+      "id": "eadf8be5-ddfa-44e1-91ec-b7376efcb88d",
+      "pos": [
+       169.0,
+       -171.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_EXP_MORGANA_BAT_VETERAN": 9,
+     "T6_MOB_EXP_MORGANA_BLOODHOUND_VETERAN": 9,
+     "T6_MOB_EXP_MORGANA_BOMBARDIER_VETERAN": 6,
+     "T6_MOB_EXP_MORGANA_CHEST_VETERAN": 1,
+     "T6_MOB_EXP_MORGANA_CROSSBOWMAN_VETERAN": 9,
+     "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_MINIBOSS": 1,
+     "T6_MOB_EXP_MORGANA_INFESTOR_VETERAN": 8,
+     "T6_MOB_EXP_MORGANA_RECRUIT_RANGE_VETERAN": 19,
+     "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN": 13,
+     "T6_MOB_EXP_MORGANA_TORTURER_VETERAN": 9,
+     "T6_MOB_EXP_MORGANA_TORTURER_VETERAN_BOSS": 1
+    },
+    "templates": [
+     {
+      "ref": "Torturer_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_01"
+      ],
+      "file": "templates/RED/Torturer_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         169.0,
+         -171.0
+        ],
+        "height": -16.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         165.0,
+         -164.0
+        ],
+        "height": -16.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -229.0,
+         289.0
+        ],
+        "height": -56.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         161.0,
+         -169.0
+        ],
+        "height": -16.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -232.7,
+         283.93
+        ],
+        "height": -56.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -147.0,
+         282.0
+        ],
+        "height": -40.0,
+        "roty": 290.0,
+        "maxcolliderdist": 23.54906
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -34.0,
+         178.0
+        ],
+        "height": -24.0,
+        "roty": 135.0,
+        "maxcolliderdist": 25.02001
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         85.0,
+         59.0
+        ],
+        "height": -24.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_EXP_MORGANA_TORTURER_VETERAN_BOSS": 1,
+       "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN": 13,
+       "T6_MOB_EXP_MORGANA_RECRUIT_RANGE_VETERAN": 19,
+       "T6_MOB_EXP_MORGANA_CROSSBOWMAN_VETERAN": 9,
+       "T6_MOB_EXP_MORGANA_TORTURER_VETERAN": 9,
+       "T6_MOB_EXP_MORGANA_BLOODHOUND_VETERAN": 9,
+       "T6_MOB_EXP_MORGANA_BOMBARDIER_VETERAN": 6,
+       "T6_MOB_EXP_MORGANA_INFESTOR_VETERAN": 8,
+       "T6_MOB_EXP_MORGANA_BAT_VETERAN": 9,
+       "T6_MOB_EXP_MORGANA_CULTIST_TORTURER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_EXP_MORGANA_CHEST_VETERAN": 1
+      },
+      "spawns_inactive": {
+       "T6_MOB_HRD_MORGANA_BLOODHOUND_VETERAN": 11,
+       "T6_MOB_HRD_MORGANA_BAT_VETERAN": 11,
+       "T6_MOB_HRD_MORGANA_TORTURER_VETERAN": 11,
+       "T6_MOB_HRD_MORGANA_RECRUIT_RANGE_VETERAN": 20,
+       "T6_MOB_HRD_MORGANA_SOLDIER_VETERAN": 16,
+       "T6_MOB_HRD_MORGANA_BOMBARDIER_VETERAN": 6,
+       "T6_MOB_HRD_MORGANA_CROSSBOWMAN_VETERAN": 11,
+       "T6_MOB_HRD_MORGANA_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_MORGANA_INFESTOR_VETERAN": 9,
+       "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_MORGANA_TORTURER_VETERAN_BOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T6_long",
+        "active": true
+       },
+       {
+        "id": "Layer_02",
+        "name": "T6_HRD",
+        "active": false
+       },
+       {
+        "id": "Layer_03",
+        "name": "Hardcore_Chest",
+        "active": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 19,
+   "uniquename": "T6_EXP_VET_MORGANA_WINTER",
+   "cluster_attr": "WINTER-Expedition_EXP_MN_T6_MOR",
+   "cluster": "WINTER-Expedition",
+   "category": "TEST",
+   "category_index": 0,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T6_EXP_VET_MORGANA_WINTER",
+   "steps": [
+    [
+     {
+      "mobid": "T6_MOB_MORGANA_CROSSBOWMAN_VETERAN_MINIBOSS_WINTER",
+      "count": 1,
+      "mob_exists": false
+     },
+     {
+      "mobid": "T6_MOB_MORGANA_CULTIST_VETERAN_MINIBOSS_WINTER",
+      "count": 1,
+      "mob_exists": false
+     },
+     {
+      "mobid": "T6_MOB_MORGANA_KNIGHT_VETERAN_MINIBOSS_WINTER",
+      "count": 1,
+      "mob_exists": false
+     },
+     {
+      "mobid": "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_WINTER",
+      "count": 1,
+      "mob_exists": false
+     }
+    ]
+   ]
+  },
+  {
+   "index": 20,
+   "uniquename": "T6_EXP_HRD_UNDEAD_RECRUITMENT",
+   "cluster_attr": "RecruitmentOfTheDead-HRD_EXP_SW_T6_UND",
+   "cluster": "RecruitmentOfTheDead-HRD",
+   "category": "T6_HARDCORE",
+   "category_index": 10,
+   "timeout": 2600,
+   "bonustimeout": 1730,
+   "title": "@EXP_TITLE_T4_EXP_VET_UNDEAD_RECRUITMENT",
+   "steps": [
+    [
+     {
+      "faction": "UNDEAD",
+      "count": 96,
+      "countpartykills": "false",
+      "mob_exists": null
+     },
+     {
+      "mobid": "T6_MOB_HRD_UNDEAD_MAGE_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "RecruitmentOfTheDead-HRD_EXP_SW_GREEN_T6_UND.cluster.xml",
+    "type": "HARDCORE_EXPEDITION_SURFACE",
+    "displayname": "Preaching to the Dead",
+    "startpoints": [
+     {
+      "id": "1fa5da0a-1335-4ebb-ad38-4dc386ad0a3b",
+      "pos": [
+       -2.0,
+       -17.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN": 17,
+     "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN_MINIBOSS": 1,
+     "T6_MOB_HRD_UNDEAD_CHEST_VETERAN": 1,
+     "T6_MOB_HRD_UNDEAD_KNIGHT_VETERAN": 3,
+     "T6_MOB_HRD_UNDEAD_MAGE_VETERAN": 12,
+     "T6_MOB_HRD_UNDEAD_MAGE_VETERAN_BOSS": 1,
+     "T6_MOB_HRD_UNDEAD_PULLER_VETERAN": 4,
+     "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN": 14,
+     "T6_MOB_HRD_UNDEAD_TRASH_SKELETON_VETERAN": 88
+    },
+    "templates": [
+     {
+      "ref": "RecruitmentOfTheDead_Main",
+      "pos": [
+       0.0,
+       -8.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_01",
+       "Layer_02"
+      ],
+      "file": "templates/GREEN/RecruitmentOfTheDead_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         -2.0,
+         -17.0
+        ],
+        "height": -12.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -227.0,
+         258.0
+        ],
+        "height": 2.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -5.0,
+         -9.0
+        ],
+        "height": -12.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         -9.0,
+         -14.0
+        ],
+        "height": -12.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -231.0,
+         253.0
+        ],
+        "height": 2.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -62.0,
+         115.0
+        ],
+        "height": -8.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -148.0,
+         118.0
+        ],
+        "height": -8.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -228.0,
+         159.0
+        ],
+        "height": -6.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN": 14,
+       "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN": 17,
+       "T6_MOB_HRD_UNDEAD_TRASH_SKELETON_VETERAN": 88,
+       "T6_MOB_HRD_UNDEAD_PULLER_VETERAN": 4,
+       "T6_MOB_HRD_UNDEAD_MAGE_VETERAN": 12,
+       "T6_MOB_HRD_UNDEAD_KNIGHT_VETERAN": 3,
+       "T6_MOB_HRD_UNDEAD_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_UNDEAD_MAGE_VETERAN_BOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_inactive": {
+       "T4_MOB_EXP_UNDEAD_TRASH_SKELETON": 56,
+       "T4_MOB_EXP_UNDEAD_SOLDIER": 10,
+       "T4_MOB_EXP_UNDEAD_ARCHER": 12,
+       "T4_MOB_EXP_UNDEAD_MAGE": 6,
+       "T4_MOB_EXP_UNDEAD_CHEST": 1,
+       "T4_MOB_EXP_UNDEAD_ARCHER_MINIBOSS": 1,
+       "T4_MOB_EXP_UNDEAD_MAGE_BOSS": 1,
+       "T4_MOB_EXP_UNDEAD_TRASH_SKELETON_VETERAN": 97,
+       "T4_MOB_EXP_UNDEAD_ARCHER_VETERAN": 16,
+       "T4_MOB_EXP_UNDEAD_CHEST_VETERAN": 1,
+       "T4_MOB_EXP_UNDEAD_MAGE_VETERAN": 6,
+       "T4_MOB_EXP_UNDEAD_SOLDIER_VETERAN": 14,
+       "T4_MOB_EXP_UNDEAD_PULLER_VETERAN": 4,
+       "T4_MOB_EXP_UNDEAD_ARCHER_VETERAN_MINIBOSS": 1,
+       "T4_MOB_EXP_UNDEAD_MAGE_VETERAN_BOSS": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "28e79016-bb63-40df-a704-56bfc039ef5d",
+        "name": "Regular_T4",
+        "active": false
+       },
+       {
+        "id": "aeacf936-06b2-4a01-bee6-5fb988578fba",
+        "name": "Veteran_T4",
+        "active": false
+       },
+       {
+        "id": "Layer_01",
+        "name": "Hardcore_T6",
+        "active": true
+       },
+       {
+        "id": "Layer_02",
+        "name": "Hardcore_Chest",
+        "active": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 21,
+   "uniquename": "T6_EXP_HRD_HERETIC_FISHYBUSINESS",
+   "cluster_attr": "FishyBusiness-HRD_EXP_DL_T6_HER",
+   "cluster": "FishyBusiness-HRD",
+   "category": "T6_HARDCORE",
+   "category_index": 10,
+   "timeout": 2810,
+   "bonustimeout": 1880,
+   "title": "@EXP_TITLE_T4_EXP_VET_HERETIC_FISHYBUSINESS",
+   "steps": [
+    [
+     {
+      "faction": "HERETIC",
+      "count": 91,
+      "countpartykills": "false",
+      "mob_exists": null
+     },
+     {
+      "mobid": "T6_MOB_HRD_HERETIC_GIBSON_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "FishyBusiness-HRD_EXP_FR_GREEN_T6_HER.cluster.xml",
+    "type": "HARDCORE_EXPEDITION_STANDARD",
+    "displayname": "Fishy Business",
+    "startpoints": [
+     {
+      "id": "cd80d375-ecd4-48c0-96d3-f29ea26c4b1d",
+      "pos": [
+       -124.0,
+       -201.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_HRD_HERETIC_ARCHER_VETERAN": 11,
+     "T6_MOB_HRD_HERETIC_CHEST_VETERAN": 1,
+     "T6_MOB_HRD_HERETIC_FOULRAT_VETERAN": 62,
+     "T6_MOB_HRD_HERETIC_GIBSON_STOOGE_VETERAN": 1,
+     "T6_MOB_HRD_HERETIC_GIBSON_VETERAN_BOSS": 1,
+     "T6_MOB_HRD_HERETIC_HEALER_VETERAN": 5,
+     "T6_MOB_HRD_HERETIC_MAGE_VETERAN": 7,
+     "T6_MOB_HRD_HERETIC_MORTAR_VETERAN": 4,
+     "T6_MOB_HRD_HERETIC_OVERSEER_VETERAN_MINIBOSS": 1,
+     "T6_MOB_HRD_HERETIC_SCAVENGER_VETERAN": 19,
+     "T6_MOB_HRD_HERETIC_TANK_VETERAN": 11,
+     "T6_MOB_HRD_HERETIC_THIEF_VETERAN": 10
+    },
+    "templates": [
+     {
+      "ref": "FishyBusiness_Main",
+      "pos": [
+       0.0,
+       0.0,
+       -8.0
+      ],
+      "active_layers": [
+       "Layer_01",
+       "Layer_02"
+      ],
+      "file": "templates/GREEN/FishyBusiness_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         -124.0,
+         -201.0
+        ],
+        "height": -4.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -128.0,
+         -198.0
+        ],
+        "height": -4.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -169.0,
+         206.0
+        ],
+        "height": -8.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -173.0,
+         201.0
+        ],
+        "height": -8.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         -132.0,
+         -203.0
+        ],
+        "height": -4.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -137.0,
+         -25.0
+        ],
+        "height": -24.0,
+        "roty": 130.0,
+        "maxcolliderdist": 24.9592
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -122.0,
+         116.0
+        ],
+        "height": -20.0,
+        "roty": 335.0,
+        "maxcolliderdist": 24.06675
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -40.0,
+         -110.0
+        ],
+        "height": -16.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_HRD_HERETIC_FOULRAT_VETERAN": 62,
+       "T6_MOB_HRD_HERETIC_SCAVENGER_VETERAN": 19,
+       "T6_MOB_HRD_HERETIC_ARCHER_VETERAN": 11,
+       "T6_MOB_HRD_HERETIC_THIEF_VETERAN": 10,
+       "T6_MOB_HRD_HERETIC_HEALER_VETERAN": 5,
+       "T6_MOB_HRD_HERETIC_MAGE_VETERAN": 7,
+       "T6_MOB_HRD_HERETIC_MORTAR_VETERAN": 4,
+       "T6_MOB_HRD_HERETIC_OVERSEER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_HERETIC_TANK_VETERAN": 11,
+       "T6_MOB_HRD_HERETIC_GIBSON_STOOGE_VETERAN": 1,
+       "T6_MOB_HRD_HERETIC_GIBSON_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_HERETIC_CHEST_VETERAN": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_inactive": {
+       "T4_MOB_EXP_HERETIC_GIBSON_STOOGE": 1,
+       "T4_MOB_EXP_HERETIC_MORTAR": 4,
+       "T4_MOB_EXP_HERETIC_SCAVENGER": 12,
+       "T4_MOB_EXP_HERETIC_THIEF": 8,
+       "T4_MOB_EXP_HERETIC_TANK": 10,
+       "T4_MOB_EXP_HERETIC_ARCHER": 11,
+       "T4_MOB_EXP_HERETIC_FOULRAT": 44,
+       "T4_MOB_EXP_HERETIC_OVERSEER_MINIBOSS": 1,
+       "T4_MOB_EXP_HERETIC_MAGE": 5,
+       "T4_MOB_EXP_HERETIC_CHEST": 1,
+       "T4_MOB_EXP_HERETIC_HEALER": 5,
+       "T4_MOB_EXP_HERETIC_GIBSON_BOSS": 1,
+       "T4_MOB_EXP_HERETIC_FOULRAT_VETERAN": 62,
+       "T4_MOB_EXP_HERETIC_TANK_VETERAN": 11,
+       "T4_MOB_EXP_HERETIC_SCAVENGER_VETERAN": 19,
+       "T4_MOB_EXP_HERETIC_MAGE_VETERAN": 7,
+       "T4_MOB_EXP_HERETIC_ARCHER_VETERAN": 11,
+       "T4_MOB_EXP_HERETIC_GIBSON_VETERAN_BOSS": 1,
+       "T4_MOB_EXP_HERETIC_THIEF_VETERAN": 10,
+       "T4_MOB_EXP_HERETIC_CHEST_VETERAN": 1,
+       "T4_MOB_EXP_HERETIC_GIBSON_STOOGE_VETERAN": 1,
+       "T4_MOB_EXP_HERETIC_MORTAR_VETERAN": 4,
+       "T4_MOB_EXP_HERETIC_HEALER_VETERAN": 5,
+       "T4_MOB_EXP_HERETIC_OVERSEER_VETERAN_MINIBOSS": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "52f53477-ef06-499b-ac8a-0e1b9b3a1cc9",
+        "name": "Mobs_T4_Solo",
+        "active": false
+       },
+       {
+        "id": "83d00616-6c86-4161-b2ee-37882d00a3de",
+        "name": "Mobs_T4_Veteran",
+        "active": false
+       },
+       {
+        "id": "Layer_01",
+        "name": "Mobs_T6_Hardcore",
+        "active": true
+       },
+       {
+        "id": "Layer_02",
+        "name": "Hardcore_Chest",
+        "active": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 22,
+   "uniquename": "T6_EXP_HRD_KEEPER_STONEWARS",
+   "cluster_attr": "StoneWars-HRD_EXP_HL_T6_KPR",
+   "cluster": "StoneWars-HRD",
+   "category": "T6_HARDCORE",
+   "category_index": 10,
+   "timeout": 2100,
+   "bonustimeout": 1400,
+   "title": "@EXP_TITLE_T5_EXP_VET_KEEPER_STONEWARS",
+   "steps": [
+    [
+     {
+      "faction": "KEEPER",
+      "count": 63,
+      "countpartykills": "false",
+      "mob_exists": null
+     },
+     {
+      "mobid": "T6_MOB_HRD_KEEPER_CHIEFTAIN_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "StoneWars-HRD_EXP_HL_GREEN_T6_KPR.cluster.xml",
+    "type": "HARDCORE_EXPEDITION_SURFACE",
+    "displayname": "Stone Wars",
+    "startpoints": [
+     {
+      "id": "58bb9eb0-3440-4547-abb0-8eb0458d51ca",
+      "pos": [
+       150.0,
+       43.0
+      ],
+      "roty": 90.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_HRD_KEEPER_AXE_THROWER_VETERAN": 9,
+     "T6_MOB_HRD_KEEPER_AXE_THROWER_VETERAN_MINIBOSS": 1,
+     "T6_MOB_HRD_KEEPER_BERSERK_VETERAN": 12,
+     "T6_MOB_HRD_KEEPER_CHEST_VETERAN": 2,
+     "T6_MOB_HRD_KEEPER_CHIEFTAIN_VETERAN_BOSS": 1,
+     "T6_MOB_HRD_KEEPER_DRUID_VETERAN": 8,
+     "T6_MOB_HRD_KEEPER_GIANT_VETERAN": 4,
+     "T6_MOB_HRD_KEEPER_UNPROVEN_FEMALE_VETERAN": 25,
+     "T6_MOB_HRD_KEEPER_UNPROVEN_MALE_VETERAN": 33
+    },
+    "templates": [
+     {
+      "ref": "StoneWars_Main",
+      "pos": [
+       -5.0,
+       0.0,
+       -5.0
+      ],
+      "active_layers": [
+       "Layer_01",
+       "Layer_02"
+      ],
+      "file": "templates/GREEN/StoneWars_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         150.0,
+         43.0
+        ],
+        "height": -40.0,
+        "roty": 90.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         141.0,
+         44.0
+        ],
+        "height": -40.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -86.0,
+         53.0
+        ],
+        "height": 0.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         137.0,
+         39.0
+        ],
+        "height": -40.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -90.0,
+         48.0
+        ],
+        "height": 0.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         22.0,
+         -72.0
+        ],
+        "height": -24.0,
+        "roty": 125.0,
+        "maxcolliderdist": 31.81384
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         122.0,
+         20.0
+        ],
+        "height": -16.0,
+        "roty": 180.0,
+        "maxcolliderdist": 26.94439
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         50.0,
+         58.0
+        ],
+        "height": -12.0,
+        "roty": 315.0,
+        "maxcolliderdist": 32.08665
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_HRD_KEEPER_UNPROVEN_FEMALE_VETERAN": 25,
+       "T6_MOB_HRD_KEEPER_UNPROVEN_MALE_VETERAN": 33,
+       "T6_MOB_HRD_KEEPER_DRUID_VETERAN": 8,
+       "T6_MOB_HRD_KEEPER_AXE_THROWER_VETERAN": 9,
+       "T6_MOB_HRD_KEEPER_BERSERK_VETERAN": 12,
+       "T6_MOB_HRD_KEEPER_GIANT_VETERAN": 4,
+       "T6_MOB_HRD_KEEPER_CHIEFTAIN_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_KEEPER_CHEST_VETERAN": 2,
+       "T6_MOB_HRD_KEEPER_AXE_THROWER_VETERAN_MINIBOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_inactive": {
+       "T5_MOB_EXP_KEEPER_AXE_THROWER": 5,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_FEMALE": 21,
+       "T5_MOB_EXP_KEEPER_CHEST": 2,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_MALE": 26,
+       "T5_MOB_EXP_KEEPER_BERSERK": 9,
+       "T5_MOB_EXP_KEEPER_GIANT": 3,
+       "T5_MOB_EXP_KEEPER_DRUID": 6,
+       "T5_MOB_EXP_KEEPER_CHIEFTAIN_BOSS": 1,
+       "T5_MOB_EXP_KEEPER_AXE_THROWER_MINIBOSS": 1,
+       "T5_MOB_EXP_KEEPER_AXE_THROWER_VETERAN": 9,
+       "T5_MOB_EXP_KEEPER_BERSERK_VETERAN": 12,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_MALE_VETERAN": 33,
+       "T5_MOB_EXP_KEEPER_CHEST_VETERAN": 2,
+       "T5_MOB_EXP_KEEPER_UNPROVEN_FEMALE_VETERAN": 25,
+       "T5_MOB_EXP_KEEPER_GIANT_VETERAN": 4,
+       "T5_MOB_EXP_KEEPER_DRUID_VETERAN": 8,
+       "T5_MOB_EXP_KEEPER_CHIEFTAIN_VETERAN_BOSS": 1,
+       "T5_MOB_EXP_KEEPER_AXE_THROWER_VETERAN_MINIBOSS": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "46056780-0902-4a07-80b4-e690a498ba7b",
+        "name": "Regular_T5",
+        "active": false
+       },
+       {
+        "id": "c00f0ac2-46ce-49be-b8aa-0c339580e9b0",
+        "name": "Veteran_T5",
+        "active": false
+       },
+       {
+        "id": "Layer_01",
+        "name": "Hardcore_T6",
+        "active": true
+       },
+       {
+        "id": "Layer_02",
+        "name": "Hardcore_Chest",
+        "active": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 23,
+   "uniquename": "T6_EXP_HRD_HERETIC_LUMBERCAMP",
+   "cluster_attr": "LumberCamp-HRD_EXP_FR_T6_HER",
+   "cluster": "LumberCamp-HRD",
+   "category": "T6_HARDCORE",
+   "category_index": 10,
+   "timeout": 2440,
+   "bonustimeout": 1630,
+   "title": "@EXP_TITLE_T5_EXP_VET_HERETIC_LUMBERCAMP",
+   "steps": [
+    [
+     {
+      "faction": "HERETIC",
+      "count": 74,
+      "countpartykills": "false",
+      "mob_exists": null
+     },
+     {
+      "mobid": "T6_MOB_HRD_HERETIC_BALLISTA_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "LumberCamp-HRD_EXP_FR_RED_T6_HER.cluster.xml",
+    "type": "HARDCORE_EXPEDITION_SURFACE",
+    "displayname": "Lumber Lunacy",
+    "startpoints": [
+     {
+      "id": "cfbf368f-5c6c-48ee-a94c-c9285db42d04",
+      "pos": [
+       0.0,
+       0.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "MOB_FOX": 1,
+     "MOB_HERETIC_LOCATOR": 1,
+     "MOB_RABBIT": 3,
+     "T6_MOB_HRD_HERETIC_ARCHER_VETERAN": 6,
+     "T6_MOB_HRD_HERETIC_BALLISTA_VETERAN": 4,
+     "T6_MOB_HRD_HERETIC_BALLISTA_VETERAN_BOSS": 1,
+     "T6_MOB_HRD_HERETIC_CHEST_VETERAN": 1,
+     "T6_MOB_HRD_HERETIC_FOULRAT_VETERAN": 44,
+     "T6_MOB_HRD_HERETIC_HEALER_VETERAN": 7,
+     "T6_MOB_HRD_HERETIC_LUMBERJACK_VETERAN_MINIBOSS": 1,
+     "T6_MOB_HRD_HERETIC_MAGE_VETERAN": 7,
+     "T6_MOB_HRD_HERETIC_TANK_VETERAN": 5,
+     "T6_MOB_HRD_HERETIC_THIEF_VETERAN": 13,
+     "T6_MOB_HRD_HERETIC_WOODGATHERER_VETERAN": 20
+    },
+    "templates": [
+     {
+      "ref": "LumberCamp_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_02",
+       "Layer_04"
+      ],
+      "file": "templates/RED/LumberCamp_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         0.0,
+         0.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -10.0,
+         0.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -194.0,
+         164.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -198.0,
+         159.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         -14.0,
+         -5.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -97.0,
+         188.0
+        ],
+        "height": 0.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -122.0,
+         50.0
+        ],
+        "height": -12.0,
+        "roty": 224.0,
+        "maxcolliderdist": 25.01756
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -102.0,
+         105.0
+        ],
+        "height": -16.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_HRD_HERETIC_MAGE_VETERAN": 7,
+       "T6_MOB_HRD_HERETIC_FOULRAT_VETERAN": 44,
+       "T6_MOB_HRD_HERETIC_TANK_VETERAN": 5,
+       "T6_MOB_HRD_HERETIC_THIEF_VETERAN": 13,
+       "T6_MOB_HRD_HERETIC_LUMBERJACK_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_HERETIC_WOODGATHERER_VETERAN": 20,
+       "T6_MOB_HRD_HERETIC_ARCHER_VETERAN": 6,
+       "T6_MOB_HRD_HERETIC_HEALER_VETERAN": 7,
+       "T6_MOB_HRD_HERETIC_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_HERETIC_BALLISTA_VETERAN": 4,
+       "T6_MOB_HRD_HERETIC_BALLISTA_VETERAN_BOSS": 1,
+       "MOB_HERETIC_LOCATOR": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_inactive": {
+       "T5_MOB_EXP_HERETIC_ARCHER_VETERAN": 6,
+       "T5_MOB_EXP_HERETIC_WOODGATHERER_VETERAN": 21,
+       "T5_MOB_EXP_HERETIC_LUMBERJACK_VETERAN_MINIBOSS": 1,
+       "T5_MOB_EXP_HERETIC_FOULRAT_VETERAN": 44,
+       "T5_MOB_EXP_HERETIC_THIEF_VETERAN": 14,
+       "T5_MOB_EXP_HERETIC_MAGE_VETERAN": 7,
+       "T5_MOB_EXP_HERETIC_HEALER_VETERAN": 7,
+       "T5_MOB_EXP_HERETIC_TANK_VETERAN": 6,
+       "T5_MOB_EXP_HERETIC_CHEST_VETERAN": 1,
+       "MOB_HERETIC_LOCATOR": 2,
+       "T5_MOB_EXP_HERETIC_BALLISTA_VETERAN_BOSS": 1,
+       "T5_MOB_EXP_HERETIC_BALLISTA_VETERAN": 4,
+       "T5_MOB_EXP_HERETIC_ARCHER": 6,
+       "T5_MOB_EXP_HERETIC_WOODGATHERER": 15,
+       "T5_MOB_EXP_HERETIC_LUMBERJACK_MINIBOSS": 1,
+       "T5_MOB_EXP_HERETIC_TANK": 3,
+       "T5_MOB_EXP_HERETIC_THIEF": 9,
+       "T5_MOB_EXP_HERETIC_FOULRAT": 40,
+       "T5_MOB_EXP_HERETIC_MAGE": 7,
+       "T5_MOB_EXP_HERETIC_CHEST": 1,
+       "T5_MOB_EXP_HERETIC_BALLISTA_BOSS": 1,
+       "T5_MOB_EXP_HERETIC_HEALER": 4,
+       "T5_MOB_EXP_HERETIC_BALLISTA": 4
+      },
+      "spawns_nolayer": {
+       "RABBIT": 3,
+       "FOX": 1
+      },
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T5_Veteran",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "T6_Hardcore",
+        "active": true
+       },
+       {
+        "id": "Layer_03",
+        "name": "T5_Solo",
+        "active": false
+       },
+       {
+        "id": "Layer_04",
+        "name": "Hardcore_Chest",
+        "active": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 24,
+   "uniquename": "T6_EXP_HRD_UNDEAD_SEWERSCRYPT",
+   "cluster_attr": "SewersMaintenance-HRD_EXP_DL_T6_UND",
+   "cluster": "SewersMaintenance-HRD",
+   "category": "T6_HARDCORE",
+   "category_index": 10,
+   "timeout": 2350,
+   "bonustimeout": 1570,
+   "title": "@EXP_TITLE_T5_EXP_VET_UNDEAD_SEWERSCRYPT",
+   "steps": [
+    [
+     {
+      "faction": "UNDEAD",
+      "count": 97,
+      "countpartykills": "false",
+      "mob_exists": null
+     },
+     {
+      "mobid": "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "SewersMaintenance-HRD_EXP_FR_GREEN_T6_UND.cluster.xml",
+    "type": "HARDCORE_EXPEDITION_STANDARD",
+    "displayname": "Lurking Underneath",
+    "startpoints": [
+     {
+      "id": "f51aca28-e75d-4151-9a88-90121dd62cc1",
+      "pos": [
+       38.0,
+       -156.0
+      ],
+      "roty": 90.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN": 11,
+     "T6_MOB_HRD_UNDEAD_CHEST_VETERAN": 1,
+     "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN": 16,
+     "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN_BOSS": 1,
+     "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN_MINIBOSS": 2,
+     "T6_MOB_HRD_UNDEAD_PULLER_VETERAN": 3,
+     "T6_MOB_HRD_UNDEAD_RAT_VETERAN": 35,
+     "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN": 6,
+     "T6_MOB_HRD_UNDEAD_TRASH_SKELETON_VETERAN": 73
+    },
+    "templates": [
+     {
+      "ref": "SewersMaintenance_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_03",
+       "Layer_04"
+      ],
+      "file": "templates/GREEN/SewersMaintenance_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         38.0,
+         -156.0
+        ],
+        "height": 0.0,
+        "roty": 90.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -4.0,
+         230.0
+        ],
+        "height": -4.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         32.0,
+         -149.0
+        ],
+        "height": 0.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -8.0,
+         225.0
+        ],
+        "height": -4.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         28.0,
+         -154.0
+        ],
+        "height": 0.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         40.0,
+         107.0
+        ],
+        "height": 0.0,
+        "roty": 53.0,
+        "maxcolliderdist": 24.86468
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         118.0,
+         -78.0
+        ],
+        "height": -12.0,
+        "roty": 41.0,
+        "maxcolliderdist": 24.98106
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         75.0,
+         10.0
+        ],
+        "height": 1.0,
+        "roty": 45.0,
+        "maxcolliderdist": 25.01999
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_HRD_UNDEAD_TRASH_SKELETON_VETERAN": 73,
+       "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN_MINIBOSS": 2,
+       "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN": 11,
+       "T6_MOB_HRD_UNDEAD_RAT_VETERAN": 35,
+       "T6_MOB_HRD_UNDEAD_PULLER_VETERAN": 3,
+       "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN": 16,
+       "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN": 6,
+       "T6_MOB_HRD_UNDEAD_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_UNDEAD_GHOUL_VETERAN_BOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_inactive": {
+       "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN": 10,
+       "T5_MOB_EXP_UNDEAD_ARCHER_VETERAN": 9,
+       "T5_MOB_EXP_UNDEAD_TRASH_SKELETON_VETERAN": 61,
+       "T5_MOB_EXP_UNDEAD_RAT_VETERAN": 25,
+       "T5_MOB_EXP_UNDEAD_PULLER_VETERAN": 3,
+       "T5_MOB_EXP_UNDEAD_SOLDIER_VETERAN": 4,
+       "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN_MINIBOSS": 2,
+       "T5_MOB_EXP_UNDEAD_CHEST_VETERAN": 1,
+       "T5_MOB_EXP_UNDEAD_GHOUL_VETERAN_BOSS": 1,
+       "T5_MOB_EXP_UNDEAD_RAT": 23,
+       "T5_MOB_EXP_UNDEAD_TRASH_SKELETON": 50,
+       "T5_MOB_EXP_UNDEAD_ARCHER": 6,
+       "T5_MOB_EXP_UNDEAD_GHOUL": 9,
+       "T5_MOB_EXP_UNDEAD_GHOUL_MINIBOSS": 2,
+       "T5_MOB_EXP_UNDEAD_PULLER": 3,
+       "T5_MOB_EXP_UNDEAD_CHEST": 1,
+       "T5_MOB_EXP_UNDEAD_SOLDIER": 4,
+       "T5_MOB_EXP_UNDEAD_GHOUL_BOSS": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T5_Veteran",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "T5_Solo",
+        "active": false
+       },
+       {
+        "id": "Layer_03",
+        "name": "T6_Hardcore",
+        "active": true
+       },
+       {
+        "id": "Layer_04",
+        "name": "Hardcore_Chest",
+        "active": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 25,
+   "uniquename": "T6_EXP_HRD_KEEPER_MUSHROOM",
+   "cluster_attr": "MushroomCave-HRD_EXP_DL_T6_KPR",
+   "cluster": "MushroomCave-HRD",
+   "category": "T6_HARDCORE",
+   "category_index": 10,
+   "timeout": 1980,
+   "bonustimeout": 1320,
+   "title": "@EXP_TITLE_T6_EXP_VET_KEEPER_MUSHROOM",
+   "steps": [
+    [
+     {
+      "faction": "KEEPER",
+      "count": 62,
+      "countpartykills": "false",
+      "mob_exists": null
+     },
+     {
+      "mobid": "T6_MOB_HRD_KEEPER_SEER_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "MushroomCave-HRD_EXP_FR_GREEN_T6_KPR.cluster.xml",
+    "type": "HARDCORE_EXPEDITION_STANDARD",
+    "displayname": "Mushroom Cave",
+    "startpoints": [
+     {
+      "id": "ab4414e8-a0b6-49b6-8e97-5fcbfb15fe91",
+      "pos": [
+       45.0,
+       5.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_HRD_KEEPER_AXE_THROWER_VETERAN": 9,
+     "T6_MOB_HRD_KEEPER_BERSERK_VETERAN": 16,
+     "T6_MOB_HRD_KEEPER_BERSERK_VETERAN_MINIBOSS": 1,
+     "T6_MOB_HRD_KEEPER_CHEST_VETERAN": 1,
+     "T6_MOB_HRD_KEEPER_DRUID_VETERAN": 11,
+     "T6_MOB_HRD_KEEPER_MUSHROOM_THROWER_VETERAN": 8,
+     "T6_MOB_HRD_KEEPER_SEER_VETERAN_BOSS": 1,
+     "T6_MOB_HRD_KEEPER_SPECIAL_SNIPER_VETERAN": 4,
+     "T6_MOB_HRD_KEEPER_UNPROVEN_FEMALE_VETERAN": 18,
+     "T6_MOB_HRD_KEEPER_UNPROVEN_MALE_VETERAN": 19
+    },
+    "templates": [
+     {
+      "ref": "MushroomCave_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_02",
+       "Layer_03"
+      ],
+      "file": "templates/GREEN/MushroomCave_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         45.0,
+         5.0
+        ],
+        "height": -4.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -247.0,
+         345.0
+        ],
+        "height": -77.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         53.0,
+         13.0
+        ],
+        "height": -4.0,
+        "roty": 30.0,
+        "spawnatstartup": true
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         47.0,
+         11.0
+        ],
+        "height": -4.0,
+        "roty": 120.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -251.0,
+         340.0
+        ],
+        "height": -77.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -145.0,
+         320.0
+        ],
+        "height": -52.0,
+        "roty": 45.0,
+        "maxcolliderdist": 25.02
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -113.0,
+         182.0
+        ],
+        "height": -28.0,
+        "roty": 180.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -118.0,
+         52.0
+        ],
+        "height": -16.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_HRD_KEEPER_AXE_THROWER_VETERAN": 9,
+       "T6_MOB_HRD_KEEPER_DRUID_VETERAN": 11,
+       "T6_MOB_HRD_KEEPER_MUSHROOM_THROWER_VETERAN": 8,
+       "T6_MOB_HRD_KEEPER_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_KEEPER_UNPROVEN_MALE_VETERAN": 19,
+       "T6_MOB_HRD_KEEPER_BERSERK_VETERAN": 16,
+       "T6_MOB_HRD_KEEPER_SPECIAL_SNIPER_VETERAN": 4,
+       "T6_MOB_HRD_KEEPER_UNPROVEN_FEMALE_VETERAN": 18,
+       "T6_MOB_HRD_KEEPER_SEER_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_KEEPER_BERSERK_VETERAN_MINIBOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_inactive": {
+       "T6_MOB_EXP_KEEPER_AXE_THROWER_VETERAN": 9,
+       "T6_MOB_EXP_KEEPER_UNPROVEN_MALE_VETERAN": 11,
+       "T6_MOB_EXP_KEEPER_MUSHROOM_THROWER_VETERAN": 8,
+       "T6_MOB_EXP_KEEPER_SPECIAL_SNIPER_VETERAN": 4,
+       "T6_MOB_EXP_KEEPER_DRUID_VETERAN": 11,
+       "T6_MOB_EXP_KEEPER_BERSERK_VETERAN": 14,
+       "T6_MOB_EXP_KEEPER_SEER_VETERAN_BOSS": 1,
+       "T6_MOB_EXP_KEEPER_UNPROVEN_FEMALE_VETERAN": 12,
+       "T6_MOB_EXP_KEEPER_CHEST_VETERAN": 1,
+       "T6_MOB_EXP_KEEPER_BERSERK_VETERAN_MINIBOSS": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T6_Veteran",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "T6_Hardcore",
+        "active": true
+       },
+       {
+        "id": "Layer_03",
+        "name": "Hardcore_Chest",
+        "active": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 26,
+   "uniquename": "T6_EXP_HRD_MORGANA_TRHEESISTERS",
+   "cluster_attr": "ThreeSisters-HRD_EXP_MN_T6_MOR",
+   "cluster": "ThreeSisters-HRD",
+   "category": "T6_HARDCORE",
+   "category_index": 10,
+   "timeout": 1990,
+   "bonustimeout": 1330,
+   "title": "@EXP_TITLE_T6_EXP_VET_MORGANA_TRHEESISTERS",
+   "steps": [
+    [
+     {
+      "faction": "MORGANA",
+      "count": 58,
+      "countpartykills": "false",
+      "mob_exists": null
+     },
+     {
+      "mobid": "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_A",
+      "count": 1,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_B",
+      "count": 1,
+      "mob_exists": true
+     },
+     {
+      "mobid": "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_C",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "ThreeSisters-HRD_EXP_MN_RED_T6_MOR.cluster.xml",
+    "type": "HARDCORE_EXPEDITION_SURFACE",
+    "displayname": "Three Sisters",
+    "startpoints": [
+     {
+      "id": "77f2dc93-ee69-432c-b22b-a2c5003732c5",
+      "pos": [
+       176.0,
+       -210.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_HRD_MORGANA_BAT_VETERAN": 19,
+     "T6_MOB_HRD_MORGANA_BLOODHOUND_VETERAN": 7,
+     "T6_MOB_HRD_MORGANA_BOMBARDIER_VETERAN": 7,
+     "T6_MOB_HRD_MORGANA_CHEST_VETERAN": 1,
+     "T6_MOB_HRD_MORGANA_CROSSBOWMAN_VETERAN": 9,
+     "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_A": 1,
+     "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_B": 1,
+     "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_C": 1,
+     "T6_MOB_HRD_MORGANA_INFESTOR_VETERAN": 8,
+     "T6_MOB_HRD_MORGANA_KNIGHT_VETERAN": 6,
+     "T6_MOB_HRD_MORGANA_RECRUIT_RANGE_VETERAN": 14,
+     "T6_MOB_HRD_MORGANA_ROYALKNIGHT_VETERAN": 1,
+     "T6_MOB_HRD_MORGANA_SOLDIER_VETERAN": 10,
+     "T6_MOB_HRD_MORGANA_SOLDIER_VETERAN_MINIBOSS": 1
+    },
+    "templates": [
+     {
+      "ref": "ThreeSisters_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_02",
+       "Layer_04"
+      ],
+      "file": "templates/RED/ThreeSisters_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         176.0,
+         -210.0
+        ],
+        "height": -25.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         172.0,
+         -207.0
+        ],
+        "height": -26.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -40.0,
+         222.0
+        ],
+        "height": -12.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         168.0,
+         -212.0
+        ],
+        "height": -26.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -44.0,
+         217.0
+        ],
+        "height": -12.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         29.0,
+         -112.0
+        ],
+        "height": -34.0,
+        "roty": 90.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         54.0,
+         12.0
+        ],
+        "height": -20.0,
+        "roty": 315.0,
+        "maxcolliderdist": 25.01999
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -46.0,
+         118.0
+        ],
+        "height": -18.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_HRD_MORGANA_CROSSBOWMAN_VETERAN": 9,
+       "T6_MOB_HRD_MORGANA_KNIGHT_VETERAN": 6,
+       "T6_MOB_HRD_MORGANA_BAT_VETERAN": 19,
+       "T6_MOB_HRD_MORGANA_SOLDIER_VETERAN": 10,
+       "T6_MOB_HRD_MORGANA_RECRUIT_RANGE_VETERAN": 14,
+       "T6_MOB_HRD_MORGANA_BLOODHOUND_VETERAN": 7,
+       "T6_MOB_HRD_MORGANA_INFESTOR_VETERAN": 8,
+       "T6_MOB_HRD_MORGANA_SOLDIER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_MORGANA_BOMBARDIER_VETERAN": 7,
+       "T6_MOB_HRD_MORGANA_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_B": 1,
+       "T6_MOB_HRD_MORGANA_ROYALKNIGHT_VETERAN": 1,
+       "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_C": 1,
+       "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_BOSS_A": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_inactive": {
+       "T6_MOB_EXP_MORGANA_BLOODHOUND_VETERAN": 15,
+       "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN": 22,
+       "T6_MOB_EXP_MORGANA_INFESTOR_VETERAN": 14,
+       "T6_MOB_EXP_MORGANA_CROSSBOWMAN_VETERAN": 19,
+       "T6_MOB_EXP_MORGANA_BOMBARDIER_VETERAN": 14,
+       "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN_MINIBOSS": 2,
+       "T6_MOB_EXP_MORGANA_BAT_VETERAN": 38,
+       "T6_MOB_EXP_MORGANA_KNIGHT_VETERAN": 10,
+       "T6_MOB_EXP_MORGANA_CHEST_VETERAN": 2,
+       "T6_MOB_EXP_MORGANA_RECRUIT_RANGE_VETERAN": 29,
+       "T6_MOB_EXP_MORGANA_ROYALKNIGHT_VETERAN": 2,
+       "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_B": 2,
+       "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_A": 2,
+       "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_C": 2
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "Veteran_T6",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "Hardcore_T6",
+        "active": true
+       },
+       {
+        "id": "Layer_03",
+        "name": "Mobs_Veteran_T6",
+        "active": false
+       },
+       {
+        "id": "Layer_04",
+        "name": "Hardcore_Chest",
+        "active": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 27,
+   "uniquename": "T6_EXP_HRD_UNDEAD_ETERNALBATTLE",
+   "cluster_attr": "EternalBattle-HRD_EXP_HL_T6_UND",
+   "cluster": "EternalBattle-HRD",
+   "category": "T6_HARDCORE",
+   "category_index": 10,
+   "timeout": 2480,
+   "bonustimeout": 1650,
+   "title": "@EXP_TITLE_T6_EXP_VET_UNDEAD_ETERNALBATTLE",
+   "steps": [
+    [
+     {
+      "faction": "UNDEAD",
+      "count": 85,
+      "countpartykills": "false",
+      "mob_exists": null
+     },
+     {
+      "mobid": "T6_MOB_HRD_UNDEAD_GOVERNOR_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "EternalBattle-HRD_EXP_HL_RED_T6_UND.cluster.xml",
+    "type": "HARDCORE_EXPEDITION_SURFACE",
+    "displayname": "Eternal Battle",
+    "startpoints": [
+     {
+      "id": "9e988e40-8650-4c62-9675-4949da320b19",
+      "pos": [
+       25.0,
+       -275.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN": 11,
+     "T6_MOB_HRD_UNDEAD_CHEST_VETERAN": 1,
+     "T6_MOB_HRD_UNDEAD_GOVERNOR_VETERAN_BOSS": 1,
+     "T6_MOB_HRD_UNDEAD_KNIGHT_VETERAN": 7,
+     "T6_MOB_HRD_UNDEAD_MAGE_VETERAN": 7,
+     "T6_MOB_HRD_UNDEAD_PULLER_VETERAN": 3,
+     "T6_MOB_HRD_UNDEAD_SKELETON_RANGED_VETERAN": 18,
+     "T6_MOB_HRD_UNDEAD_SKELETON_VETERAN": 23,
+     "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN": 13,
+     "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN_MINIBOSS": 1,
+     "T6_MOB_HRD_UNDEAD_TRASH_SKELETON_VETERAN": 41
+    },
+    "templates": [
+     {
+      "ref": "EternalBattle_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_01",
+       "Layer_03"
+      ],
+      "file": "templates/RED/EternalBattle_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         25.0,
+         -275.0
+        ],
+        "height": -32.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         21.0,
+         -270.0
+        ],
+        "height": -32.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -25.0,
+         270.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -29.0,
+         265.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         17.0,
+         -275.0
+        ],
+        "height": -32.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -35.0,
+         34.0
+        ],
+        "height": -20.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -15.0,
+         160.0
+        ],
+        "height": 0.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         65.0,
+         -32.0
+        ],
+        "height": -28.0,
+        "roty": 315.0,
+        "maxcolliderdist": 25.01999
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_HRD_UNDEAD_TRASH_SKELETON_VETERAN": 41,
+       "T6_MOB_HRD_UNDEAD_SKELETON_VETERAN": 23,
+       "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN": 13,
+       "T6_MOB_HRD_UNDEAD_ARCHER_VETERAN": 11,
+       "T6_MOB_HRD_UNDEAD_GOVERNOR_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_UNDEAD_SOLDIER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_UNDEAD_SKELETON_RANGED_VETERAN": 18,
+       "T6_MOB_HRD_UNDEAD_MAGE_VETERAN": 7,
+       "T6_MOB_HRD_UNDEAD_KNIGHT_VETERAN": 7,
+       "T6_MOB_HRD_UNDEAD_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_UNDEAD_PULLER_VETERAN": 3,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_inactive": {
+       "T6_MOB_EXP_UNDEAD_SKELETON_VETERAN": 22,
+       "T6_MOB_EXP_UNDEAD_MAGE_VETERAN": 8,
+       "T6_MOB_EXP_UNDEAD_SOLDIER_VETERAN": 14,
+       "T6_MOB_EXP_UNDEAD_KNIGHT_VETERAN": 7,
+       "T6_MOB_EXP_UNDEAD_SKELETON_RANGED_VETERAN": 17,
+       "T6_MOB_EXP_UNDEAD_ARCHER_VETERAN": 10,
+       "T6_MOB_EXP_UNDEAD_TRASH_SKELETON_VETERAN": 42,
+       "T6_MOB_EXP_UNDEAD_CHEST_VETERAN": 1,
+       "T6_MOB_EXP_UNDEAD_SOLDIER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_EXP_UNDEAD_PULLER_VETERAN": 3,
+       "T6_MOB_EXP_UNDEAD_GOVERNOR_VETERAN_BOSS": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "Hardcore_T6",
+        "active": true
+       },
+       {
+        "id": "Layer_02",
+        "name": "Veteran_T6",
+        "active": false
+       },
+       {
+        "id": "Layer_03",
+        "name": "Hardcore_Chest",
+        "active": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 28,
+   "uniquename": "T6_EXP_HRD_HERETIC_FISTFULOFSILVER",
+   "cluster_attr": "FistfulOfSilver-HRD_EXP_ST_T6_HER",
+   "cluster": "FistfulOfSilver-HRD",
+   "category": "T6_HARDCORE",
+   "category_index": 10,
+   "timeout": 3410,
+   "bonustimeout": 2270,
+   "title": "@EXP_TITLE_T6_EXP_VET_HERETIC_FISTFULOFSILVER",
+   "steps": [
+    [
+     {
+      "faction": "HERETIC",
+      "count": 94,
+      "countpartykills": "false",
+      "mob_exists": null
+     },
+     {
+      "mobid": "T6_MOB_HRD_HERETIC_SHADOWMASK_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "FistfulOfSilver-HRD_EXP_ST_RED_T6_HER.cluster.xml",
+    "type": "HARDCORE_EXPEDITION_SURFACE",
+    "displayname": "A Fistful Of Silver",
+    "startpoints": [
+     {
+      "id": "97708419-a020-4ea8-9591-8aba0b2785f1",
+      "pos": [
+       174.0,
+       -165.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T5_MOB_EXP_HERETIC_CHEST": 5,
+     "T5_MOB_EXP_HERETIC_FOULRAT": 5,
+     "T6_MOB_HRD_HERETIC_ALARMTRAP_VETERAN": 10,
+     "T6_MOB_HRD_HERETIC_ARCHER_VETERAN": 13,
+     "T6_MOB_HRD_HERETIC_BRAWLER_VETERAN": 11,
+     "T6_MOB_HRD_HERETIC_BRAWLER_VETERAN_MINIBOSS": 1,
+     "T6_MOB_HRD_HERETIC_DYNAMITE_VETERAN_MINIBOSS": 1,
+     "T6_MOB_HRD_HERETIC_HEALER_VETERAN": 9,
+     "T6_MOB_HRD_HERETIC_MAGE_VETERAN": 9,
+     "T6_MOB_HRD_HERETIC_SCAVENGER_VETERAN": 52,
+     "T6_MOB_HRD_HERETIC_SHADOWMASK_VETERAN_BOSS": 1,
+     "T6_MOB_HRD_HERETIC_THIEF_VETERAN": 21
+    },
+    "templates": [
+     {
+      "ref": "FistfulOfSilver_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_02",
+       "Layer_03"
+      ],
+      "file": "templates/RED/FistfulOfSilver_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         174.0,
+         -165.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -110.0,
+         212.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         170.0,
+         -157.0
+        ],
+        "height": 4.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -114.0,
+         207.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         166.0,
+         -162.0
+        ],
+        "height": 4.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         84.0,
+         32.0
+        ],
+        "height": -12.0,
+        "roty": 45.0,
+        "maxcolliderdist": 25.01999
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -115.0,
+         17.0
+        ],
+        "height": -12.0,
+        "roty": 315.0,
+        "maxcolliderdist": 25.01999
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         213.0,
+         -58.0
+        ],
+        "height": -12.0,
+        "roty": 53.0,
+        "maxcolliderdist": 24.86468
+       }
+      ],
+      "spawns_active": {
+       "T5_MOB_EXP_HERETIC_CHEST": 5,
+       "T6_MOB_HRD_HERETIC_SCAVENGER_VETERAN": 52,
+       "T6_MOB_HRD_HERETIC_THIEF_VETERAN": 21,
+       "T6_MOB_HRD_HERETIC_ALARMTRAP_VETERAN": 10,
+       "T6_MOB_HRD_HERETIC_SHADOWMASK_VETERAN_BOSS": 1,
+       "T6_MOB_HRD_HERETIC_BRAWLER_VETERAN": 11,
+       "T6_MOB_HRD_HERETIC_ARCHER_VETERAN": 13,
+       "T5_MOB_EXP_HERETIC_FOULRAT": 5,
+       "T6_MOB_HRD_HERETIC_BRAWLER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_HERETIC_HEALER_VETERAN": 9,
+       "T6_MOB_HRD_HERETIC_MAGE_VETERAN": 9,
+       "T6_MOB_HRD_HERETIC_DYNAMITE_VETERAN_MINIBOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_inactive": {
+       "T6_MOB_EXP_HERETIC_ARCHER_VETERAN": 12,
+       "T5_MOB_EXP_HERETIC_FOULRAT": 5,
+       "T6_MOB_EXP_HERETIC_HEALER_VETERAN": 8,
+       "T5_MOB_EXP_HERETIC_CHEST": 5,
+       "T6_MOB_EXP_HERETIC_TRAP_VETERAN": 10,
+       "T6_MOB_EXP_HERETIC_SCAVENGER_VETERAN": 47,
+       "T6_MOB_EXP_HERETIC_THIEF_VETERAN": 14,
+       "T6_MOB_EXP_HERETIC_MAGE_VETERAN": 9,
+       "T6_MOB_EXP_HERETIC_BRAWLER_VETERAN": 11,
+       "T5_MOB_EXP_HERETIC_THIEF_VETERAN": 1,
+       "T6_MOB_EXP_HERETIC_GRENADE_VETERAN_MINIBOSS": 1,
+       "T6_MOB_EXP_HERETIC_BRAWLER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_EXP_HERETIC_SHADOWMASK_VETERAN_BOSS": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T6_Veteran",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "T6_Hardcore",
+        "active": true
+       },
+       {
+        "id": "Layer_03",
+        "name": "Hardcore_Chest",
+        "active": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 29,
+   "uniquename": "T6_EXP_HRD_MORGANA_TORTURER",
+   "cluster_attr": "Torturer-HRD_EXP_FR_T6_MOR",
+   "cluster": "Torturer-HRD",
+   "category": "T6_HARDCORE",
+   "category_index": 10,
+   "timeout": 2400,
+   "bonustimeout": 1600,
+   "title": "@EXP_TITLE_T6_EXP_HRD_MORGANA_TORTURER",
+   "steps": [
+    [
+     {
+      "faction": "MORGANA",
+      "count": 79,
+      "countpartykills": "false",
+      "mob_exists": null
+     },
+     {
+      "mobid": "T6_MOB_HRD_MORGANA_TORTURER_VETERAN_BOSS",
+      "count": 1,
+      "mob_exists": true
+     }
+    ]
+   ],
+   "world": {
+    "file": "Torturer-HRD_EXP_FR_RED_T6_MOR.cluster.xml",
+    "type": "HARDCORE_EXPEDITION_STANDARD",
+    "displayname": "In the Raven's Claws",
+    "startpoints": [
+     {
+      "id": "187c678c-24fd-44c0-8e87-6dcfe896b4af",
+      "pos": [
+       169.0,
+       -171.0
+      ],
+      "roty": 0.0
+     }
+    ],
+    "mobcounts": {
+     "T6_MOB_HRD_MORGANA_BAT_VETERAN": 11,
+     "T6_MOB_HRD_MORGANA_BLOODHOUND_VETERAN": 11,
+     "T6_MOB_HRD_MORGANA_BOMBARDIER_VETERAN": 6,
+     "T6_MOB_HRD_MORGANA_CHEST_VETERAN": 1,
+     "T6_MOB_HRD_MORGANA_CROSSBOWMAN_VETERAN": 11,
+     "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_MINIBOSS": 1,
+     "T6_MOB_HRD_MORGANA_INFESTOR_VETERAN": 9,
+     "T6_MOB_HRD_MORGANA_RECRUIT_RANGE_VETERAN": 20,
+     "T6_MOB_HRD_MORGANA_SOLDIER_VETERAN": 16,
+     "T6_MOB_HRD_MORGANA_TORTURER_VETERAN": 11,
+     "T6_MOB_HRD_MORGANA_TORTURER_VETERAN_BOSS": 1
+    },
+    "templates": [
+     {
+      "ref": "Torturer_Main",
+      "pos": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "active_layers": [
+       "Layer_02",
+       "Layer_03"
+      ],
+      "file": "templates/RED/Torturer_Main.template.xml",
+      "startpoints": [
+       {
+        "pos": [
+         169.0,
+         -171.0
+        ],
+        "height": -16.0,
+        "roty": 0.0,
+        "id": "expeditionstartpoint_01"
+       }
+      ],
+      "exits": [
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         165.0,
+         -164.0
+        ],
+        "height": -16.0,
+        "roty": 0.0,
+        "spawnatstartup": true
+       },
+       {
+        "tile": "ExpeditionExit",
+        "pos": [
+         -229.0,
+         289.0
+        ],
+        "height": -56.0,
+        "roty": 0.0,
+        "spawnatstartup": false
+       }
+      ],
+      "narrators": [
+       {
+        "tile": "ExpeditionNarrator",
+        "pos": [
+         161.0,
+         -169.0
+        ],
+        "height": -16.0,
+        "roty": 90.0
+       },
+       {
+        "tile": "ExpeditionNarratorFinish",
+        "pos": [
+         -232.7,
+         283.93
+        ],
+        "height": -56.0,
+        "roty": 90.0
+       }
+      ],
+      "checkpoints": [
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -147.0,
+         282.0
+        ],
+        "height": -40.0,
+        "roty": 290.0,
+        "maxcolliderdist": 23.54906
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         -34.0,
+         178.0
+        ],
+        "height": -24.0,
+        "roty": 135.0,
+        "maxcolliderdist": 25.02001
+       },
+       {
+        "tile": "ExpeditionCheckPoint",
+        "pos": [
+         85.0,
+         59.0
+        ],
+        "height": -24.0,
+        "roty": 0.0,
+        "maxcolliderdist": 20.63977
+       }
+      ],
+      "spawns_active": {
+       "T6_MOB_HRD_MORGANA_BLOODHOUND_VETERAN": 11,
+       "T6_MOB_HRD_MORGANA_BAT_VETERAN": 11,
+       "T6_MOB_HRD_MORGANA_TORTURER_VETERAN": 11,
+       "T6_MOB_HRD_MORGANA_RECRUIT_RANGE_VETERAN": 20,
+       "T6_MOB_HRD_MORGANA_SOLDIER_VETERAN": 16,
+       "T6_MOB_HRD_MORGANA_BOMBARDIER_VETERAN": 6,
+       "T6_MOB_HRD_MORGANA_CROSSBOWMAN_VETERAN": 11,
+       "T6_MOB_HRD_MORGANA_CHEST_VETERAN": 1,
+       "T6_MOB_HRD_MORGANA_INFESTOR_VETERAN": 9,
+       "T6_MOB_HRD_MORGANA_CULTIST_VETERAN_MINIBOSS": 1,
+       "T6_MOB_HRD_MORGANA_TORTURER_VETERAN_BOSS": 1,
+       "LOOTCHEST_HCE_FINAL_REWARD": 1
+      },
+      "spawns_inactive": {
+       "T6_MOB_EXP_MORGANA_TORTURER_VETERAN_BOSS": 1,
+       "T6_MOB_EXP_MORGANA_SOLDIER_VETERAN": 13,
+       "T6_MOB_EXP_MORGANA_RECRUIT_RANGE_VETERAN": 19,
+       "T6_MOB_EXP_MORGANA_CROSSBOWMAN_VETERAN": 9,
+       "T6_MOB_EXP_MORGANA_TORTURER_VETERAN": 9,
+       "T6_MOB_EXP_MORGANA_BLOODHOUND_VETERAN": 9,
+       "T6_MOB_EXP_MORGANA_BOMBARDIER_VETERAN": 6,
+       "T6_MOB_EXP_MORGANA_INFESTOR_VETERAN": 8,
+       "T6_MOB_EXP_MORGANA_BAT_VETERAN": 9,
+       "T6_MOB_EXP_MORGANA_CULTIST_TORTURER_VETERAN_MINIBOSS": 1,
+       "T6_MOB_EXP_MORGANA_CHEST_VETERAN": 1
+      },
+      "spawns_nolayer": {},
+      "layers": [
+       {
+        "id": "Layer_01",
+        "name": "T6_long",
+        "active": false
+       },
+       {
+        "id": "Layer_02",
+        "name": "T6_HRD",
+        "active": true
+       },
+       {
+        "id": "Layer_03",
+        "name": "Hardcore_Chest",
+        "active": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "index": 30,
+   "uniquename": "T6_EXP_HRD_WINTER_EVENT",
+   "cluster_attr": "WINTER-Expedition_EXP_MN_T6_MOR",
+   "cluster": "WINTER-Expedition",
+   "category": "T6_EVENT",
+   "category_index": 11,
+   "timeout": 7200,
+   "bonustimeout": 7200,
+   "title": "@EXP_TITLE_T6_EXP_HRD_WINTER_EVENT",
+   "steps": [
+    [
+     {
+      "mobid": "T6_MOB_MORGANA_CROSSBOWMAN_VETERAN_MINIBOSS_WINTER",
+      "count": 1,
+      "mob_exists": false
+     },
+     {
+      "mobid": "T6_MOB_MORGANA_CULTIST_VETERAN_MINIBOSS_WINTER",
+      "count": 1,
+      "mob_exists": false
+     },
+     {
+      "mobid": "T6_MOB_MORGANA_KNIGHT_VETERAN_MINIBOSS_WINTER",
+      "count": 1,
+      "mob_exists": false
+     },
+     {
+      "mobid": "T6_MOB_EXP_MORGANA_CULTIST_VETERAN_BOSS_WINTER",
+      "count": 1,
+      "mob_exists": false
+     }
+    ]
+   ]
+  }
+ ]
+}

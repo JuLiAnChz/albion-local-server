@@ -1,0 +1,24 @@
+// Buildings the server adds to Fort Sterling (cluster 4000; analysis/work/stageN/stations/SPEC.md, Content/StationSpawns): the same ownerless
+// public crafting and refining stations as Thetford's (content/spawns/0000.json), one per RealEstate plot centre of the 4000 template
+// (20 x 20 plots, best locationquality first, then nearest the bank entrance).
+// City bonus (craftingmodifiers.xml by cluster, applied by the station handler to the map the crafter stands on):
+//   refining and crafting +18 %, wood +40 %, chicken and sheep +10 %, hammers, spears, holy staffs, plate helmets and cloth armour +15 %.
+// The bank (4001) and the market (4002) are Fort Sterling's own clusters with their own vault and orders; nothing here is shared.
+// "Building" is a buildings.xml uniquename, "Position" [x, z] in world coordinates, "Direction" the facing in degrees. Read at server start.
+{
+  "Buildings": [
+    { "Building": "T8_SMELTER",            "Position": [-15, -65] },            // ore -> metal bars (plot quality A)
+    { "Building": "T8_FORGE",              "Position": [55, 55] },              // warrior weapons and plate (plot quality A)
+    { "Building": "T8_CARPENTERSWORKSHOP", "Position": [-45, -65] },            // wood -> planks (plot quality A)
+    { "Building": "T8_TANNERY",            "Position": [-65, -55] },            // hide -> leather (plot quality A)
+    { "Building": "T8_WEAVINGMILL",        "Position": [35, -35] },             // fiber -> cloth (plot quality B)
+    { "Building": "T8_STONEMASONRY",       "Position": [55, 35] },              // rock -> stone blocks (plot quality B)
+    { "Building": "T8_HUNTERSLODGE",       "Position": [25, -65] },             // hunter weapons and leather armour (plot quality B)
+    { "Building": "T8_MAGICITEMS",         "Position": [75, 35] },              // mage weapons and cloth armour (plot quality B)
+    { "Building": "T8_TOOLMAKER",          "Position": [-15, -85] },            // tools, bags, capes (plot quality B)
+    { "Building": "T8_ALCHEMIST",          "Position": [75, 55] },              // potions (plot quality B)
+    { "Building": "T8_COOK",               "Position": [-45, -85] },            // food (plot quality B)
+    { "Building": "T8_BUTCHER",            "Position": [-65, -75] },             // meat (plot quality B)
+    { "Building": "T8_STABLE",             "Position": [45, 105] }               // mounts: horses and oxen from island-grown animals + leather (stageN/mounts/SPEC.md) (plot quality B)
+  ]
+}

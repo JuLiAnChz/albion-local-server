@@ -1,0 +1,45 @@
+// Corrupted dungeons (analysis/work/stageL/corrupted/SPEC.md; README "Corrupted dungeons"). The switches and the factors that differ
+// between the presets are config keys (config/albionlocal.json "Corrupted"); here the tables. Every key is optional; a missing key keeps
+// the value shown here. Read at the start.
+{
+  // The completion reward per difficulty (beginner = Hunter T5, intermediate = Stalker T6, pro = Slayer T8): whole silver and fame,
+  // x Rates:Silver / Rates:Fame and x Corrupted:RewardFactor (pve 1.5); the silver also x (1 + the infamy bonus of the run).
+  "Completion": {
+    "beginner": { "Silver": 15000, "Fame": 20000 },
+    "intermediate": { "Silver": 40000, "Fame": 60000 },
+    "pro": { "Silver": 120000, "Fame": 200000 }
+  },
+  // Phase B: the reward of an owner who repels an invasion (beats the invader or destroys the 3 Demonic Shards itself) and of a player
+  // invader who wins (beats the owner): whole silver x Rates:Silver x (1 + the infamy bonus of the winner's own run), infamy x
+  // Corrupted:InfamyFactor. An invasion that ends by a leave or a disconnect pays nobody.
+  "InvaderReward": {
+    "beginner": { "Silver": 5000, "Infamy": 300 },
+    "intermediate": { "Silver": 15000, "Infamy": 1500 },
+    "pro": { "Silver": 40000, "Infamy": 6000 }
+  },
+  // When a consenting owner's bot invader comes: "Fixed" = once, Corrupted:BotInvaderDelaySeconds after the shrine use; "Official" = by the
+  // data's rolls (every 30 s after the first 60 s, 5.9 % each).
+  "Rolls": "Fixed",
+  // The weight of a map instead of corrupteddungeons.xml's (1 each; 0 = never picked), e.g. { "CORRUPT-007": 0 }.
+  "Maps": {},
+  // The chat lines (System channel); {name} is filled in. A key left out keeps its built-in text.
+  "Texts": {
+    "cd.refused": "Corrupted dungeon: {reason}.",
+    "cd.entered": "{rank} dungeon, T{tier}: slay demons to draw out the demon ({points}/{required}).",
+    "cd.demon": "The demon has appeared in its lair.",
+    "cd.completed": "Demon slain: +{infamy} infamy, +{silver} silver. The boss chest is open; leave through the start or the escape.",
+    "cd.rank": "Infamy {value} reached: corrupted rewards +{bonus}%.",
+    "cd.closing": "The dungeon closes in {seconds} s.",
+    "cd.closed": "The corrupted dungeon has closed.",
+    "cd.left": "You left the corrupted dungeon: +{infamy} infamy.",
+    "cd.shrine": "The Demonic Shrine has marked you: you may be invaded now.",
+    "cd.invaded": "An invader has come: beat him or destroy {shards} Demonic Shards.",
+    "cd.invading": "You invade {owner}'s dungeon: beat its owner.",
+    "cd.repelled": "The invader is gone: +{infamy} infamy, +{silver} silver.",
+    "cd.lost": "The invader has beaten you and left.",
+    "cd.won": "You have beaten the dungeon's owner: +{infamy} infamy, +{silver} silver. You return in {seconds} s.",
+    "cd.beaten": "The dungeon's owner has repelled you. You return in {seconds} s.",
+    "cd.over": "The invasion is over without a fight: no reward.",
+    "cd.chain": "Next dungeon: streak {streak}, completion rewards +{bonus}%."
+  }
+}

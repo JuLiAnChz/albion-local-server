@@ -1,0 +1,43 @@
+// The Mists (analysis/work/stageL/mists/SPEC.md; README "The Mists"). The switches and the factors that differ between the presets are
+// config keys (config/albionlocal.json "Mists"); here the tables. Every key is optional; a missing key keeps the value shown here.
+// Read at the start.
+{
+  // What each mists.xml <treasures> subtype of a zone spawns when its roll succeeds: one name of the list at random, "{tier}" the zone's
+  // tier. A LootChestSpawnpoint of lootchests.xml is a treasure chest (it needs its channel), a mobs.xml mob a mob; MYTHICALMOBS are the
+  // mist bosses (from rarity 1). Subtypes left out spawn nothing (the power-crystal WISPS, SPECIALMOBS and RESOURCE_* have no client
+  // object to map to); [] switches one off.
+  "Treasures": {
+    "CHEST": ["MISTS_TREASURE_SOLO"],
+    "COFFER": ["MISTS_TREASURE_COFFER_SOLO"],
+    "MYTHICALMOBS": ["T{tier}_MOB_MISTS_GRIFFIN", "T{tier}_MOB_MISTS_SPIDER", "T{tier}_MOB_MISTS_FAIRYDRAGON"]
+  },
+  // Phase B: Knightfall Abbey's treasures (chest 1 x 100 %, coffers 3 x 100 %) on the dungeon's own treasure spots.
+  "DungeonTreasures": {
+    "CHEST": ["MISTS_DUNGEON_TREASURE_SOLO"],
+    "COFFER": ["MISTS_DUNGEON_TREASURE_COFFER_SOLO"]
+  },
+  // Phase B: the Brecilien standing per point of mob fame earned in the mists (x Mists:StandingFactor), the City Trader's FAVOR per
+  // point of standing gained, and the chance of a black solo zone to hold a resource wisp (its portal leads into a resource zone).
+  "StandingPerFame": 1,
+  "FavorPerStanding": 0.01,
+  "ResourceWispChance": 0.5,
+  // No two treasures of a zone closer than this (metres), and none this close to a zone's arrival points.
+  "MinTreasureSpacing": 30,
+  "ArrivalMinDistance": 40,
+  // The chat lines (System channel); {name} is filled in; "" switches a line off. A key left out keeps its built-in text.
+  "Texts": {
+    "Entered": "The {mode} ({rarity}, T{tier}): it fades in {minutes} min.",
+    "Closing": "The mist thickens: this zone closes in {seconds} s.",
+    "Closed": "The zone dissolved; you are back at {place}.",
+    "TeamFull": "This mist takes at most {max} travellers together; you enter on your own.",
+    "DuoAlone": "You enter the Greater Mists alone: its creatures are weakened for you.",
+    "BossDown": "{boss} has fallen. A reward chest awaits.",
+    "ReturnExpired": "The way back has faded.",
+    "Refused": "The mist refuses you: {why}.",
+    "Standing": "Brecilien standing +{gain} ({total}, rank {rank}).",
+    "Shrine": "The room is cleared: the {set} shrine blesses you.",
+    "StaticBlocked": "The mists entrance stays closed to you for {seconds} s.",
+    "StandingTooLow": "This needs Brecilien standing {need}; you have {have}.",
+    "RoadsClosed": "The roads entrance of Brecilien is not open on this server yet."
+  }
+}

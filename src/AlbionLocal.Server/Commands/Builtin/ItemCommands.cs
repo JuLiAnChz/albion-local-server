@@ -1,0 +1,88 @@
+using AlbionLocal.Server.Data;
+using AlbionLocal.Server.Entities;
+using AlbionLocal.Server.Persistence;
+
+namespace AlbionLocal.Server.Commands.Builtin;
+
+/// <summary>Item commands: .item add, .kit (content/kits.json).</summary>
+public static class ItemCommands
+{
+    /// <summary>Count limit of one stack: items.xml maxstacksize, 999 for nearly every stackable item (22 differ; <see cref="ItemTemplate.MaxStackSize"/>, not applied yet).</summary>
+    public const int MaxStack = 999;
+
+    /// <summary>
+    /// Creates the item as Join creates saved items (NewSimpleItem, NewJournalItem, or NewEquipmentItem with the default spell choice) and
+    /// puts it into the first free inventory slot (<see cref="Network.WorldSession.AddInventoryItem"/>), saved after the
+    /// change delay. Equipment does not stack: each one is its own object in its own slot. Quality (1 normal … 5
+    /// masterpiece) only exists on equipment.
+    /// </summary>
+    [Command("item add", Level = AccountLevel.GameMaster, Help = "puts a new item into the first free inventory slot (quality 1-5, equipment only)")]
+    public static void Add(CommandContext ctx, ItemTemplate item, int count = 1, int quality = 1)
+    {
+        var player = ctx.RequirePlayer();
+        // Checked before anything is sent or saved: a saved item the client cannot build would come back on every Join.
+        if (!item.CanCreate) throw new CommandError($"{item.Name} is a {item.Kind}: only equipment, simple items and journals (_EMPTY, _FULL) can be created yet");
+        if (count is < 1 or > MaxStack) throw new CommandError($"count: {count} is not 1..{MaxStack}");
+        if (quality is < 1 or > 5) throw new CommandError($"quality: {quality} is not 1..5 (1 normal ... 5 masterpiece)");
+        if (item.IsEquipment && quality > item.MaxQuality) throw new CommandError($"quality: {item.Name} has quality 1..{item.MaxQuality} only (maxqualitylevel)");
+        var slots = Put(player, item, count, quality);
+        if (slots.Count == 0) throw new CommandError("the inventory is full");
+        var what = item.IsEquipment ? $"{slots.Count} x {item.Name}{(quality > 1 ? $" (quality {quality})" : "")}" : $"{count} x {item.Name}";
+        ctx.Reply($"added {what} to inventory slot{(slots.Count > 1 ? "s" : "")} {string.Join(", ", slots)}"
+            + (item.IsEquipment && slots.Count < count ? $"; the inventory is full, {count - slots.Count} not added" : ""));
+    }
+
+    /// <summary>
+    /// <paramref name="count"/> of <paramref name="item"/> into free inventory slots as .item add puts them: one stack, or one slot
+    /// per piece of equipment. The slots filled; fewer than asked (none for a stack) when the inventory is full.
+    /// </summary>
+    private static List<int> Put(Player player, ItemTemplate item, int count, int quality)
+    {
+        var slots = new List<int>();
+        for (var n = 0; n < (item.IsEquipment ? count : 1); n++)
+        {
+            if (player.Session.AddInventoryItem(item, item.IsEquipment ? 1 : count, item.IsEquipment ? quality : 1) is not { } slot) break;
+            slots.Add(slot);
+        }
+        return slots;
+    }
+
+    /// <summary>The kits of content/kits.json with their items.</summary>
+    [Command("kit list", Level = AccountLevel.GameMaster, Help = "lists the item kits of content/kits.json")]
+    public static void KitList(CommandContext ctx)
+    {
+        if (ctx.World.Kits.All is not { Count: > 0 } kits) throw new CommandError("no kits (content/kits.json is missing or empty)");
+        ctx.Reply(string.Join("\n", kits.Select(k => $"{k.Name}: {k.Items.Count} item{(k.Items.Count == 1 ? "" : "s")}{(k.Help.Length > 0 ? $" - {k.Help}" : "")}")));
+    }
+
+    /// <summary>
+    /// Every item of a kit (content/kits.json, Content/Kits) into the inventory, each as <see cref="Add"/> puts it, while free
+    /// slots last; the reply counts the items added (a piece of equipment or a stack each) and names what did not fit (or
+    /// cannot be created: missing from the item table, or a quality above its maxqualitylevel).
+    /// </summary>
+    [Command("kit", Level = AccountLevel.GameMaster, Help = "puts the items of a kit (.kit list) into the inventory, as far as free slots go")]
+    public static void Kit(CommandContext ctx, string name)
+    {
+        var player = ctx.RequirePlayer();
+        var kit = ctx.World.Kits.Find(name) ?? throw new CommandError(
+            $"unknown kit {name}; kits: {(ctx.World.Kits.All is { Count: > 0 } all ? string.Join(", ", all.Select(k => k.Name)) : "none")}");
+        var (added, missed) = (0, new List<string>());
+        foreach (var entry in kit.Items)
+        {
+            // Checked at load against the server's item table; a test world's hand-made table may still lack one.
+            if (ctx.World.Items.Find(entry.Name) is not { CanCreate: true } item || item.IsEquipment && entry.Quality > item.MaxQuality)
+            {
+                missed.Add($"{entry.Name} (not creatable)");
+                continue;
+            }
+            // Slots filled: one per piece of equipment, one for the whole stack.
+            var slots = Put(player, item, entry.Count, entry.Quality).Count;
+            added += slots;
+            var left = item.IsEquipment ? entry.Count - slots : slots == 0 ? entry.Count : 0;
+            if (left > 0) missed.Add($"{left} x {entry.Name}");
+        }
+        if (added == 0 && missed.Count > 0) throw new CommandError($"kit {kit.Name}: nothing added; the inventory is full ({missed.Count} entr{(missed.Count == 1 ? "y" : "ies")} left)");
+        ctx.Reply($"kit {kit.Name}: added {added} item{(added == 1 ? "" : "s")}"
+            + (missed.Count > 0 ? $"; did not fit: {string.Join(", ", missed)}" : ""));
+    }
+}

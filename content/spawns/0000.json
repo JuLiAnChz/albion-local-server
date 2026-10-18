@@ -1,0 +1,24 @@
+// Buildings the server adds to Thetford (cluster 0000; ARCHITECTURE.md §5.2, Content/StationSpawns). Stage 6 SPEC §6c:
+// every crafting and refining station of an official city stands on a player plot, so a local server has none; these are
+// ownerless public stations instead (NewBuilding without owner keys, as the NPC buildings), at the official station plots,
+// or (for the rest of SPEC §6c's list) at free RealEstate plot centres.
+// "Building" is a buildings.xml uniquename (the client places the tiles.xml tile of the same name), "Position" [x, z] in
+// world coordinates, "Direction" the facing in degrees. Read at server start; an unknown building is skipped with a warning.
+{
+  "Buildings": [
+    { "Building": "T8_SMELTER",            "Position": [30, 70] },   // ore -> metal bars (Thetford: +40 % ore returns)
+    { "Building": "T8_FORGE",              "Position": [40, 70] },   // warrior weapons and plate
+    { "Building": "T8_CARPENTERSWORKSHOP", "Position": [30, 80] },   // wood -> planks
+    { "Building": "T8_TANNERY",            "Position": [-70, -60] }, // hide -> leather
+    { "Building": "T8_WEAVINGMILL",        "Position": [-80, -60] }, // fiber -> cloth
+    { "Building": "T8_STONEMASONRY",       "Position": [-95, -65] }, // rock -> stone blocks
+    // The other crafting stations of SPEC §6c, one per free plot centre (realestate_01, 03, 04, 05, 06, 09 of the template).
+    { "Building": "T8_HUNTERSLODGE",       "Position": [65, 55] },   // hunter weapons and leather armour
+    { "Building": "T8_MAGICITEMS",         "Position": [65, 25] },   // mage weapons and cloth armour
+    { "Building": "T8_TOOLMAKER",          "Position": [65, -45] },  // tools, bags, capes
+    { "Building": "T8_ALCHEMIST",          "Position": [55, -75] },  // potions
+    { "Building": "T8_COOK",               "Position": [25, -75] },  // food
+    { "Building": "T8_BUTCHER",            "Position": [-45, -75] },  // meat
+    { "Building": "T8_STABLE",             "Position": [-45, -95] }   // mounts: horses and oxen from island-grown animals + leather (stageN/mounts/SPEC.md)
+  ]
+}

@@ -1,0 +1,5236 @@
+[
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "SWAMP_GREEN_T1_BANK_ENTRANCE",
+  "pos": [
+   -10.0,
+   -10.0
+  ],
+  "guid": "982df85e-a6f5-45a7-a01f-a9ef91314007",
+  "worldxml_pos": "-10 -10",
+  "target": "06b25940-e4fa-40b9-9afd-d100c5d82985@0006",
+  "spawn": [
+   -10.0,
+   -20.0
+  ]
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "SWAMP_GREEN_MARKETPLACE_ENTRANCE",
+  "pos": [
+   -25.0,
+   25.0
+  ],
+  "guid": "399399b1-2fa3-43e7-86e7-037590a33673",
+  "worldxml_pos": "-25 25",
+  "target": "9c1b401a-4833-4986-80cd-7a07bd78caea@0007",
+  "spawn": [
+   -20.38,
+   19.83
+  ]
+ },
+ {
+  "event": "none:placeholderspot",
+  "pos": [
+   -23.5,
+   93.5
+  ],
+  "tile": "HALL_OF_FAME_PLACEHOLDER_BANNER"
+ },
+ {
+  "event": "none:placeholderspot",
+  "pos": [
+   -37.5,
+   106.5
+  ],
+  "tile": "HALL_OF_FAME_PLACEHOLDER_BANNER"
+ },
+ {
+  "event": "none:placeholderspot",
+  "pos": [
+   -67.5,
+   93.5
+  ],
+  "tile": "HALL_OF_FAME_PLACEHOLDER_BANNER"
+ },
+ {
+  "event": "none:placeholderspot",
+  "pos": [
+   -52.5,
+   106.5
+  ],
+  "tile": "HALL_OF_FAME_PLACEHOLDER_BANNER"
+ },
+ {
+  "event": "none:placeholderspot",
+  "pos": [
+   -45.0,
+   109.0
+  ],
+  "tile": "HALL_OF_FAME_PLACEHOLDER_STATUE"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   95.0,
+   -215.0
+  ],
+  "guid": "d6a536f6-a029-488f-990e-6da06a141bb9",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   85.0,
+   -185.0
+  ],
+  "guid": "8d0f823a-c689-4f3b-a560-2e12c48b3969",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   165.0,
+   55.0
+  ],
+  "guid": "665e01b3-3204-4d43-8bac-4062601f5204",
+  "size": "20 20"
+ },
+ {
+  "event": "NewBuilding",
+  "code": 45,
+  "tile": "SWAMP_GREEN_T8_MELDBUILDING",
+  "pos": [
+   -25.0,
+   38.0
+  ],
+  "rot": 90.0,
+  "guid": "dbecb58f-debd-4481-b33e-aa614340d72c",
+  "type": 26,
+  "type_1based_datatrack": 27
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   85.0,
+   155.0
+  ],
+  "guid": "18435ab4-cde2-483a-b376-a150829150db",
+  "size": "20 20"
+ },
+ {
+  "event": "NewTravelpoint",
+  "code": 213,
+  "tile": "FASTTRAVEL_POINT",
+  "pos": [
+   -2.0,
+   36.0
+  ],
+  "guid": "cfca05a8-f2cc-4b49-9aa8-e89ed1d2b64e"
+ },
+ {
+  "event": "NewBuilding",
+  "code": 45,
+  "tile": "SWAMP_GREEN_VANITY_STORE",
+  "pos": [
+   -50.0,
+   12.0
+  ],
+  "rot": 0.0,
+  "guid": "e31fb85e-d199-426d-a94f-9c6ed484fa2c",
+  "type": 370,
+  "type_1based_datatrack": 371
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   65.0,
+   175.0
+  ],
+  "guid": "6a3f733c-9a90-48a0-b6e4-83fb05b49b16",
+  "size": "20 20"
+ },
+ {
+  "event": "NewIslandAccessPoint",
+  "code": 214,
+  "pos": [
+   -56.0,
+   -19.0
+  ],
+  "rot": 90.0,
+  "guid": "e97f4505-abdc-4e9e-8121-f113503f6dde"
+ },
+ {
+  "event": "NewBuilding",
+  "code": 45,
+  "tile": "SWAMP_GREEN_REPAIRSHOP",
+  "pos": [
+   16.0,
+   8.0
+  ],
+  "rot": 0.0,
+  "guid": "ad0d88b5-6f6f-420f-88fc-ccbf87fb0af5",
+  "type": 494,
+  "type_1based_datatrack": 495
+ },
+ {
+  "event": "none:respawnpoint",
+  "pos": [
+   4.0,
+   33.0
+  ],
+  "tile": "RespawnPoint"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   165.0,
+   105.0
+  ],
+  "guid": "c8dc1426-4437-4a55-9ff5-8d3c45eff678",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -95.0,
+   -195.0
+  ],
+  "guid": "65deca6b-7312-46f2-b663-146970297cc7",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   165.0,
+   -75.0
+  ],
+  "guid": "f8f1d49b-6e4b-466c-a175-e751c5e7ba38",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -45.0,
+   -205.0
+  ],
+  "guid": "c694b30d-a3d2-4dfe-bbf8-1b29172b3175",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   165.0,
+   -45.0
+  ],
+  "guid": "b5f536a8-f8fc-454a-92f1-f6f8271777eb",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   155.0,
+   -95.0
+  ],
+  "guid": "6d8136af-381c-4a40-8453-4bef49afd8a2",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -185.0,
+   -85.0
+  ],
+  "guid": "b4f75331-4380-4b63-b1db-b7f7967daf41",
+  "size": "40 40"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   115.0,
+   -175.0
+  ],
+  "guid": "3250d394-1b0b-4c40-945b-a6e5f45a2cb5",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -175.0,
+   -155.0
+  ],
+  "guid": "8a6e6a3c-b46f-4332-a751-6615b8d55941",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -75.0,
+   -205.0
+  ],
+  "guid": "4f66464a-bdbe-415c-ba3f-1fb28f62d47b",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   35.0,
+   -175.0
+  ],
+  "guid": "54f94bee-67c9-4686-b3c3-ec43c4b77a07",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   85.0,
+   -165.0
+  ],
+  "guid": "bcca7853-ac31-4f40-be73-2ecbb17e17dc",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   65.0,
+   -175.0
+  ],
+  "guid": "b438ff93-b864-4b84-817f-6b8152e8ee17",
+  "size": "20 20"
+ },
+ {
+  "event": "NewExpeditionAgent",
+  "code": 314,
+  "pos": [
+   3.5,
+   18.5
+  ],
+  "guid": "422e2fd7-4443-4061-a7f6-02bc78fad2bb",
+  "agent": "T6_EXPAGENT_ROYAL_CITY",
+  "agent_index": 4
+ },
+ {
+  "event": "NewBuilding",
+  "code": 45,
+  "tile": "ARENA_AGENCY",
+  "pos": [
+   -63.0,
+   40.0
+  ],
+  "rot": 90.0,
+  "guid": "4f4c7fe3-1239-4b69-9978-c31b73fd7b22",
+  "type": 348,
+  "type_1based_datatrack": 349
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "Exit",
+  "pos": [
+   -26.5,
+   103.5
+  ],
+  "guid": "3bf7f70d-1f1b-4dba-95d4-ad0d283d2fec",
+  "worldxml_pos": "-26.5 103.5",
+  "target": "9d0cf6d3-582a-4f08-980c-5e5a2a9c74a7@0360-HALL-01",
+  "spawn": [
+   -45.009,
+   95.029
+  ]
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "Exit",
+  "pos": [
+   -10.5,
+   52.5
+  ],
+  "guid": "8c7d7adb-6933-4038-8b90-f8d741b90334",
+  "worldxml_pos": "-10.5 52.5",
+  "target": "7e205a1f-e2c7-4be8-a448-6688dd35aace@0204",
+  "spawn": [
+   -10.5,
+   37.5
+  ]
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "Exit",
+  "pos": [
+   -57.5,
+   -6.5
+  ],
+  "guid": "6d942dbe-cba5-4464-a920-24ffa37f7094",
+  "worldxml_pos": "-57.5 -6.5",
+  "target": "bccde3dd-bf3c-481f-9acc-a0f3393e94a5@0202",
+  "spawn": [
+   -45.864,
+   -9.48
+  ]
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "Exit",
+  "pos": [
+   -10.5,
+   -52.5
+  ],
+  "guid": "8ead40dc-79d2-4c4f-9ee4-1785b29c06bd",
+  "worldxml_pos": "-10.5 -52.5",
+  "target": "5f740861-90c4-49ba-90d0-0aaf7e4eb253@0206",
+  "spawn": [
+   -10.188,
+   -39.658
+  ]
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "Exit",
+  "pos": [
+   67.5,
+   -10.5
+  ],
+  "guid": "5a72bd2c-848d-4b23-a3b8-7f0c2f8246f8",
+  "worldxml_pos": "67.5 -10.5",
+  "target": "5dcd7144-f171-492b-9d02-94ebb22fbce7@0203",
+  "spawn": [
+   51.462,
+   -10.5
+  ]
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   65.0,
+   -195.0
+  ],
+  "guid": "d42ce343-6015-401a-a745-36e050dd75eb",
+  "size": "20 20"
+ },
+ {
+  "event": "NewFactionWarfarePortal",
+  "code": 662,
+  "tile": "SWAMP_GREEN_CITY_FWARFARE_PORTAL_WAGON",
+  "pos": [
+   50.0,
+   0.0
+  ],
+  "guid": "3859a82b-f690-4c82-8ee0-a0fd9125ec19",
+  "flagging": 5,
+  "component": "factionwarfareportal"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   35.0,
+   -195.0
+  ],
+  "guid": "2b3540f4-8da0-4d67-a75e-07c6a7ff0bfa",
+  "size": "20 20"
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "HELLDEN_PORTAL",
+  "pos": [
+   -68.0,
+   66.0
+  ],
+  "guid": "cb197789-d2ca-40f6-ba22-14d1d8cdfe39",
+  "worldxml_pos": "-68 66",
+  "target": "53e318cd-bab5-45df-babe-e511821292b6@0000-HellDen",
+  "spawn": [
+   -59.809,
+   61.64
+  ]
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   115.0,
+   165.0
+  ],
+  "guid": "f4c1b9e9-6aaf-4507-8259-2009dec4f48d",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -75.0,
+   -235.0
+  ],
+  "guid": "d3562f7c-a159-404e-8ec0-42f4b97d4078",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   185.0,
+   -45.0
+  ],
+  "guid": "6f3076d0-bf14-480a-b146-aac175ea757c",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   205.0,
+   -85.0
+  ],
+  "guid": "28deb94a-7708-483b-8ec1-b41def4cce77",
+  "size": "40 40"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   215.0,
+   85.0
+  ],
+  "guid": "ee1e1705-cf2b-49d6-bd42-017e754bc053",
+  "size": "40 40"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -115.0,
+   -225.0
+  ],
+  "guid": "cc94427c-a081-40a0-aa92-aa9c7ddfbc98",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   65.0,
+   205.0
+  ],
+  "guid": "a6de9e5e-372f-401c-bf12-8d6c2b786d51",
+  "size": "20 20"
+ },
+ {
+  "event": "NewBuilding",
+  "code": 45,
+  "tile": "SWAMP_GREEN_FACTION_TRADER",
+  "pos": [
+   34.0,
+   2.0
+  ],
+  "rot": 90.0,
+  "guid": "5f932a92-8895-43ef-bc72-01b12bc00b2d",
+  "type": 20,
+  "type_1based_datatrack": 21
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   105.0,
+   195.0
+  ],
+  "guid": "ee9ac742-de08-4655-8aef-df248168c7ef",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   15.0,
+   175.0
+  ],
+  "guid": "35a14751-3105-4eb3-9444-f028d5d3c92b",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   155.0,
+   85.0
+  ],
+  "guid": "4f8162c4-889d-49a1-8bf0-b13fdce8300d",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -55.0,
+   -235.0
+  ],
+  "guid": "7e1d2dc4-5521-4346-ade6-49364745d73a",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   105.0,
+   85.0
+  ],
+  "guid": "fa3ce966-ffd7-4b33-a32d-2c35c84fcffb",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   105.0,
+   65.0
+  ],
+  "guid": "3c4ce3b2-95e2-449f-8637-3fbb43f75be7",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   115.0,
+   35.0
+  ],
+  "guid": "61eb5ae6-1d00-4542-a0b7-6252843c4845",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   25.0,
+   -75.0
+  ],
+  "guid": "0687268a-db1f-49a5-8c2a-4810bf8f38b8",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   55.0,
+   -75.0
+  ],
+  "guid": "915dd782-5ea3-4050-a285-83ee7bc47f8e",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   65.0,
+   -45.0
+  ],
+  "guid": "ff1e3906-c9c7-4658-ae17-c3f348afe43b",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   65.0,
+   25.0
+  ],
+  "guid": "1a693302-1a5a-4400-b6c5-7db585cf7df7",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   35.0,
+   75.0
+  ],
+  "guid": "9b8eb631-ed4f-45e9-ab84-f89a60ec3cc1",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   65.0,
+   55.0
+  ],
+  "guid": "df7dbe5d-6f06-4845-ab3c-40dd04d58ebb",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -195.0,
+   -155.0
+  ],
+  "guid": "b91fd748-b4d7-46bf-b04a-660bd4cc55b1",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -215.0,
+   -135.0
+  ],
+  "guid": "649f6802-8cac-40a5-92c1-736d8c15079b",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -185.0,
+   -125.0
+  ],
+  "guid": "4395c32e-6967-44c9-a6c4-e8a61cd1f54d",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -75.0,
+   -65.0
+  ],
+  "guid": "87054642-4b47-42af-9d96-0502c24288c8",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   185.0,
+   55.0
+  ],
+  "guid": "bb1c8d55-409b-4733-bd3b-5359760f021c",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -175.0,
+   -215.0
+  ],
+  "guid": "bf98de89-cc31-4fd4-9faf-aa7a0b1b5125",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   85.0,
+   205.0
+  ],
+  "guid": "aa065c8e-c25b-4e75-a7e9-9188e5dce14b",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   175.0,
+   135.0
+  ],
+  "guid": "9f257a9c-b9b3-4cac-b3ea-d51505edd670",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   195.0,
+   115.0
+  ],
+  "guid": "608fbce0-b47b-4a3d-ba65-92e063be52bf",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -215.0,
+   -115.0
+  ],
+  "guid": "83cccd09-828f-4685-b5f3-9f095ef323cb",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   175.0,
+   -135.0
+  ],
+  "guid": "6df3e396-9141-415c-9b46-815c44d07267",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   185.0,
+   -115.0
+  ],
+  "guid": "0e281da0-d9ec-4622-91dd-66a2dd439eca",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -95.0,
+   -235.0
+  ],
+  "guid": "f8ef996c-a4f7-4045-9410-450ccbd39ae8",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -135.0,
+   -215.0
+  ],
+  "guid": "15a1d97d-68fd-40b7-b3ff-e5b87367d89d",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   175.0,
+   85.0
+  ],
+  "guid": "8a2baf1d-a3eb-4a48-952f-e4dcd84488be",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -45.0,
+   -95.0
+  ],
+  "guid": "255638d2-e1c2-41eb-af9d-dba1ae7aa4f3",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -45.0,
+   -75.0
+  ],
+  "guid": "02eb377c-db0c-4b82-9eb2-89e5c418d00c",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -75.0,
+   -95.0
+  ],
+  "guid": "a6ba9646-2721-44d4-b0eb-df0aa94daf5c",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   35.0,
+   115.0
+  ],
+  "guid": "a41d3cdd-7f34-4b72-82ca-49e93cdc38c8",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   85.0,
+   -115.0
+  ],
+  "guid": "d31c6f10-b871-41b8-bd72-9032792c87c8",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   65.0,
+   -115.0
+  ],
+  "guid": "6814d42f-e810-4cf8-b0db-12ef70adf943",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   35.0,
+   -125.0
+  ],
+  "guid": "9b4d858b-a8c1-4fba-8314-2aea31a80858",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   115.0,
+   -45.0
+  ],
+  "guid": "93f65916-9fe1-454b-826b-86ee6d19febf",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -125.0,
+   -75.0
+  ],
+  "guid": "66c0b230-3f8c-45cf-b83c-28fd443144c6",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -115.0,
+   -125.0
+  ],
+  "guid": "5b5af0fe-2f27-490b-8cc2-f6a5e17701a6",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -115.0,
+   -105.0
+  ],
+  "guid": "c9307f42-6479-4a07-92e9-79cc0a6bf80f",
+  "size": "20 20"
+ },
+ {
+  "event": "NewExit",
+  "code": 215,
+  "tile": "Exit",
+  "pos": [
+   -63.5,
+   104.5
+  ],
+  "guid": "6c4a0f6b-9361-4123-a0e8-c6588551a82c",
+  "worldxml_pos": "-63.5 104.5",
+  "target": "2ce18096-66af-4f36-9dca-a5ae36ed2c09@0360-HALL-01",
+  "spawn": [
+   -44.933,
+   95.066
+  ]
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   85.0,
+   -45.0
+  ],
+  "guid": "072e6e22-4610-416f-ae3a-89515cc4468d",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -85.0,
+   -125.0
+  ],
+  "guid": "09109ba9-416e-4135-8a10-c5469e4a3301",
+  "size": "40 40"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -45.0,
+   -125.0
+  ],
+  "guid": "557b2d92-9fab-4a0f-a9d1-10cd589117a0",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -95.0,
+   -65.0
+  ],
+  "guid": "8732dd3a-1a22-4047-850b-5a6c04bf5f82",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -95.0,
+   -95.0
+  ],
+  "guid": "ee835253-865a-4aae-9774-73df431483c3",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   85.0,
+   25.0
+  ],
+  "guid": "fd37a9ac-d4f3-499c-8b3a-628566d12172",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   35.0,
+   95.0
+  ],
+  "guid": "9edee864-5241-42d0-ad7a-9dd646457ff9",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   85.0,
+   55.0
+  ],
+  "guid": "36bd55ca-6164-4266-80fe-4ba67164691a",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   25.0,
+   -95.0
+  ],
+  "guid": "9e047903-4eec-4e4b-8c76-d85ea13f9953",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   85.0,
+   -85.0
+  ],
+  "guid": "e7e027f7-afc7-41a5-babc-08fb63fe53ae",
+  "size": "40 40"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   55.0,
+   -95.0
+  ],
+  "guid": "a4e5e8d0-996d-4aec-b712-59cb258a1d4e",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   75.0,
+   85.0
+  ],
+  "guid": "3ec79db9-1a98-4084-862d-6c76dd8c8f3e",
+  "size": "40 40"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   115.0,
+   -195.0
+  ],
+  "guid": "1e74ecc1-1db5-4e99-813b-2cb17ac86650",
+  "size": "20 20"
+ },
+ {
+  "event": "NewRealEstate(later)",
+  "code": 191,
+  "pos": [
+   -165.0,
+   -125.0
+  ],
+  "guid": "c67423f2-894c-4923-8a25-53c10911ecec",
+  "size": "20 20"
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   -10.0,
+   -10.0
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   -25.0,
+   26.0
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   27.5,
+   -105.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -117.5,
+   -63.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   16.5,
+   38.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -86.5,
+   -76.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   36.5,
+   -86.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   75.5,
+   43.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   7.5,
+   48.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   20.5,
+   3.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -48.5,
+   -14.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -0.5,
+   -41.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -14.5,
+   27.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   22.5,
+   16.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   15.5,
+   -58.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   95.5,
+   27.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -62.5,
+   -53.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   36.5,
+   -89.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   79.5,
+   43.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   93.5,
+   -28.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   18.5,
+   93.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -28.5,
+   -103.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   134.5,
+   73.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   70.5,
+   -148.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -148.5,
+   -110.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -17.5,
+   30.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   98.5,
+   51.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -114.5,
+   -63.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   23.5,
+   -106.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   57.5,
+   -138.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -89.5,
+   -76.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   131.5,
+   55.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   37.5,
+   -61.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   54.5,
+   25.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   51.5,
+   37.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   82.5,
+   36.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   36.5,
+   -92.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -92.5,
+   -76.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   25.5,
+   -64.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -64.5,
+   -65.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -135.5,
+   -96.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -107.5,
+   -137.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   97.5,
+   -107.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   97.5,
+   97.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   2.5,
+   41.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   123.5,
+   57.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   58.5,
+   -132.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -132.5,
+   -98.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   119.5,
+   -120.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_DEAD_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   104.5,
+   -127.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_DEAD_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -128.5,
+   -144.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   16.5,
+   56.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   44.5,
+   3.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   43.5,
+   7.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   38.5,
+   12.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   17.5,
+   -37.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -25.5,
+   -46.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   115.5,
+   143.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   15.5,
+   -34.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   111.5,
+   117.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   15.5,
+   34.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -24.5,
+   -44.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   10.5,
+   203.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_PLAIN_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   30.5,
+   163.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_DEAD_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   215.5,
+   44.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_DEAD_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -156.5,
+   -209.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   -69.7,
+   128.9
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   -19.1,
+   128.6
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -17.5,
+   36.5
+  ],
+  "locationid": "ARTIFACTFOUNDRY",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   34.5,
+   -4.5
+  ],
+  "locationid": "FACTION_WARFARE",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   7.5,
+   0.5
+  ],
+  "locationid": "REPAIR",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -45.5,
+   15.5
+  ],
+  "locationid": "VANITY",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -21.5,
+   20.5
+  ],
+  "locationid": "MARKETPLACE",
+  "radius": 8.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -43.5,
+   -21.5
+  ],
+  "locationid": "ISLAND",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -17.17,
+   -3.16
+  ],
+  "locationid": "BANK",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -22.5,
+   106.5
+  ],
+  "locationid": "CONQUERORSHALL",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   3.5,
+   18.5
+  ],
+  "locationid": "EXPEDITION",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -34.28,
+   -15.81
+  ],
+  "locationid": "EXPLORER",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -63.5,
+   40.5
+  ],
+  "locationid": "ARENA",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -67.5,
+   107.5
+  ],
+  "locationid": "ENERGYMANIPULATOR",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -22.5,
+   106.5
+  ],
+  "locationid": "ENERGYMANIPULATOR",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -67.5,
+   107.5
+  ],
+  "locationid": "OUTLANDPORTAL",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -22.5,
+   106.5
+  ],
+  "locationid": "OUTLANDPORTAL",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -3.12,
+   -9.66
+  ],
+  "locationid": "BANK",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -14.27,
+   -18.87
+  ],
+  "locationid": "BANK",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -1.5,
+   36.5
+  ],
+  "locationid": "TRAVEL",
+  "radius": 7.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -63.0,
+   60.98
+  ],
+  "locationid": "HELLDEN",
+  "radius": 5.0
+ },
+ {
+  "event": "NewLocationMarker",
+  "code": 383,
+  "pos": [
+   -67.5,
+   107.5
+  ],
+  "locationid": "CONQUERORSHALL",
+  "radius": 7.0
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -86.1,
+   -24.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -114.0,
+   -24.7
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -155.5,
+   -36.0
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -148.2,
+   -88.7
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -141.4,
+   -140.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -161.1,
+   -188.0
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -112.4,
+   -177.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -59.2,
+   -173.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -22.7,
+   -144.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -7.0,
+   -101.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   1.4,
+   -52.5
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   22.7,
+   -151.2
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -7.0,
+   -193.9
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -41.5,
+   -53.9
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -20.0,
+   -239.3
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -82.1,
+   -275.7
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -122.2,
+   -263.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -153.9,
+   -247.5
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -195.3,
+   -245.5
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -206.2,
+   -196.9
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -233.4,
+   -169.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -257.8,
+   -129.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -235.1,
+   -81.1
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -204.6,
+   -46.3
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   23.6,
+   -231.7
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   58.9,
+   -239.0
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   100.1,
+   -256.1
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   137.4,
+   -222.2
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -41.5,
+   -275.7
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   155.9,
+   -177.0
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   132.3,
+   -143.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   79.6,
+   -141.7
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   132.9,
+   -90.7
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   208.9,
+   34.0
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   246.6,
+   49.5
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   264.02,
+   91.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   234.12,
+   128.8
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   142.7,
+   -33.8
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   199.4,
+   -158.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   221.0,
+   -122.3
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   253.9,
+   -85.0
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   245.9,
+   -45.1
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   211.9,
+   -33.8
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   180.0,
+   -1.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   40.6,
+   -17.9
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   84.3,
+   -7.5
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   121.4,
+   -5.0
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   150.5,
+   38.8
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   131.2,
+   87.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   44.8,
+   31.9
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -78.4,
+   15.3
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -81.3,
+   62.3
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -41.6,
+   82.5
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   4.5,
+   61.1
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -3.2,
+   109.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   29.2,
+   152.4
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -23.4,
+   155.2
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   -15.7,
+   195.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   29.5,
+   203.5
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   62.8,
+   241.3
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   105.2,
+   239.0
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   138.23,
+   201.07
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   164.89,
+   169.13
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   127.0,
+   132.7
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   74.2,
+   136.3
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "NewFishingZoneObject(later)",
+  "code": 360,
+  "pos": [
+   212.4,
+   150.6
+  ],
+  "zone": "FRESHWATER_BASE"
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   -0.05,
+   20.0
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   -63.0,
+   40.0
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   34.0,
+   2.0
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   -66.59,
+   64.59
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   50.0,
+   -1.0
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   -56.0,
+   -19.0
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "none:minimapmarker",
+  "pos": [
+   -2.0,
+   36.0
+  ],
+  "tile": "MiniMapMarker"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   49.5,
+   27.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_BAYOU_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   56.5,
+   216.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   116.5,
+   -86.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   117.5,
+   -90.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -103.5,
+   -53.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -99.5,
+   -52.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   26.5,
+   183.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   27.5,
+   179.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   173.5,
+   33.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   169.5,
+   32.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   173.5,
+   -146.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -73.5,
+   -193.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -69.5,
+   -192.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   126.5,
+   -183.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   126.5,
+   -176.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -103.5,
+   -183.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -99.5,
+   -182.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -33.5,
+   -93.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -33.5,
+   -86.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   53.5,
+   206.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   52.5,
+   210.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   143.5,
+   -132.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -3.5,
+   -66.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   3.5,
+   -66.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -67.5,
+   -246.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -153.5,
+   -156.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -152.5,
+   -160.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -173.5,
+   -203.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -169.5,
+   -202.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -186.5,
+   -212.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   73.5,
+   13.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   69.5,
+   12.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -136.5,
+   -226.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -140.5,
+   -227.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   143.5,
+   -103.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   142.5,
+   -99.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -76.5,
+   -246.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -80.5,
+   -247.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -97.5,
+   -156.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   153.5,
+   -73.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   152.5,
+   -69.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   3.5,
+   166.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -83.5,
+   -53.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -79.5,
+   -52.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   206.5,
+   -63.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   210.5,
+   -62.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -33.5,
+   -116.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -32.5,
+   -120.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   93.5,
+   13.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   89.5,
+   12.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -196.5,
+   -166.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -200.5,
+   -167.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   116.5,
+   -206.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   123.5,
+   -206.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   42.5,
+   -136.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -96.5,
+   -246.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -100.5,
+   -247.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   106.5,
+   -216.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   107.5,
+   -220.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -226.5,
+   -113.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -227.5,
+   -109.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   116.5,
+   -97.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   196.5,
+   -116.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   197.5,
+   -120.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -53.5,
+   -147.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -206.5,
+   -73.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -207.5,
+   -69.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   226.5,
+   -96.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   227.5,
+   -100.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -183.5,
+   -166.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -176.5,
+   -166.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -226.5,
+   -133.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -227.5,
+   -129.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   116.5,
+   -153.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   120.5,
+   -152.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -33.5,
+   -76.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -32.5,
+   -80.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   236.5,
+   83.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -123.5,
+   -53.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -119.5,
+   -52.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   233.5,
+   63.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   229.5,
+   62.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   196.5,
+   -47.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -86.5,
+   -156.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -90.5,
+   -157.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -173.5,
+   -63.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   36.5,
+   -53.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   40.5,
+   -52.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -183.5,
+   -203.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   106.5,
+   -33.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   110.5,
+   -32.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   226.5,
+   -76.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   227.5,
+   -80.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   13.5,
+   -83.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   12.5,
+   -79.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   87.5,
+   216.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   176.5,
+   -146.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   183.5,
+   -146.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   33.5,
+   -206.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -37.5,
+   -136.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   226.5,
+   -93.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   226.5,
+   -86.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   53.5,
+   -43.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   52.5,
+   -39.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   23.5,
+   116.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   22.5,
+   120.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -33.5,
+   -56.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -32.5,
+   -60.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   76.5,
+   116.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   80.5,
+   117.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   73.5,
+   -216.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   69.5,
+   -217.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   223.5,
+   -106.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   219.5,
+   -107.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -153.5,
+   -83.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -153.5,
+   -76.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   7.5,
+   186.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -173.5,
+   -226.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -166.5,
+   -226.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -86.5,
+   -246.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   222.5,
+   63.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   23.5,
+   163.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   19.5,
+   162.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -136.5,
+   -82.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   87.5,
+   116.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   43.5,
+   177.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -113.5,
+   -53.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -33.5,
+   -203.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -33.5,
+   -196.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   113.5,
+   13.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   109.5,
+   12.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   83.5,
+   -33.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   76.5,
+   -33.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -132.5,
+   -183.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   136.5,
+   163.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -116.5,
+   -236.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   93.5,
+   143.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   89.5,
+   142.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   126.5,
+   42.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   13.5,
+   -103.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   12.5,
+   -99.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   23.5,
+   83.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   23.5,
+   76.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   63.5,
+   163.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   59.5,
+   162.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   13.5,
+   -123.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   12.5,
+   -119.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   12.5,
+   163.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   176.5,
+   146.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   180.5,
+   147.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   42.5,
+   -206.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -176.5,
+   -226.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -180.5,
+   -227.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -203.5,
+   -63.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   66.5,
+   216.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   70.5,
+   217.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   156.5,
+   33.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   163.5,
+   33.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   143.5,
+   116.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   142.5,
+   120.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   126.5,
+   -196.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   127.5,
+   -200.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   116.5,
+   193.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   117.5,
+   189.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   33.5,
+   43.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   29.5,
+   42.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   167.5,
+   -33.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -217.5,
+   -146.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   3.5,
+   176.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   2.5,
+   180.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   27.5,
+   126.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   226.5,
+   -67.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   23.5,
+   66.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   22.5,
+   70.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   66.5,
+   -33.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   70.5,
+   -32.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -43.5,
+   -243.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -43.5,
+   -236.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -66.5,
+   -53.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -73.5,
+   -53.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   183.5,
+   -33.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   176.5,
+   -33.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   23.5,
+   186.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   16.5,
+   186.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   73.5,
+   146.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   72.5,
+   150.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   23.5,
+   -186.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   23.5,
+   -193.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   236.5,
+   93.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   237.5,
+   89.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   126.5,
+   -37.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   33.5,
+   -163.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   26.5,
+   -163.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   153.5,
+   -43.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   152.5,
+   -39.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   23.5,
+   -183.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   22.5,
+   -179.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -183.5,
+   -63.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_C"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   -179.5,
+   -62.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_A"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   116.5,
+   202.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   23.5,
+   -173.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   173.5,
+   146.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   166.5,
+   146.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   196.5,
+   -43.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   196.5,
+   -36.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_B"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   93.5,
+   -226.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_BUSH_D"
+ },
+ {
+  "event": "Harvestable",
+  "code": 39,
+  "pos": [
+   126.5,
+   -187.5
+  ],
+  "type": 0,
+  "tier": 1,
+  "charges": 2,
+  "tile": "SWAMP_GREEN_T1_TREE_WATER_B"
+ }
+]

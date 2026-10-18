@@ -1,0 +1,32 @@
+// Random dungeons (analysis/work/stageG/dungeons/SPEC.md): the numbers the client data and the captures leave open.
+// Every key is optional and an [assume]; a missing key keeps the value shown here. Read at the start.
+{
+  "Enabled": true,                          // open-world clusters get random dungeon exits on their RandomExitPositionMarker tiles
+  "PerPartySubtypes": ["SOLO", "EVENT_SOLO"], // one dungeon per party (or per player out of a party) behind the same exit; others: one per exit
+  "Floors": 0,                              // floors of every dungeon (0 = as the generator's Size draw gives; the path lengths are drawn)
+  "FillAtStart": true,                      // a new map fills its markers at once; later exits wait for the exit's activationtime
+  "FixedExits": false,                      // exits on the fixed exit tiles too (key 5 true: their own tile; outside the roads untried); a road's come with Roads:FixedDungeons
+  "MinSquare": 10,                          // smallest trigger square side accepted at the entrance (SPEC §2.2), plus Transfer:PositionTolerance
+  "ExitChannelSeconds": 2,                  // a clicked portal (PORTAL_SOLO prefabs, op 237): channel seconds (gamedata ExitSettings/@channeledexitusagetime)
+  "ExitCancelDistance": 1,                  // metres moved during that channel that cancel it (254)
+  "UpdateSeconds": 1,                       // seconds between the passes of the exit and dungeon timers
+  "GmExitSeconds": 600,                     // an exit made with .rd goes after this long unused (0 = with its map)
+  "ArrivalGraceSeconds": 120,               // a dungeon counts as occupied this long after a player is sent in, until its Join (scene load)
+  "FallbackCluster": "0000",                // where a character goes whose dungeon is gone and who has no saved return point
+  "Chests": true,                           // floors get the loot chests of their reward layers (lootchests.xml)
+  "ChestState": 6,                          // ChestState a chest spawns with (6 Unlocked; the boss chests: BossChests below)
+  "RespawnAtEntrance": true,                // a player who dies inside (lethal dungeon) respawns in front of the dungeon's entrance
+  // StageH PvE (PVE-DESIGN.md §3 step 10).
+  "GroupScaling": true,                     // mobs of the scaled subtypes: health (and damage) x min(ScalingMax, ScalingBase + ScalingPerPlayer x players)
+  "GroupScaledSubtypes": ["VETERAN", "ELITE"], // players = the party members online at the making, or more once more went in (1: 0.55, 2: 0.70, 3: 0.85, 4+: 1)
+  "ScalingBase": 0.40,
+  "ScalingPerPlayer": 0.15,
+  "ScalingMax": 1.0,
+  "ScaleDamage": true,                      // false: the health only
+  "BossChests": true,                       // *BOSS* chest spawnpoints spawn BossLocked (0) until the boss or miniboss near them (else every one of the floor) dies
+  "BossChestRadius": 40,                    // metres from the chest to a boss's spawn point that make it the chest's guard
+  "DailyBonus": 1.5,                        // dungeon of the day: x fame, silver and loot (mobs and chests) in that faction's dungeons; 1 = off
+  "DailyFactions": ["HERETIC", "KEEPER", "MORGANA", "UNDEAD"], // one each day, in turn (day number mod the list)
+  "DailyResetHour": 10,                     // UTC hour the dungeon of the day changes
+  "DailyText": "Dungeon of the day: {faction} dungeons give x{bonus} fame, silver and loot today." // chat line on entering one; "" = none
+}

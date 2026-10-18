@@ -1,0 +1,100 @@
+// Side requests the server answers without a handler (ARCHITECTURE.md §5.2, §6.2; Content/OpcodeStubs).
+// An object entry: the answer is the empty response of the operation's class (zeros, "" and empty arrays) with the
+// fields given here over it, sent without the "unhandled" warning (".ops unhandled" lists these apart). Only operations
+// whose client takes any well-formed answer belong here; anything with logic or with a value the server must know (the
+// character's Guid, an echo of the request, the current date) is a handler in code (GetRankings,
+// GetReferralSeasonDetails, GetMailInfos).
+// A field is named by its parameter key ("1") or by its field name in the generated class (Messages.g.cs, confirmed
+// names from analysis/protocol-names.json). Values are JSON of the field's type: numbers, true/false, strings, Guids
+// as strings, arrays, [x, y] for a Vector2; GameTimeStamps are DateTime ticks. "ReturnCode" sets the Photon return
+// code (default 0 = success), the operation's error code the client's handler knows.
+// "silent": no answer at all, for an operation with a response class that the official server never answers (the
+// unhandled default would send the empty response). "ack": the bare success {253, 255} with return code 0, for an
+// operation without a response class that the official server answers so (the unhandled default sends nothing);
+// "ack-no-request-id": the same without key 255. "ignore": no answer and no "unhandled" warning, for an operation without
+// a response class that nobody answers (telemetry; analysis/work/stageH/ops-audit/SPEC.md §6).
+// Read at server start: an unknown operation, kind, key or field, a value that does not fit its field, an operation
+// that has a handler, fields or "silent" without a response class, or "ack" / "ignore" with one stops the start.
+// Each entry was checked against the client's response handler (345319, analysis/NOTES-protocol.md "Opcode stubs") or,
+// for silent, ack and ignore, against the official answers in the captures (103829, 114814, 20261016_002835).
+// Answered in code since the ops audit (stageH ops-audit SPEC): SubscribeToCluster, TravelIslandShowroom,
+// GetPersonalSeasonPastRewardData, GetFactionWarfareCampaignData, TrackAlbionJournalAchievements, QuickSellAuctionQueryAction; since the
+// goals (PVE-DESIGN step 11): GetPersonalSeasonTrackerData, GetCharacterSteamAchievements, ClaimAlbionJournalReward; since the
+// island farms (PVE-DESIGN step 14 phase 3): PlaceableObjectPlace, BoostFarmable; since the mail (stageJ mail SPEC): ReadMail.
+{
+  // ---- login server
+  "AccountSubscriptionInfo": {},      // c3d.j.c: key 0 (character Guids), keys 1/2 per entry; none = no flags
+  "GetSurveyLogs": {},                // c3d.cl: rows up to the shortest of keys 0-2; none = no surveys
+
+  // ---- game server
+  "GetVanityUnlocks": {},             // cjk.b: key 0 = unlocked vanity ids; none = nothing unlocked
+  "GetVanityConsumables": {},         // cjk.c.c → bh(bcm, ajg): keys 0/1 parallel; none = no consumables
+  "ArmoryItemUsageStatistics": {},    // ItemDetailsPopularBuildsView.OnSearchResult: empty key 0 = view stays hidden
+  "GoldMarketGetInfos": {},           // del.x: thirteen numbers kept as they are
+  "GoldMarketGetAverageInfo": {},     // del.a.c: keys 0/1 parallel price history; none = no history
+  "GoldMarketGetBuyOffer": {},        // GetGoldView: key 1 = 0 → "@GOLD_MARKET_NOT_AVAILABLE";
+                                      // PremiumStoreGui: silver price 0 → its silver buy button is off
+  "GoldMarketGetSellOffer": {},       // GetGoldView: as GoldMarketGetBuyOffer
+  "GetMatches": {},                   // dd0.b: rows of key 1; none = no matches
+  "AuctionGetLowestOfferPrices": {},  // stage 6d: keys 0/1 parallel (item type, lowest price); none = no price shown
+  "AuctionGetItemAverageStats": {},   // stage 6d: keys 0-2 parallel price history; none = no history
+  "GetClusterMapInfo": {},            // c32.n.b → the map's callback; the world map opened fine with it (2026-10-15)
+
+  // ---- the empty answer the unhandled default sent already, kept as it is without the warning (ops-audit SPEC §1:
+  // no PvP challenges, shop tiles, territories or guilds here yet; each becomes a handler with its feature;
+  // QueryGuildPlayerStats and GetGuildEnergyDrainInfo did with the guilds, Handlers/World/GuildHandler; GetGvgSeasonRank,
+  // GetGuildChallengePoints, GetGvgSeasonRankings, GetGvgSeasonContributionByActivity and GetGuildMightCategoryOverview with the
+  // guild goals of stage I, Handlers/World/GuildSeasonHandler)
+  "GetPvpChallengeData": {},
+  "GetShopTilesForCategory": {},
+  "GetMyTerritories": {},
+  "GetGuildAccountLogs": {},
+  "GvGSeasonPlayerGuildParticipationDetails": {},
+
+  // PremiumStoreGui.d.d: rc 0 = bought ("@PREMIUM_STORE_BUY_SILVER_RESULT_*" from key 0, though nothing was), 10521 =
+  // "@PAYMENT_NOT_ENOUGH_SILVER_PLAYER", 10522 = "@PREMIUM_STORE_OFFER_NO_LONGER_AVAILABLE"; after any answer the store
+  // asks for its offers again. Premium cannot be bought here, so the offer is gone.
+  "BuyPremium": { "ReturnCode": 10522 },
+
+  // cvs.b.c → ArenaQueueView, ArenaDetailsGui: each ranked category (arena.xml isranked) needs an entry, or
+  // ArenaRankingInfoView.SetRankingInfo and ArenaDetailsGui.FillRewards throw NullReferenceException (the empty response
+  // did, 2026-10-15 20:43 and 23:09). The official answer for a new character: the season, both ranked categories, the
+  // lowest rank, 0 points.
+  "GetArenaRankings": {
+    "SeasonId": 12,         // arenaseason index (b7o id) in the client's region file: Login key 26 "europe" →
+                            // arena_europe.bin (from SEASON_22) → 12 = SEASON_34, 2026-09-12..11-21, as the official
+                            // Europe server sent; arena.xml (West) would be 18, arena_asia.bin (East) 16. Another index
+                            // misses: no rank, points or rewards, and an error line in the client per window
+    "CategoryIds": [1, 2],  // arenacategory index: ranked, ranked_1v1 (the same in all three files)
+    "RankLevels": [0, 0],   // rank index in the season's template, 0 = the lowest (ARENA_IRON_1)
+    "RankPoints": [0, 0],
+    "bnw": [0, 0]           // kept by cfu, not read by the queue view; 0 as sent officially
+  },
+
+  // ---- never answered by the official server, although the client has a response class (requests / responses in the
+  // captures 103829, 114814, 20261016_002835; the unhandled default answered them with the empty response)
+  // (CastStart and RegisterToObject were here: since stage 5b/5c their handlers keep that silence, CombatHandler and LootHandler;
+  // ActionOnBuildingStart too: since stage 6 its handler answers only a failure, BuildingActionHandler; ChangeUseFlag and
+  // SetAchievementsAutoLearn since stageJ focus-lp, FocusHandler)
+  "QueryAllianceGuildStats": "silent", // 002835: 1 request (a guild without an alliance), no response
+
+  // ---- answered with a bare rc-0 response by the official server, although the client has no response class
+  // (002835; the unhandled default sent nothing): {253, 255} as official
+  "GetCharacterStats": "ack",                              // rc 0 with the request id, then a stats event (not sent here)
+  "PartyFinderRegisterApplicants": "ack",                  // 2 x rc 0 with the request id
+  "PartyFinderUnregisterApplicants": "ack-no-request-id",  // rc 0 without key 255, although the request had one
+  "DepositToGuildAccount": "ack",                          // rc 0; request and answer without a request id (guilds only)
+
+  // ---- no response class and never answered officially (0 responses in all captures; ops-audit SPEC §1, §6): the
+  // unhandled default's silence without its warning
+  "ExtendedHardwareStats": "ignore",               // telemetry, 27 requests in the captures
+  "ClientPerformanceStats": "ignore",              // telemetry, 22
+  "ClientFrametimeSpike": "ignore",                // telemetry, 4
+  "ProductShopUserEvent": "ignore",                // shop telemetry, 2
+  "EventBasedPopupAddSeen": "ignore",              // store/marketing pop-up seen, 3
+  "UseFunction": "ignore",                         // journal "usefunction" counter input, until the Albion Journal exists
+  "PartyFinderRegisterForUpdates": "ignore",       // answered only by PartyFinder update events (no Party Finder here)
+  "PartyFinderUnregisterForUpdates": "ignore",
+  "PartyFinderRequestEquipmentSnapshot": "ignore",
+  "RequestEstimatedMarketValue": "ignore"          // its event EstimatedMarketValueUpdate was never seen, 5 requests
+}

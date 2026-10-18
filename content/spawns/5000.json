@@ -1,0 +1,22 @@
+// Buildings the server adds to Brecilien (cluster 5000; analysis/work/stageL/mists/SPEC.md §6.7, Content/StationSpawns): officially its
+// crafting stations stand on player plots, as in every city, so a local server has none; these are the same ownerless public stations as
+// Thetford's (content/spawns/0000.json), one per free RealEstate plot centre of the 5000 template. The bank (5002) and the market (5003) are
+// Brecilien's own: their vaults and orders are a location of their own, as the regional economy wants.
+// "Building" is a buildings.xml uniquename, "Position" [x, z] in world coordinates, "Direction" the facing in degrees. Read at server start.
+{
+  "Buildings": [
+    { "Building": "T8_SMELTER",            "Position": [85, 175] },  // ore -> metal bars
+    { "Building": "T8_FORGE",              "Position": [85, 145] },  // warrior weapons and plate
+    { "Building": "T8_CARPENTERSWORKSHOP", "Position": [85, 115] },  // wood -> planks
+    { "Building": "T8_TANNERY",            "Position": [85, -125] }, // hide -> leather
+    { "Building": "T8_WEAVINGMILL",        "Position": [85, -155] }, // fiber -> cloth
+    { "Building": "T8_STONEMASONRY",       "Position": [85, -185] }, // rock -> stone blocks
+    { "Building": "T8_HUNTERSLODGE",       "Position": [275, 75] },  // hunter weapons and leather armour
+    { "Building": "T8_MAGICITEMS",         "Position": [275, 45] },  // mage weapons and cloth armour
+    { "Building": "T8_TOOLMAKER",          "Position": [305, 25] },  // tools, bags, capes
+    { "Building": "T8_ALCHEMIST",          "Position": [305, -25] }, // potions
+    { "Building": "T8_COOK",               "Position": [275, -55] }, // food
+    { "Building": "T8_BUTCHER",            "Position": [285, -85] },  // meat
+    { "Building": "T8_STABLE",             "Position": [135, 25] }    // mounts: horses and oxen from island-grown animals + leather (stageN/mounts/SPEC.md)
+  ]
+}
