@@ -65,6 +65,16 @@ The detailed, per-feature reference (English) is in [docs/REFERENCE.md](docs/REF
 - The GameData folder of a client installation you own (`<client>/Albion-Online_Data/StreamingAssets/GameData`).
   The server will not start without it.
 
+## Client version
+
+The server is built against client build **1.32.030.345319** (`albiononline-win32-full-1.32.030.345319`, the first
+line of the client's `version.txt`). The protocol (operation and event codes, message fields) and the GameData formats
+follow that build.
+
+Other builds are not supported: an update can renumber operations and events or change the data files, and the server
+may then fail to start or misbehave in game. At each start the server logs the build and a SHA-256 of every GameData
+file it reads, keeps them in `data/clientdata.json`, and warns when they differ from the previous start.
+
 ## Build and run
 
 ```bash
