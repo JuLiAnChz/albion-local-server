@@ -3,6 +3,9 @@ using AlbionLocal.Photon;
 using AlbionLocal.Server;
 using AlbionLocal.Server.Commands;
 using AlbionLocal.Server.Data;
+using AlbionLocal.Server.Protocol;
+
+ProtocolTrace.Enabled = args.Contains("--protocol-trace");
 
 ServerConfig config;
 try
