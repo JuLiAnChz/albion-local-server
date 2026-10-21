@@ -12,6 +12,25 @@ namespace AlbionLocal.Server.Entities;
 /// </summary>
 public sealed class Player(WorldSession session, World world, long id, Character character, Inventory inventory, Progression? progression) : IUnit
 {
+    private TimeSpan _playedAt = world.Clock.Now;
+    private bool _playing = true;
+
+    /// <summary>Settle only elapsed online time; repeated save/disconnect snapshots cannot count it twice.</summary>
+    public void StorePlayedTime()
+    {
+        if (!_playing) return;
+        var elapsed = (World.Clock.Now - _playedAt).Ticks / TimeSpan.TicksPerMillisecond;
+        if (elapsed <= 0) return;
+        Character.PlayedMilliseconds = checked(Character.PlayedMilliseconds + elapsed);
+        _playedAt += TimeSpan.FromMilliseconds(elapsed);
+    }
+
+    internal void StopPlayedTime()
+    {
+        StorePlayedTime();
+        _playing = false;
+    }
+
     /// <summary>Object id of the player (Join key 0); new for every Join.</summary>
     public long Id { get; } = id;
 
@@ -329,6 +348,7 @@ public sealed class Player(WorldSession session, World world, long id, Character
     /// <summary>Writes where the player is at <paramref name="now"/> (the last Move extrapolated) into its character, for saving.</summary>
     public void StorePosition(DateTime now)
     {
+        StorePlayedTime();
         if (Movement is not { } move) return;
         var p = move.PositionAt(now);
         Character.PositionX = p.X;

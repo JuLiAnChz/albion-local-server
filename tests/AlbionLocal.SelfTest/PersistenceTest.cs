@@ -41,6 +41,7 @@ public static class PersistenceTest
         var path = Path.Combine(dir, "albionlocal.db");
         var a = StarterKit.Default.NewCharacter("Alpha");
         a.Template = 3;
+        a.PlayedMilliseconds = 123456789;
         a.Appearance = 2;
         a.Customization = [1, 2, 3];
         a.Clothes = [7];

@@ -144,6 +144,7 @@ public sealed partial class WorldSession(IPeer peer, World world) : AlbionSessio
     /// </summary>
     private void Leave(Player player)
     {
+        player.StopPlayedTime();
         if (world.Scripts.PlayerHooks.Count > 0)
         {
             world.Scripts.OnLogout(player);

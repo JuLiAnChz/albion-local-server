@@ -15,13 +15,11 @@ public sealed partial class LoginSession
     /// <summary>
     /// Character list = parallel arrays (LoginInProcessDialog.CreateCharacterRecord → LoginGui.c).
     /// Every array must hold one entry per character or the client throws. A guild member's keys 19 (guild name), 20 (role) and
-    /// 22-28 (crest) come from <paramref name="guilds"/> (stageH guilds SPEC §2.7); null = none. Key 35 is each character's premium end
-    /// (<paramref name="premiumEnd"/>, <see cref="Systems.Premium.ListEnd"/>; stageJ focus-lp SPEC §2.2: the entry shows premium while it is
-    /// in the future); 0 = now (no premium).
+    /// 22-28 (crest) come from <paramref name="guilds"/>; null = none. Key 34 is played milliseconds (client c4.k),
+    /// key 35 is remaining premium days (client c4.p), not UTC timestamps. Zero means no premium.
     /// </summary>
-    private static void FillCharacterList(LoginResponse r, IReadOnlyList<Character> chars, Systems.Guilds? guilds = null, long premiumEnd = 0)
+    private static void FillCharacterList(LoginResponse r, IReadOnlyList<Character> chars, Systems.Guilds? guilds = null, long premiumDays = 0, World? world = null)
     {
-        if (premiumEnd == 0) premiumEnd = DateTime.UtcNow.Ticks;
         var n = chars.Count;
         T[] Each<T>(Func<Character, T> f) => chars.Select(f).ToArray();
         int[] Ints() => new int[n];
@@ -29,10 +27,11 @@ public sealed partial class LoginSession
         string[] Strings() => Enumerable.Repeat("", n).ToArray();
 
         r.bdd = Each(c => c.Name);            // [9]  c.a  name (sent back in SelectCharacter key 0)
-        r.bde = Each(c => c.Id.ToString());   // [10] c.b
+        r.bde = Each(c => c.Cluster);         // [10] c.b: cluster instance id, not character id
         r.bdf = Strings();                    // [11] c.d
         r.bdg = Strings();                    // [12] c.e
-        r.bdh = Strings();                    // [13] c.c
+        r.bdh = Each(c => world?.Islands.WorldOf(c.Cluster) ?? world?.Expeditions.WorldOf(c.Cluster)
+            ?? world?.Corrupted.Find(c.Cluster)?.World ?? world?.Hellgates.WorldOf(c.Cluster) ?? c.Cluster); // [13] base world map
         r.bdi = Ints();                       // [14] c.f  appearance lookup
         r.bdj = Ints();                       // [15] c.g  appearance lookup
         r.bdk = new byte[n];                  // [16] c.h  FlaggingStatus
@@ -44,8 +43,8 @@ public sealed partial class LoginSession
         r.bdq = Ints(); r.bdr = Ints(); r.bds = Ints(); r.bdt = Ints(); r.bdu = Ints(); // [22-26] guild logo
         r.bdv = new float[n]; r.bdw = new float[n];                                      // [27-28] guild logo
         r.bdx = Longs(); r.bdy = Longs(); r.bdz = Longs(); r.bd0 = Longs(); r.bd1 = Longs(); // [29-33] a7m values
-        r.bd2 = Each(c => c.Created.Ticks);   // [34] c.s  c4
-        r.bd3 = Each(c => premiumEnd);        // [35] c.t c4, the premium end (LoginGui.c+0x98 → CharacterEntryBase.SetPremium)
+        r.bd2 = Each(c => c.PlayedMilliseconds); // [34] c.s: played duration in milliseconds
+        r.bd3 = Each(c => premiumDays);       // [35] c.t: remaining premium duration in days
         r.bd4 = Ints();                       // [36] c.u
         r.bd5 = Ints(); r.bd6 = Ints(); r.bd7 = Ints(); r.bd8 = Ints(); r.bd9 = Ints(); r.bea = Ints();
         r.beb = Ints(); r.bec = Ints(); r.bed = Ints(); r.bee = Ints(); r.bef = Ints(); r.beg = Ints(); // [37-48] equipment
@@ -142,6 +141,8 @@ public sealed partial class LoginSession
         return new CreateCharacterResponse
         {
             aop = c.Name,
+            aoq = c.Cluster, // [1] instance cluster used immediately by CreateCharacterDialog
+            aor = c.Cluster, // [2] world map used to resolve the entry's location label
             aos = c.Template,
             aou = c.Appearance,
             aov = c.Customization,

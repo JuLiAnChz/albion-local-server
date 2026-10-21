@@ -1,5 +1,22 @@
 # Validación del laboratorio — 21 de octubre de 2026
 
+## Primera referencia visual y correcciones de selección
+
+El usuario aportó la escena inicial original de The Lighthouse; está descrita en
+[TUTORIAL-REFERENCIA.es.md](TUTORIAL-REFERENCIA.es.md). El análisis estático local confirmó los campos de ubicación
+y las unidades de duración en Login y CreateCharacter. Se corrigieron las ubicaciones, el tiempo jugado y los días de
+premium de la ficha. El contador de tiempo conectado se añade mediante migración v30 y no modifica la fecha de creación.
+
+La suite completa tras los cambios de ubicación/tiempo/premium obtuvo **378 correctas, 0 fallos, 4 omitidas;
+382 seleccionadas**. Después se añadió la ubicación en la respuesta de creación y su caso de regresión; las pruebas
+dirigidas se registran en `data/lab/character-entry-tests.json`. Los informes completos están en
+`data/lab/character-entry-full.json` y `.log`; compilación en `data/lab/character-entry-build.log`.
+La prueba de migración reconstruye un esquema v29 temporal y comprueba preservación de personaje y equipo.
+No se ha usado ni migrado la base del usuario para estas comprobaciones.
+
+La aparición inicial, animación, interfaz restringida y avance de misiones continúan pendientes de implementación
+y comprobación interactiva. La ficha corregida tampoco se ha confirmado aún visualmente en el cliente real.
+
 ## Tutorial: definiciones y referencia manual
 
 En `feature/tutorial-definitions` se añadió un lector inmutable de `tutorial.bin` y la comprobación de solo lectura

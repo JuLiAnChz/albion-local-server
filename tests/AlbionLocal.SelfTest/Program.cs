@@ -35,6 +35,7 @@ tests.AddRange(WorldTest.All);
 tests.AddRange(PersistenceTest.All);
 tests.AddRange(RepositoryContractTest.All);
 tests.AddRange(TutorialDataTest.All);
+tests.AddRange(CharacterEntryTest.All);
 tests.AddRange(CommandTest.All);
 tests.AddRange(ClusterDataTest.All);
 tests.AddRange(WorldObjectTest.All);

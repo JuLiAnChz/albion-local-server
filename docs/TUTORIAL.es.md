@@ -30,6 +30,35 @@ de equipo inicial y cinco destinos. Estos resultados **no acreditan todavía un 
 Falta identificar el inicio exacto del personaje, enlazar misiones y acciones a los estados e implementar su ejecución.
 El [registro de referencia](TUTORIAL-REFERENCIA.es.md) recoge el recorrido que observará el usuario.
 
+## Primera escena observada y corrección de la ficha
+
+El usuario aportó la primera escena original: The Lighthouse, aparición inicial tumbado (la captura posterior muestra
+al personaje de pie), chaqueta y zapatos T1 de mercenario, poderes seleccionados, 0 de plata, indicación «El primer paso»
+y botones superiores restringidos a inventario/configuración. La ficha recién creada muestra The Lighthouse y 0s.
+El inventario restante y la condición que termina el primer objetivo aún no se han observado.
+
+El análisis del cliente identificó tres errores independientes de las misiones en la ficha del emulador:
+
+- Login 10 y 13 son la ubicación de instancia y el mapa base; se enviaba el GUID del personaje y una cadena vacía.
+- Login 34 es duración jugada en **milisegundos**; se enviaban ticks de creación, que desbordaban la conversión del cliente.
+- Login 35 es premium restante en **días**; se enviaba una fecha, que también producía duraciones incorrectas.
+
+Se corrigieron las unidades y la ubicación, incluida la respuesta CreateCharacter (campos 1 y 2) para que la ficha
+pueda resolver su mapa antes de un nuevo login. La etiqueta la resuelve el cliente desde los identificadores del mapa;
+no se fuerza el texto The Lighthouse para personajes que estén en otra zona.
+
+El tiempo conectado se guarda en `Character.PlayedMilliseconds` y en una migración nueva SQLite **v30** (`played_ms`).
+Se acumula con el reloj del mundo en las instantáneas y al salir; no cuenta dos veces el mismo intervalo ni suma horas
+desconectado. Los guardados anteriores comienzan su contador en cero: su tiempo histórico no se puede reconstruir
+fiablemente desde la fecha de creación. Esa fecha se conserva.
+
+Las pruebas usan bases temporales. Antes de abrir una base real con la nueva versión, conservar una copia consistente
+con el servidor detenido: las versiones antiguas del servidor rechazan el esquema v30. La compilación de desarrollo
+está aislada en `data/lab/onboarding-build`; el servidor ya abierto conserva su versión hasta que se reinicie.
+
+Estas correcciones no activan aún la aparición en la playa, la animación, las restricciones de interfaz ni las misiones.
+La ficha requiere validación visual en el cliente; el inicio interactivo seguirá desarrollándose con la referencia observada.
+
 ## Diagnóstico comprobado
 
 El inicio actual es una preparación de laboratorio:
