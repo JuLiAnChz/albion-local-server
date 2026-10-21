@@ -1,5 +1,22 @@
 # Validación del laboratorio — 21 de octubre de 2026
 
+## Inicio completamente vacío tras el reinicio solicitado
+
+El usuario solicitó retirar todas las cuentas para crear una nueva y recorrer el inicio completo. Con el
+servidor detenido se retiraron las bases activas del laboratorio normal y de la comprobación de arranque;
+la del modo tutorial aún no existía. Se conserva una copia local ignorada en `data/lab/reset-backups`.
+No se borró código, GameData, configuración ni registros. Las bases nuevas se crearán al iniciar cada modo.
+
+Se eliminó la creación automática de LocalHero únicamente para `Tutorial:Opening=true`. Una base vacía
+de ese modo no contiene personajes hasta que el usuario crea el suyo. El registro interno reservado
+de la cuenta local sigue siendo parte del proveedor; no es una cuenta de usuario registrada.
+
+Compilación sin advertencias ni errores y **6 pruebas del tutorial correctas, 0 fallos**:
+`data/lab/clean-start-build.log`, `data/lab/clean-start-tests.json` y `.log`. La prueba nueva construye
+el host con una base temporal, comprueba que no crea LocalHero y verifica Login/CreateCharacter como
+primer y único personaje con avance inicial. La suite completa inmediatamente anterior se conserva debajo;
+no se repitió tras este cambio acotado de arranque.
+
 ## Integración optativa del inicio hasta Busca el barco
 
 Se añadió el modo `Tutorial:Opening=true`: creación en el punto inicial resuelto de 1008, dos piezas T1,

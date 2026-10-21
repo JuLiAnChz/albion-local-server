@@ -276,7 +276,7 @@ public sealed class ServerHost : IDisposable
         Characters.Dispose();
     }
 
-    /// <summary>The character database with the one-time import of the old characters.json; an empty one gets the default character.</summary>
+    /// <summary>The character database and legacy import. Empty ordinary labs get LocalHero; the tutorial starts without characters.</summary>
     private static IGameRepository OpenCharacters(ServerConfig config, StarterKit starter, IGameRepositoryFactory factory)
     {
         var characters = factory.Open(config);
@@ -288,7 +288,7 @@ public sealed class ServerHost : IDisposable
             if (characters.Accounts().Where(a => a.Id != Account.LocalId && a.Level == AccountLevel.Admin).ToList() is { Count: > 0 } admins)
                 Log.Warn("main", $"{admins.Count} account(s) besides the local one are Admin (all GM commands in chat): "
                     + $"{string.Join(", ", admins.Select(a => a.Shown))}; lower them with the console's .account level <name> Player");
-            if (characters.List().Count == 0)
+            if (characters.List().Count == 0 && !config.TutorialOpening)
             {
                 // As before the repository: an empty save gets one character, in the local account (the first login name takes it).
                 var hero = starter.NewCharacter("LocalHero");

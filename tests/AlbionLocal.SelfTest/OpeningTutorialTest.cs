@@ -1,4 +1,5 @@
 using System.Numerics;
+using System.Net;
 using AlbionLocal.Server;
 using AlbionLocal.Server.Content;
 using AlbionLocal.Server.Data;
@@ -23,6 +24,7 @@ public static class OpeningTutorialTest
         ("opening tutorial: proximity, premature delivery and repeated requests cannot skip tasks", Refusals),
         ("opening tutorial: staying requires continuous online time; reconnect resumes the task", StayAndRejoin),
         ("opening tutorial: SQLite restart preserves progress and migrates legacy characters", Persistence),
+        ("opening tutorial: clean host does not bootstrap LocalHero before account creation", EmptyHost),
     ];
     private sealed class Lab : IDisposable
     {
@@ -166,6 +168,30 @@ public static class OpeningTutorialTest
             }
             using var migrated = new SqliteCharacterRepository(path);
             Check(migrated.Find("PersistOpening") is { Tutorial: null, Cluster: "0000" }, "schema30 migration leaves old characters outside tutorial");
+        }
+        finally { Directory.Delete(dir, true); }
+    }
+
+    private static void EmptyHost()
+    {
+        var dir = NewDir();
+        try
+        {
+            using var host = new ServerHost(new ServerConfig
+            {
+                TutorialOpening = true, ClientGameDataPath = ClientGameDataDir(), SavesPath = dir,
+                LoginEndPoint = new IPEndPoint(IPAddress.Loopback, 0),
+                GameEndPoint = new IPEndPoint(IPAddress.Loopback, 0),
+                ChatEndPoint = new IPEndPoint(IPAddress.Loopback, 0),
+            }, Client);
+            Check(host.Characters.List().Count == 0, "empty tutorial host stays empty rather than creating LocalHero");
+            Check(host.Characters.Accounts().All(a => string.IsNullOrEmpty(a.Name)), "no registered user accounts on a fresh host");
+            var peer = new FakePeer();
+            var login = new LoginSession(peer, host.Config, host.Characters, host.Starter) { World = host.World };
+            login.OnRequest(Request(TestLogin(), 1), false);
+            login.OnRequest(Request(new CreateCharacterRequest { h7 = "FirstActualHero" }, 2), false);
+            Check(peer.Responses.Last().ReturnCode == 0 && host.Characters.List() is [{ Tutorial.Stage: 0 }],
+                "first user-created character is the only character and starts the tutorial");
         }
         finally { Directory.Delete(dir, true); }
     }

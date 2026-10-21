@@ -23,8 +23,9 @@ La base nueva usa el esquema **v31**. La migración añade el avance del tutoria
 anteriores con avance nulo. No se debe abrir una base ya migrada con un binario que solo soporte v30 o anterior.
 
 Abrir el cliente con el lanzador local ya comprobado (`scripts/start-client.ps1`; entorno `dev`).
-Usar credenciales de laboratorio. Crear un personaje nuevo: el personaje automático LocalHero, si aparece,
-conserva el inicio normal del laboratorio y no sirve para comprobar este recorrido.
+Usar credenciales de laboratorio y crear un personaje nuevo. El modo tutorial ya no crea LocalHero
+automáticamente en una base vacía. Si se reutiliza una base antigua, sus personajes conservan su inicio;
+solo los personajes nuevos reciben este recorrido.
 
 Para salir, cerrar el juego y detener el servidor con Ctrl+C para completar el guardado.
 
