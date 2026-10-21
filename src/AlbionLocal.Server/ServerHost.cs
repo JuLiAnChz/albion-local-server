@@ -26,7 +26,8 @@ public sealed class ServerHost : IDisposable
 
     /// <param name="client">The client data to run on; null = <see cref="ClientData.Load"/> from Paths:ClientGameData, which
     /// throws <see cref="InvalidDataException"/> when the folder or a file is missing or broken.</param>
-    public ServerHost(ServerConfig config, ClientData? client = null)
+    /// <param name="repositoryFactory">Persistence backend; null keeps SQLite. The host owns the opened repository.</param>
+    public ServerHost(ServerConfig config, ClientData? client = null, IGameRepositoryFactory? repositoryFactory = null)
     {
         // Bind the handlers now: a handler on the wrong request class, a second handler for an operation or a
         // [Handles] outside the three sessions throws here and stops the server at startup, not at the first
@@ -92,7 +93,7 @@ public sealed class ServerHost : IDisposable
         {
             LoginServer = new PhotonServer(config.LoginEndPoint, "login",
                 peer => new LoginSession(new PhotonPeerAdapter(peer), Config, Characters!, Starter) { World = World!, Stubs = Stubs, Throttle = Throttle, FairStarter = FairStarter }, Sync);
-            Characters = OpenCharacters(Config, Starter);
+            Characters = OpenCharacters(Config, Starter, repositoryFactory ?? new SqliteRepositoryFactory());
         }
         catch
         {
@@ -128,7 +129,7 @@ public sealed class ServerHost : IDisposable
     /// <summary>The one lock of both listeners; take it when touching game state from outside a handler.</summary>
     public object Sync { get; } = new();
 
-    public ICharacterRepository Characters { get; }
+    public IGameRepository Characters { get; }
 
     /// <summary>Start cluster, position and kit of new characters (content/starter.json).</summary>
     public StarterKit Starter { get; }
@@ -246,7 +247,7 @@ public sealed class ServerHost : IDisposable
         LoginServer.Start();
         GameServer.Start();
         ChatServer?.Start();
-        Log.Info("main", $"{Characters.List().Count} character(s) in {Config.DatabasePath}; start cluster {Starter.Cluster}");
+        Log.Info("main", $"{Characters.List().Count} persisted character(s); start cluster {Starter.Cluster}");
     }
 
     /// <summary>
@@ -269,23 +270,31 @@ public sealed class ServerHost : IDisposable
     }
 
     /// <summary>The character database with the one-time import of the old characters.json; an empty one gets the default character.</summary>
-    private static SqliteCharacterRepository OpenCharacters(ServerConfig config, StarterKit starter)
+    private static IGameRepository OpenCharacters(ServerConfig config, StarterKit starter, IGameRepositoryFactory factory)
     {
-        var characters = new SqliteCharacterRepository(config.DatabasePath, config.LocalAccountLevel);
-        JsonSaveImport.Run(characters, config.JsonSavePath, starter);
-        // Accounts made before the per-account levels were stored at the old shared LocalAccountLevel (often Admin) and keep
-        // it: name them once, so a server others reach is not left with GM accounts nobody meant.
-        if (characters.Accounts().Where(a => a.Id != SqliteCharacterRepository.LocalAccountId && a.Level == AccountLevel.Admin).ToList() is { Count: > 0 } admins)
-            Log.Warn("main", $"{admins.Count} account(s) besides the local one are Admin (all GM commands in chat): "
-                + $"{string.Join(", ", admins.Select(a => a.Shown))}; lower them with the console's .account level <name> Player");
-        if (characters.List().Count == 0)
+        var characters = factory.Open(config);
+        try
         {
-            // As before the repository: an empty save gets one character, in the local account (the first login name takes it).
-            var hero = starter.NewCharacter("LocalHero");
-            Systems.Focus.NewCharacter(hero, config);
-            characters.Create(hero);
-            Log.Info("main", $"no characters in {config.DatabasePath}: created the default one");
+            JsonSaveImport.Run(characters, config.JsonSavePath, starter);
+            // Accounts made before the per-account levels were stored at the old shared LocalAccountLevel (often Admin) and keep
+            // it: name them once, so a server others reach is not left with GM accounts nobody meant.
+            if (characters.Accounts().Where(a => a.Id != Account.LocalId && a.Level == AccountLevel.Admin).ToList() is { Count: > 0 } admins)
+                Log.Warn("main", $"{admins.Count} account(s) besides the local one are Admin (all GM commands in chat): "
+                    + $"{string.Join(", ", admins.Select(a => a.Shown))}; lower them with the console's .account level <name> Player");
+            if (characters.List().Count == 0)
+            {
+                // As before the repository: an empty save gets one character, in the local account (the first login name takes it).
+                var hero = starter.NewCharacter("LocalHero");
+                Systems.Focus.NewCharacter(hero, config);
+                characters.Create(hero);
+                Log.Info("main", "no persisted characters: created the default one");
+            }
+            return characters;
         }
-        return characters;
+        catch
+        {
+            characters.Dispose();
+            throw;
+        }
     }
 }

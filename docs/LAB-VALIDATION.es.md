@@ -1,5 +1,32 @@
 # Validación del laboratorio — 21 de octubre de 2026
 
+## Actualización: aporte SQLite aislado y proveedores de persistencia
+
+La rama `fix/sqlite-native-security`, commit `ea91393`, se preparó directamente sobre `upstream/main`
+`bdb2c60` en una copia independiente (`../sqlite-security`). Solo cambia el proyecto del servidor y la prueba
+de versión SQLite. Compilación sin advertencias ni errores, seis pruebas de persistencia correctas y auditoría
+transitiva de la solución sin avisos conocidos. La biblioteca cargada declara SQLite 3.54.0.
+La [descripción preparada](SQLITE-CONTRIBUTION.md) aún no se ha publicado al mantenedor.
+
+En la rama de integración se añadió una fábrica inyectable y el contrato completo `IGameRepository`,
+con SQLite predeterminado. Los contratos de cada área se separaron de sus archivos de implementación.
+El [diseño de persistencia](PERSISTENCIA.es.md) explica el alcance y la etapa posterior de PostgreSQL.
+
+Resultados posteriores al cambio:
+
+- Compilación de la solución: sin advertencias ni errores.
+- Suite completa: **370 correctas, 0 fallos, 4 omitidas; 374 seleccionadas**.
+- Cuatro pruebas nuevas: cuentas/copias/reapertura, reversión de guardados conjuntos y mercado,
+  fábrica suministrada al host y liberación del proveedor tras una importación inicial fallida.
+- Bases de pruebas temporales; la base de la sesión real no se utilizó en estas pruebas.
+- Informes locales: `data/lab/repository-contracts.json`, `data/lab/repository-full.json` y
+  `data/lab/repository-full.log`. Las cuatro omisiones siguen correspondiendo a referencias privadas ausentes.
+
+PostgreSQL no está implementado ni validado. La sesión gráfica observada antes de este cambio conserva su
+valor como evidencia de esa versión anterior; falta repetirla y verificar recuperación tras reiniciar con el cambio.
+
+## Validación inicial
+
 Base original: `bdb2c60` de MrGreenCheezz/albion-local-server. La carpeta descargada se comparó con el clon:
 no se encontraron diferencias de contenido al normalizar los saltos de línea. La descarga original se conservó.
 El fork de trabajo es [JuLiAnChz/albion-local-server](https://github.com/JuLiAnChz/albion-local-server),

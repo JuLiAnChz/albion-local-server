@@ -63,6 +63,9 @@ The detailed, per-feature reference (English) is in [docs/REFERENCE.md](docs/REF
 See [docs/LABORATORIO.es.md](docs/LABORATORIO.es.md) for a Spanish walkthrough, synthetic protocol exercises,
 local configuration and repeatable validation. The original client and anti-cheat boundaries above still apply.
 
+Persistence extension points and the SQLite/PostgreSQL roadmap are described in
+[docs/PERSISTENCIA.es.md](docs/PERSISTENCIA.es.md). SQLite remains the only implemented backend.
+
 ```powershell
 ./scripts/lab.ps1 -Mode build
 ./scripts/lab.ps1 -Mode learn -Stage serialization -Trace

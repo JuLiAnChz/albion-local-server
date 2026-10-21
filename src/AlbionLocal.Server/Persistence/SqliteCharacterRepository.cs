@@ -12,10 +12,10 @@ namespace AlbionLocal.Server.Persistence;
 /// missing steps, a newer one is refused. Arrays that are only ever read and written whole (appearance, spell
 /// names, destiny board) are JSON text columns.
 /// </summary>
-public sealed partial class SqliteCharacterRepository : ICharacterRepository
+public sealed partial class SqliteCharacterRepository : IGameRepository
 {
     /// <summary>The local account: the id the Login response carried (key 51) for every login before stage 7.</summary>
-    public static readonly Guid LocalAccountId = new("6c6f6361-6c00-0000-0000-000000000001");
+    public static readonly Guid LocalAccountId = global::AlbionLocal.Server.Persistence.Account.LocalId;
 
     private const int EquipmentContainer = 0, InventoryContainer = 1;
 

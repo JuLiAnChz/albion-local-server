@@ -13,7 +13,8 @@ entró a Thetford y mostró movimiento. La evidencia y sus límites están en
 
 | ID | Trabajo | Estado | Criterio de cierre | Destino |
 |---|---|---|---|---|
-| C01 | Actualizar SQLite nativo y activar auditoría transitiva | Implementado; preparar propuesta | Revalidar desde rama basada en upstream: compilación, auditoría y pruebas de persistencia; revisar diff | Primera contribución candidata |
+| C01 | Actualizar SQLite nativo y activar auditoría transitiva | Aislado y validado; listo para revisión local | Rama `fix/sqlite-native-security`, commit `ea91393`: compilación sin advertencias, 6 pruebas correctas, auditoría sin avisos conocidos | [Propuesta preparada](SQLITE-CONTRIBUTION.md) |
+| A01 | Preparar proveedores de persistencia | Implementado y validado con SQLite | Fábrica inyectable, contratos completos, SQLite por defecto; suite: 370 correctas, 0 fallos, 4 omitidas | Aporte independiente; [diseño](PERSISTENCIA.es.md) |
 | V01 | Comprobar persistencia con el cliente real | Pendiente; siguiente prueba funcional | Anotar posición e inventario, salir normalmente, guardar copia consistente con servidor detenido, reiniciar y comprobar recuperación | Informe en el fork; corrección upstream si aparece un fallo reproducible |
 | C02 | Hacer portables las pruebas y distinguir omitidas | Implementado; separar cambios | Ruta GameData configurable; selección vacía devuelve 2; informes separan aprobadas, fallidas y omitidas | Contribución candidata |
 | C03 | Añadir trazas opcionales del protocolo | Implementado; revisión pendiente | Desactivadas por defecto; pruebas confirman que contraseñas, tokens y valores desconocidos no se muestran | Contribución candidata |
@@ -41,9 +42,10 @@ en el fork: el proyecto original excluye de su soporte el procedimiento para dir
 
 ## Primer aporte propuesto: C01
 
-El commit `6864c93` contiene la actualización a `SQLitePCLRaw.bundle_e_sqlite3 2.1.14`, la activación
-de la auditoría y una comprobación de la versión nativa. Es un candidato acotado y verificable.
-Antes de publicarlo hay que extraerlo a una rama independiente y repetir su validación.
+El commit original `6864c93` se extrajo como cambio mínimo en `ea91393`, rama `fix/sqlite-native-security`,
+con una copia de trabajo independiente en `../sqlite-security`. La compilación, las seis pruebas de persistencia
+y la auditoría se repitieron correctamente en esa rama. La [descripción revisable](SQLITE-CONTRIBUTION.md)
+contiene el resultado actualizado. La propuesta todavía no se ha publicado.
 
 Título propuesto: **Update native SQLite bundle and enable transitive dependency audits**.
 
@@ -54,11 +56,11 @@ Descripción propuesta para revisar:
 > Microsoft.Data.Sqlite 10.0.8. Enable transitive NuGet audits in the laboratory build and verify
 > the loaded SQLite version in the persistence checks.
 >
-> Validation on the integration branch: solution restore/build and transitive audit completed without
-> reported advisories; six persistence checks passed. Validation of the isolated contribution is pending.
+> Validation on the isolated branch: solution restore/build and transitive audit completed without
+> reported advisories; all six persistence checks passed. The runtime reported SQLite 3.54.0.
 
-Si el mantenedor prefiere una corrección mínima, separar la referencia de dependencia y su prueba
-de los ajustes del script de laboratorio, que todavía no existe en upstream.
+La rama aislada ya excluye el script de laboratorio y el cambio de arquitectura; configura la auditoría en
+el proyecto del servidor para poder revisarse sin depender de otros aportes.
 
 ## Registro de incidencias durante las pruebas
 
