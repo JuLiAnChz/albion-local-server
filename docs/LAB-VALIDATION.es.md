@@ -68,26 +68,31 @@ Los comandos siguientes permiten inspeccionar las omisiones y repetir únicament
 ./scripts/lab.ps1 -Mode test -Only 'persistence:'
 ```
 
-## Cliente real: puerta de viabilidad pendiente
+## Cliente real: sesión local verificada
 
-**No se ha demostrado una sesión del cliente gráfico contra el servidor local.** Todos los resultados de sesiones
-anteriores corresponden al cliente de laboratorio. La coincidencia de versión permite comprobar la base existente;
-no convierte automáticamente la instalación normal en un cliente de servidor privado.
+El 21 de octubre se abrió la instalación Windows `1.32.030.345319` mediante `Albion-Online_BE.exe`, con BattlEye,
+usando `0 1 +server 127.0.0.1 +serverenvironment dev`. La línea de argumentos quedó confirmada en el registro
+del cliente. `scripts/start-client.ps1` reproduce ese arranque y conserva registros separados en `data/lab/`.
+La inspección estática local identificó las entradas Local (USA/Europe/Asia) de `dev`, todas con login en
+`127.0.0.1:5055`. No se publicaron archivos del cliente ni salidas de esa inspección.
 
-Se inspeccionaron los archivos de configuración de texto disponibles y, sin modificarlos ni publicarlos, los
-metadatos de la instalación. Aparecen las cadenas `+server`, `serverenvironment`, `GetCommandLineArgs` y
-`ServerAddress`. El launcher protegido instalado referencia el ejecutable del juego, pero esa evidencia estática
-no prueba qué argumentos acepta ni qué endpoints de estado, login y regiones cambia en esta versión de Windows.
-Una [publicación de primera mano en el foro del juego](https://forum.albiononline.com/index.php/Thread/219095-Game-Startup-Settings-Are-Broken/)
-muestra esos argumentos en otro entorno; no valida el flujo de esta instalación.
+Evidencia observada en `data/lab/server/server.log` (hora local):
 
-No se lanzó el cliente gráfico ni se modificaron el launcher, la instalación, hosts o las protecciones. No existe
-todavía un primer mensaje incompatible del cliente real que podamos atribuir al servidor. El siguiente hito requiere
-verificar interactivamente la selección local de servidor mediante el flujo normal del cliente, observar una conexión
-a loopback y usar credenciales locales. Después se comprobarán login, selección, mapa, movimiento y persistencia.
+- 12:54:03: conexión real `Albion.LoginServer`, cifrado establecido y operación Login aceptada;
+  el cliente declaró `1.32.455 build 345319`. La cuenta de laboratorio heredó un personaje existente.
+- 12:54:37: SelectCharacter de LocalHero, redirección a `127.0.0.1:5056` y registro en `Albion.ChatServer`.
+- 12:54:41: conexión `Albion.GameServer`, cifrado, Join de LocalHero en cluster 0000, objetos e inventario enviados.
+- La interfaz mostró el mapa Thetford y un desplazamiento corto del personaje. El movimiento usa predicción
+  del cliente y su manejador es silencioso; la observación visual no demuestra persistencia tras reinicio.
 
-Hasta superar esa puerta, la conexión gráfica y cualquier compatibilidad con una versión diferente quedan pendientes.
-El laboratorio reproducible, las pruebas y la documentación pueden utilizarse y revisarse de forma independiente.
+El aviso de disponibilidad siguió mostrando Local (USA) como Desconocido/no disponible, pero no bloqueó
+el login ni el acceso al mundo. Queda pendiente corregir o explicar esa comprobación de estado y probar
+guardado/recuperación tras reiniciar. La consulta `Albion.StatusServer` de las 12:33 correspondía al cliente
+sintético de diagnóstico y no se cuenta como evidencia del juego real.
+
+No se modificaron el launcher, la instalación, hosts ni protecciones. Los intentos con `live` y `local`
+no produjeron login local; no deben usarse como procedimiento validado. La compatibilidad con otras versiones
+y con sistemas adicionales del juego no se ha demostrado.
 
 ## Corrección posterior: dependencia SQLite vulnerable
 

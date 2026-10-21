@@ -190,15 +190,32 @@ completas por sí solo. Los informes, registros, bases locales y GameData quedan
 ## Paso posterior: cliente real y nuevas versiones
 
 La comprobación inicial y sus límites están en [LAB-VALIDATION.es.md](LAB-VALIDATION.es.md).
-Los metadatos de la instalación contienen `+server` y `serverenvironment`; eso es una pista de investigación,
-no demuestra que el launcher protegido actual permita cambiar todos los endpoints regionales. No se proporciona
-un parche de cliente, una modificación de hosts o una desactivación de protecciones como procedimiento de arranque.
+Para la instalación Windows `1.32.030.345319` se verificó una sesión real usando el entorno predefinido `dev`.
+Con el servidor encendido y todas las ventanas anteriores de Albion cerradas, ejecuta desde el clon:
+
+```powershell
+./scripts/start-client.ps1
+# Si no existe lab.local.json:
+./scripts/start-client.ps1 -GameDir 'G:/SteamLibrary/steamapps/common/Albion Online/game'
+```
+
+El script abre `Albion-Online_BE.exe` con BattlEye y los argumentos
+`0 1 +server 127.0.0.1 +serverenvironment dev`, y guarda un registro independiente en `data/lab/client-dev-*.log`.
+Usa el host sin puerto: las entradas predefinidas de `dev` usan el puerto 5055. Comprueba que la pantalla muestre
+**Local (USA)**. `live` selecciona las regiones oficiales; `local` produce una entrada Custom y no funcionó en esta prueba.
+El script no modifica archivos de la instalación, hosts ni protecciones.
+
+Introduce manualmente un correo ficticio y una contraseña exclusiva del laboratorio. El servidor registra esa
+contraseña al primer login de una cuenta sin contraseña; los siguientes intentos deben usar la misma.
+La primera cuenta puede heredar el personaje local existente según `Accounts:LegacyName`.
+El cliente puede mostrar Local (USA) como no disponible o Desconocido: en la prueba ese aviso no impidió
+iniciar sesión y entrar al mundo. Comprueba el resultado en el registro del emulador, no solo en el indicador.
 
 La puerta de aceptación del cliente real es observar primero una conexión local del cliente normal, después login
 con una cuenta de laboratorio, selección, Join, movimiento, guardado y recuperación tras reiniciar. Cada paso debe
 tener evidencia propia en los registros. El cliente simulado no sustituye esa comprobación y la coincidencia de
-versiones no la garantiza. Esta conexión interactiva queda pendiente hasta verificar un procedimiento compatible
-de selección del servidor en el launcher/cliente normal.
+versiones no la garantiza. Ya se observaron login, selección, Join, chat y carga del mapa Thetford; también se
+observó movimiento en pantalla. Falta comprobar por separado el guardado y la recuperación tras reiniciar.
 
 Si se actualiza el cliente, conserva el informe previo y compara versión, huellas y primer intercambio incompatible.
 El generador privado `analysis/tools/gen_protocol_cs.py` no está publicado. No edites masivamente los códigos
