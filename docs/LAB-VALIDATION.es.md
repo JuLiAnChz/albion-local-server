@@ -1,5 +1,21 @@
 # Validación del laboratorio — 21 de octubre de 2026
 
+## Tutorial: definiciones y referencia manual
+
+En `feature/tutorial-definitions` se añadió un lector inmutable de `tutorial.bin` y la comprobación de solo lectura
+`--check-tutorial`. Cinco pruebas nuevas correctas, sin fallos ni omisiones: numeración y ramificaciones,
+referencias inválidas/ciclos, parámetros inválidos, aislamiento del XML y referencias de la instalación real.
+La solución compila sin advertencias ni errores en `data/lab/onboarding-build`, independiente del servidor encendido.
+
+El comprobador resolvió los cuatro mapas del tutorial y validó equipo, destinos, viajero e indicaciones con cero fallos.
+Informes locales: `data/lab/tutorial-data-tests.json`, `data/lab/tutorial-check.log` y `data/lab/onboarding-build.log`.
+No se ejecutó de nuevo la suite completa para este cambio de lectura; su resultado anterior se conserva abajo.
+La comprobación no acredita ejecución de misiones, inicio interactivo ni recompensas del tutorial.
+
+El usuario confirmó manualmente creación de cuenta, recuperación de posición y poderes. Inventario y otras
+partes de la persistencia no se incluyeron en esa prueba. Se preparó una [hoja de referencia](TUTORIAL-REFERENCIA.es.md)
+para contrastar los primeros minutos del tutorial original antes de implementar sus condiciones y secuencia.
+
 ## Actualización: aporte SQLite aislado y proveedores de persistencia
 
 La rama `fix/sqlite-native-security`, commit `ea91393`, se preparó directamente sobre `upstream/main`

@@ -12,15 +12,15 @@ entró a Thetford y mostró movimiento. La evidencia y sus límites están en
 ## Trabajo por prioridad
 
 Prioridad actual solicitada: **T01, recorrido inicial y tutorial**. La revisión para publicar aportes y la ampliación
-de motores de persistencia quedan después de este recorrido. El usuario comprobará en paralelo la recuperación
-de su personaje tras reiniciar. Diagnóstico y etapas: [Tutorial](TUTORIAL.es.md).
+de motores de persistencia quedan después de este recorrido. El usuario confirmó recuperación de posición y poderes,
+y aportará una referencia manual de las primeras misiones. Diagnóstico y etapas: [Tutorial](TUTORIAL.es.md).
 
 | ID | Trabajo | Estado | Criterio de cierre | Destino |
 |---|---|---|---|---|
-| T01 | Reproducir el tutorial del cliente instalado | Diagnóstico realizado; primera prioridad | Primer hito: personaje nuevo en 1008 con objetivo inicial funcional; después misiones, avance guardado y salida verificados | Desarrollo en el fork y aportes pequeños con evidencia |
+| T01 | Reproducir el tutorial del cliente instalado | Lector y comprobación de datos implementados; referencia manual pendiente | Primer hito jugable: personaje nuevo en 1008 con objetivo inicial funcional; después misiones, avance guardado y salida verificados | Desarrollo en el fork y aportes pequeños con evidencia |
 | C01 | Actualizar SQLite nativo y activar auditoría transitiva | Aislado y validado; listo para revisión local | Rama `fix/sqlite-native-security`, commit `ea91393`: compilación sin advertencias, 6 pruebas correctas, auditoría sin avisos conocidos | [Propuesta preparada](SQLITE-CONTRIBUTION.md) |
 | A01 | Preparar proveedores de persistencia | Implementado y validado con SQLite | Fábrica inyectable, contratos completos, SQLite por defecto; suite: 370 correctas, 0 fallos, 4 omitidas | Aporte independiente; [diseño](PERSISTENCIA.es.md) |
-| V01 | Comprobar persistencia con el cliente real | Usuario realizará la reapertura; cierre observado en registros | Anotar posición e inventario, salir normalmente, guardar copia consistente con servidor detenido, reiniciar y comprobar recuperación | Informe en el fork; corrección upstream si aparece un fallo reproducible |
+| V01 | Comprobar persistencia con el cliente real | Usuario confirmó cuenta, posición y poderes; inventario no probado | Completar prueba de inventario y otros datos por separado | Informe en el fork; corrección upstream si aparece un fallo reproducible |
 | C02 | Hacer portables las pruebas y distinguir omitidas | Implementado; separar cambios | Ruta GameData configurable; selección vacía devuelve 2; informes separan aprobadas, fallidas y omitidas | Contribución candidata |
 | C03 | Añadir trazas opcionales del protocolo | Implementado; revisión pendiente | Desactivadas por defecto; pruebas confirman que contraseñas, tokens y valores desconocidos no se muestran | Contribución candidata |
 | C04 | Ejercicios sintéticos y guía de preparación | Implementado; separar cambios | Ejecutar desde clon limpio y explicar requisitos, resultados y referencias privadas ausentes | Contribución candidata |

@@ -4,6 +4,32 @@ Análisis del 21 de octubre de 2026 sobre cliente Windows `1.32.030.345319` y se
 Objetivo solicitado: reproducir el recorrido inicial del juego, empezando por el tutorial y sus misiones.
 La fidelidad se comprobará por comportamiento y versión; no se deducirá de poder entrar al mundo.
 
+## Primera implementación: lector y comprobación de definiciones
+
+Se añadió `TutorialData`: carga los estados en el orden del archivo, asigna identificadores desde cero y
+conserva equipo, destinos, indicaciones y recompensas declaradas al omitir. Rechaza identificadores duplicados,
+referencias anteriores inexistentes/cíclicas y valores inválidos. Sus resultados son inmutables.
+El análisis estático del cargador y receptor del cliente confirmó la numeración desde cero y la búsqueda por índice;
+las salidas de análisis permanecen locales e ignoradas. `previousstate` es un vínculo usado por el cliente y no
+se interpreta como permiso suficiente para avanzar una misión en el servidor.
+
+La comprobación `--check-tutorial` valida archivos y referencias de mapas, equipo, destinos, viajero e indicaciones.
+Se ejecuta antes de abrir puertos, registro en archivo o persistencia. No crea personajes ni concede recompensas.
+Con la compilación normal actualizada se ejecuta mediante `./scripts/lab.ps1 -Mode tutorial`.
+Para compilar y comprobar mientras otra instancia del emulador está encendida:
+
+```powershell
+./scripts/lab.ps1 -Mode build -ArtifactsPath data/lab/onboarding-build
+./scripts/lab.ps1 -Mode tutorial -ArtifactsPath data/lab/onboarding-build
+./scripts/lab.ps1 -Mode test -Only 'tutorial data:' -ArtifactsPath data/lab/onboarding-build
+```
+
+Resultados: cinco pruebas nuevas correctas; solución compilada sin advertencias ni errores; comprobación de datos
+con cero fallos. La instalación contiene 51 estados contando inicio y fin, cuatro mapas del recorrido, dos piezas
+de equipo inicial y cinco destinos. Estos resultados **no acreditan todavía un tutorial jugable**.
+Falta identificar el inicio exacto del personaje, enlazar misiones y acciones a los estados e implementar su ejecución.
+El [registro de referencia](TUTORIAL-REFERENCIA.es.md) recoge el recorrido que observará el usuario.
+
 ## Diagnóstico comprobado
 
 El inicio actual es una preparación de laboratorio:
@@ -78,4 +104,6 @@ Contrastar con los datos, código disponible y una referencia de juego observada
 
 El último cierre visto en `server.log` es 13:04:42: parada del servidor y salida de LocalHero en (-244.26, 160.23).
 Eso demuestra que se ejecutó la salida, pero no confirma la recuperación al volver a entrar.
-La prueba de reabrir el proceso queda a cargo del usuario según lo acordado; no bloquea el análisis del tutorial.
+El usuario confirmó después haber probado correctamente creación de cuenta y recuperación de posición y poderes.
+Ese resultado se registra como prueba manual comunicada por el usuario; inventario y otros datos no fueron comprobados
+en esa prueba. No bloquea el trabajo del tutorial.
