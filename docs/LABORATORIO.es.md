@@ -23,6 +23,12 @@ contenido y archivos de salida se resuelvan igual, incluso si lo invocas desde o
 Si NuGet falla con `NU1301`, comprueba el acceso HTTPS y DNS a `api.nuget.org`: no cambies paquetes para ocultar
 un problema de red. En un entorno que restrinja sockets locales, ejecuta las pruebas UDP con permisos de red local.
 
+La compilación mantiene activada la auditoría de NuGet, incluidas las dependencias indirectas. El servidor fija
+`SQLitePCLRaw.bundle_e_sqlite3` en `2.1.14`: la resolución original `2.1.11` incluía una biblioteca nativa afectada
+por [CVE-2025-6965](https://github.com/advisories/GHSA-2m69-gcr7-jv3q). La prueba `persistence: native SQLite`
+comprueba la versión del motor realmente cargado, no solo la versión declarada del paquete.
+Puedes consultar los avisos actuales con `dotnet list AlbionLocal.slnx package --vulnerable --include-transitive`.
+
 Para trabajar con los datos de tu cliente, copia `lab.local.example.json` como `lab.local.json` y escribe la ruta
 de **GameData**, no la del ejecutable ni la del launcher. Ese archivo local está excluido de Git.
 

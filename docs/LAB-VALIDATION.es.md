@@ -88,3 +88,27 @@ a loopback y usar credenciales locales. Después se comprobarán login, selecci�
 
 Hasta superar esa puerta, la conexión gráfica y cualquier compatibilidad con una versión diferente quedan pendientes.
 El laboratorio reproducible, las pruebas y la documentación pueden utilizarse y revisarse de forma independiente.
+
+## Corrección posterior: dependencia SQLite vulnerable
+
+La validación inicial anterior conservaba los paquetes del proyecto original. Al revisar el aviso del IDE se confirmó
+que `Microsoft.Data.Sqlite 10.0.8` resolvía indirectamente `SQLitePCLRaw.lib.e_sqlite3 2.1.11`, afectado por
+[CVE-2025-6965](https://github.com/advisories/GHSA-2m69-gcr7-jv3q). La compilación sin advertencias inicial no
+era evidencia de una auditoría de seguridad: el script desactivaba NuGetAudit. Ese ajuste se corrigió.
+
+Se mantuvo Microsoft.Data.Sqlite y se añadió una referencia explícita a `SQLitePCLRaw.bundle_e_sqlite3 2.1.14`.
+El bundle, core, proveedor y biblioteca nativa resuelven ahora `2.1.14`. La compilación del script activa
+`NuGetAudit=true` y `NuGetAuditMode=all`.
+
+Verificaciones posteriores a la corrección:
+
+- Restauración auditada y compilación de toda la solución: correctas, sin advertencias.
+- Auditoría NuGet de toda la solución, incluidas dependencias transitivas: ningún aviso conocido reportado.
+- Persistencia: 6 PASS, 0 FAIL; la prueba nueva consulta `sqlite_version()` y observó el motor nativo `3.54.0`.
+- Mensajes, incluida la cadena login → selección → Join: 3 PASS, 0 FAIL.
+
+Los informes locales son `data/lab/security-audit.json`, `data/lab/persistence-security.json` y
+`data/lab/learn-messages.json`. No se repitió toda la batería de 369 pruebas: sus cifras anteriores corresponden
+a la instantánea inicial. La nueva prueba de versión aumenta la selección completa a 370.
+Un primer intento de la migración de persistencia falló por permisos del entorno restringido para renombrar su
+archivo temporal; al repetir con esos permisos, las seis pruebas aprobaron.

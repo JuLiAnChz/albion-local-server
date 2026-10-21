@@ -16,7 +16,7 @@ try {
     }
     if ($ClientGameData) { $ClientGameData = [IO.Path]::GetFullPath($ClientGameData) }
     if ($Mode -eq 'build') {
-        & dotnet build AlbionLocal.slnx --nologo -m:1 -nr:false -p:UseSharedCompilation=false -p:NuGetAudit=false
+        & dotnet build AlbionLocal.slnx --nologo -m:1 -nr:false -p:UseSharedCompilation=false -p:NuGetAudit=true -p:NuGetAuditMode=all
         exit $LASTEXITCODE
     }
     $project = if ($Mode -in 'learn', 'test') { 'tests/AlbionLocal.SelfTest' } else { 'src/AlbionLocal.Server' }
