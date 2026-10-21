@@ -13,6 +13,10 @@ data/characters/
 data/*.log*
 data/clientdata.json
 
+# Local educational laboratory settings and generated reports
+lab.local.json
+data/lab/
+
 # Generated data stays versioned: data/items.tsv (analysis/tools/gen_items.py), data/gamedata.json
 # (analysis/tools/gen_gamedata.py) and data/spells.json (gen_item_spells.py) as the self-test's golden references
 # (the server reads the client's GameData itself), Protocol/Generated (gen_protocol_cs.py).

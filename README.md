@@ -58,6 +58,21 @@ The detailed, per-feature reference (English) is in [docs/REFERENCE.md](docs/REF
 | `config/albionlocal.json` | Server settings (every key optional, commented) |
 | `content/` | Server-side content: spawns, kits, events, dungeons, goals, bots and other tunables |
 
+## Educational laboratory / Laboratorio educativo
+
+See [docs/LABORATORIO.es.md](docs/LABORATORIO.es.md) for a Spanish walkthrough, synthetic protocol exercises,
+local configuration and repeatable validation. The original client and anti-cheat boundaries above still apply.
+
+```powershell
+./scripts/lab.ps1 -Mode build
+./scripts/lab.ps1 -Mode learn -Stage serialization -Trace
+```
+
+The self-test now accepts `--client-gamedata=<folder>` (the old `../game-local` path remains the default),
+`--only=<text>`, `--report=<file.json>` and `--lab=all|serialization|transport|session|messages`.
+Missing private golden references are reported as **SKIP**, separately from **PASS** and **FAIL**.
+`--protocol-trace` enables parameter-key/type traces without parameter values, in both the server and self-test.
+
 ## Requirements
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/)
@@ -92,15 +107,19 @@ On start it prints the database schema version and the three listening ports. By
 only; see the "second PC" part of [docs/REFERENCE.md](docs/REFERENCE.md) for LAN settings (`Network:BindAddress`,
 `Network:PublicAddress`) and the firewall ports.
 
-Run the self-test. It reads the GameData folder from the fixed path `../game-local/Albion-Online_Data/StreamingAssets/GameData`
-next to the repository, so put a link there to your client installation (for example a directory junction or symlink
-named `game-local` next to this folder):
+Run the self-test. By default it reads `../game-local/Albion-Online_Data/StreamingAssets/GameData` next to the repository.
+Alternatively, pass your installation's GameData folder directly (no directory link is needed):
 
 ```bash
 dotnet run --project tests/AlbionLocal.SelfTest
 ```
 
-Comparisons against generated "golden" data files are skipped, because those files are not published.
+```powershell
+dotnet run --project tests/AlbionLocal.SelfTest -- '--client-gamedata=C:/Games/AlbionOnline/game/Albion-Online_Data/StreamingAssets/GameData' --report=data/lab/selftest.json
+```
+
+Comparisons against generated "golden" data files are reported as SKIP, because those files are not published.
+They do not count as passed tests. Exit code 0 means no selected test failed; inspect the skip count for coverage.
 
 ## Configuration
 
