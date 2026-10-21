@@ -116,7 +116,7 @@ public static class CharacterEntryTest
             {
                 connection.Open();
                 using var command = connection.CreateCommand();
-                command.CommandText = "ALTER TABLE characters DROP COLUMN played_ms; PRAGMA user_version=29;";
+                command.CommandText = "ALTER TABLE characters DROP COLUMN tutorial_opening; ALTER TABLE characters DROP COLUMN played_ms; PRAGMA user_version=29;";
                 command.ExecuteNonQuery();
             }
             using var migrated = new SqliteCharacterRepository(path);

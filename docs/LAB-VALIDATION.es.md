@@ -1,5 +1,33 @@
 # Validación del laboratorio — 21 de octubre de 2026
 
+## Integración optativa del inicio hasta Busca el barco
+
+Se añadió el modo `Tutorial:Opening=true`: creación en el punto inicial resuelto de 1008, dos piezas T1,
+tablero propio, NPC y misiones con transición por llegada, permanencia, conversación, entrega y aceptación.
+La persistencia usa una propiedad independiente de `Character` y migración SQLite v31; las copias del repositorio
+conservan el estado como registro inmutable. Los personajes existentes reciben avance nulo.
+
+La compilación aislada pasó sin advertencias ni errores. **Suite completa final: 384 correctas, 0 fallos,
+4 omitidas; 388 seleccionadas**, registrada en `data/lab/opening-full-tests.json` y `.log`.
+Las cinco pruebas nuevas cubren creación (también Login/CreateCharacter), equipo y habilidades iniciales,
+recorrido, guardas de interacción, entrega/aceptación repetidas, permanencia continua y reconexión,
+reapertura SQLite y migración desde v30. Las cuatro omisiones siguen siendo las referencias privadas ausentes.
+
+El primer intento completo en el entorno restringido no pudo completar intercambios de cifrado por UDP;
+se interrumpió y repitió con acceso a red local. La repetición detectó una expectativa antigua de 165 manejadores;
+se actualizó a 167, incluyendo comprobaciones explícitas de las dos nuevas operaciones y su estado de sesión.
+La suite final citada arriba se ejecutó sobre esa corrección y no contiene fallos.
+
+También se comprobó el arranque real del host con puertos aleatorios en loopback y guardados exclusivamente
+en `data/lab/opening-startup-smoke`. Inicializó los tres servicios y terminó mediante Ctrl+C, registrando
+`stopping`. No se abrió ni migró la base habitual del usuario. El analizador de PowerShell no detectó errores
+de sintaxis en el script de laboratorio.
+
+El [procedimiento de prueba](TUTORIAL-PRUEBA.es.md) usa `-OpeningTutorial` y guardados separados en
+`data/lab/tutorial-server`. La prueba visual interactiva sigue pendiente: no se declara fidelidad completa.
+La animación inicial tumbado aún no se implementó y el mapa de esta entrega es compartido, no una instancia
+privada por personaje. La segunda misión se detiene en «Busca el barco», sin completar sus siguientes tareas.
+
 ## Primera referencia visual y correcciones de selección
 
 El usuario aportó la escena inicial original de The Lighthouse; está descrita en

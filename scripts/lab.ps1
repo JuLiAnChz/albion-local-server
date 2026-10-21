@@ -6,12 +6,14 @@ param(
     [string]$ClientGameData = $env:ALBION_GAMEDATA,
     [string]$Only,
     [string]$ArtifactsPath,
+    [switch]$OpeningTutorial,
     [switch]$Trace
 )
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 Push-Location $repoRoot
 try {
+    if ($OpeningTutorial -and $Mode -ne 'server') { throw '-OpeningTutorial se usa con -Mode server.' }
     if (!$ClientGameData -and (Test-Path -LiteralPath 'lab.local.json')) {
         $ClientGameData = (Get-Content -LiteralPath 'lab.local.json' -Raw | ConvertFrom-Json).clientGameData
     }
@@ -40,6 +42,11 @@ try {
         $runArgs += "--Paths:ClientGameData=$ClientGameData"
         if ($Mode -eq 'content') { $runArgs += '--check-content' }
         elseif ($Mode -eq 'tutorial') { $runArgs += '--check-tutorial' }
+        elseif ($OpeningTutorial) {
+            $runArgs += '--Tutorial:Opening=true', '--Preset=official', '--Paths:Saves=data/lab/tutorial-server', '--Log:File=data/lab/tutorial-server/server.log'
+            Write-Host 'Tutorial de laboratorio: personajes nuevos; guardados separados en data/lab/tutorial-server.'
+            Write-Host 'El recorrido implementado se detiene en el objetivo Busca el barco.'
+        }
         else { $runArgs += '--Paths:Saves=data/lab/server', '--Log:File=data/lab/server/server.log' }
     }
     if ($Trace) { $runArgs += '--protocol-trace' }

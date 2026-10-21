@@ -124,10 +124,13 @@ public sealed partial class LoginSession
         // Progression:NewCharacters: FairStart = an empty destiny board and the kit its level allows; UnlockAll = no board
         // of its own (everything unlocked) and the usual kit.
         var fair = config.NewCharacters == NewCharacterProgression.FairStart;
-        var c = (fair ? FairStarter : starter).NewCharacter(name);
+        var opening = config.TutorialOpening ? World?.OpeningTutorial
+            ?? throw new InvalidOperationException("Opening tutorial data was not loaded.") : null;
+        var c = opening is null ? (fair ? FairStarter : starter).NewCharacter(name)
+            : opening.Create(name, World!.Items, World.GameData!);
         // Without the client's board data an empty board would have no START to grow from: unlock-all instead.
-        if (fair && World?.GameData?.Board is { } board) c.Progression = board.FairStart();
-        else if (fair) Log.Warn(Name, $"fair start for '{name}' without destiny board data: everything unlocked");
+        if (opening is null && fair && World?.GameData?.Board is { } board) c.Progression = board.FairStart();
+        else if (opening is null && fair) Log.Warn(Name, $"fair start for '{name}' without destiny board data: everything unlocked");
         c.Account = _account.Id; // in this login's account; the name must be free on the whole server
         c.Template = req.h8;
         c.Appearance = req.h9;

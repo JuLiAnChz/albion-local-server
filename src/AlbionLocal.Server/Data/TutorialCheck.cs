@@ -30,7 +30,27 @@ public static class TutorialCheck
             var map = store.Get(id);
             Check(map.Problems.Count == 0, $"map {id} ({info.DisplayName}) resolves; {map.Problems.Count} problems");
             if (details)
+            {
                 output.WriteLine($"  {map.LocationMarkers.Count} location markers, {info.QuestGivers.Count} quest givers, {map.Exits.Count} exits");
+                if (id == data.StartCluster) DescribeOpening(map, output);
+            }
+            if (id == data.StartCluster)
+            {
+                Check(map.Critical.Count(c => c.Type == "startpoint") == 1,
+                    "starting map has one explicit startpoint (distinct from death respawn)");
+                foreach (var questName in new[] { "MISSIONS_T2_TUTORIAL_TEST_A", "MISSIONS_T2_TUTORIAL_TEST_B" })
+                {
+                    var quests = roots["quests.bin"].Elements("quest")
+                        .Where(q => (string?)q.Attribute("uniquename") == questName).ToArray();
+                    Check(quests.Length == 1, $"opening quest {questName} exists exactly once");
+                    if (quests.Length != 1) continue;
+                    // Validate references, not the runtime meaning/numbering of quest tasks. A marker may
+                    // legitimately have several positions; do not collapse it with Single/First.
+                    foreach (var marker in quests[0].Descendants("tasks").DescendantsAndSelf().Attributes("locationmarkerid")
+                        .Select(a => a.Value).Distinct(StringComparer.Ordinal))
+                        Check(map.LocationMarkers.Any(m => m.LocationId == marker), $"{questName}: marker {marker} resolves");
+                }
+            }
         }
         foreach (var item in data.StartingItems) Check(items.Find(item) is not null, $"starting item {item} exists");
         foreach (var destination in data.Destinations)
@@ -58,5 +78,17 @@ public static class TutorialCheck
         }
         output.WriteLine($"Definition checks: {failed} failed. Interactive tutorial and quest execution remain unverified.");
         return failed == 0 ? 0 : 1;
+    }
+
+    private static void DescribeOpening(ClusterTemplate map, TextWriter output)
+    {
+        output.WriteLine("  Opening coordinates: movement plane = x,z; height = y; world positions already include template placement.");
+        foreach (var point in map.Critical.Where(c => c.Type == "startpoint"))
+            output.WriteLine(FormattableString.Invariant($"  startpoint {point.Key}: x={point.Position.X}, z={point.Position.Y}, height={point.Height}, direction={point.Direction}"));
+        foreach (var point in map.Critical.Where(c => c.Type == "questgiverobject"))
+            output.WriteLine(FormattableString.Invariant($"  npc {point.Component.Attribute("reference")?.Value}: x={point.Position.X}, z={point.Position.Y}, height={point.Height}, direction={point.Direction}; guid={point.Guid}"));
+        foreach (var marker in map.LocationMarkers.OrderBy(m => m.LocationId, StringComparer.Ordinal))
+            output.WriteLine(FormattableString.Invariant($"  marker {marker.LocationId}: x={marker.Position.X}, z={marker.Position.Y}, height={marker.Height}, radius={marker.Radius}; key={marker.Key}"));
+        output.WriteLine("  These are data references, not proof that any quest is active, displayed, or completed in the client.");
     }
 }

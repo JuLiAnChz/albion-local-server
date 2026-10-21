@@ -70,6 +70,8 @@ public sealed class Character
     /// <summary>Accumulated time actually joined to the world, in milliseconds (Login key 34). Offline time is excluded.</summary>
     public long PlayedMilliseconds { get; set; }
 
+    public OpeningTutorialProgress? Tutorial { get; set; }
+
     /// <summary>Items by EquipmentSlot (MainHand, OffHand, Head, Armor, Shoes, Bag, Cape, Mount, Potion, Food); null = empty slot.</summary>
     public InventoryItem?[] Equipment { get; set; } = new InventoryItem?[Entities.Inventory.EquipmentSlots];
 
@@ -218,7 +220,7 @@ public sealed class Character
     /// <summary>A deep copy: what the repository hands out and what a save snapshot holds share nothing with the original.</summary>
     public Character Clone() => new()
     {
-        Id = Id, Name = Name, Account = Account, Template = Template, Appearance = Appearance,
+        Id = Id, Name = Name, Account = Account, Template = Template, Appearance = Appearance, Tutorial = Tutorial,
         Customization = [.. Customization], Clothes = [.. Clothes],
         Cluster = Cluster, PositionX = PositionX, PositionY = PositionY, Direction = Direction,
         PreviousCluster = PreviousCluster, LastLeftAt = LastLeftAt, LastCity = LastCity, PendingTransfer = PendingTransfer, DungeonReturn = DungeonReturn, Created = Created,

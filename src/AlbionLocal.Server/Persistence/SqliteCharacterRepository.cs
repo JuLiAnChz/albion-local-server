@@ -400,6 +400,10 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
         """
         ALTER TABLE characters ADD COLUMN played_ms INTEGER NOT NULL DEFAULT 0 CHECK (played_ms >= 0);
         """,
+        // v31: opt-in, bounded opening tutorial; NULL preserves existing characters.
+        """
+        ALTER TABLE characters ADD COLUMN tutorial_opening TEXT;
+        """,
     ];
 
     private const string AccountColumns = "id, level, name, display_name, password, failed_logins, locked_until, banned_until, ban_reason, created";
@@ -408,7 +412,7 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
         "id, name, template, appearance, customization, clothes, cluster, position_x, position_y, created, equipment_container, inventory_container, "
         + "direction, previous_cluster, last_left_at, last_city, pending_transfer, fame, silver, gold, effects, cooldowns, focus, mounted_since, mount_cooldown, "
         + "flag, faction, reputation, reputation_at, dungeon_return, journal_tracked, expeditions, goals, black_market, "
-        + "focus_stamp, learning_points, lp_stamp, use_flags, autolearn, infamy, mist_standing, mist_favor, loadouts, played_ms";
+        + "focus_stamp, learning_points, lp_stamp, use_flags, autolearn, infamy, mist_standing, mist_favor, loadouts, played_ms, tutorial_opening";
 
     private readonly object _sync = new();
     private readonly SqliteConnection _db;
@@ -566,7 +570,7 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
                         VALUES ($account, $id, $name, $template, $appearance, $customization, $clothes, $cluster, $x, $y, $created, $eq, $inv,
                             $direction, $previous, $left, $city, $transfer, $fame, $silver, $gold, $effects, $cooldowns, $focus, $mounted, $mountcd,
                             $flag, $faction, $reputation, $reputationat, $dungeon, $journal, $expeditions, $goals, $bm,
-                            $focusstamp, $lp, $lpstamp, $useflags, $autolearn, $infamy, $miststanding, $mistfavor, $loadouts, $played)
+                            $focusstamp, $lp, $lpstamp, $useflags, $autolearn, $infamy, $miststanding, $mistfavor, $loadouts, $played, $tutorial)
                         """, tx, [("$account", c.Account.ToString()), .. CharacterValues(c)]))
                     insert.ExecuteNonQuery();
                 WriteContents(c, tx);
@@ -612,7 +616,7 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
                     reputation = $reputation, reputation_at = $reputationat, dungeon_return = $dungeon,
                     journal_tracked = $journal, expeditions = $expeditions, goals = $goals, black_market = $bm,
                     focus_stamp = $focusstamp, learning_points = $lp, lp_stamp = $lpstamp, use_flags = $useflags, autolearn = $autolearn,
-                    infamy = $infamy, mist_standing = $miststanding, mist_favor = $mistfavor, loadouts = $loadouts, played_ms = $played
+                    infamy = $infamy, mist_standing = $miststanding, mist_favor = $mistfavor, loadouts = $loadouts, played_ms = $played, tutorial_opening = $tutorial
                 WHERE id = $id
                 """, tx, CharacterValues(c)))
             if (update.ExecuteNonQuery() == 0) return false;
@@ -678,6 +682,7 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
         ("$miststanding", c.MistStanding), ("$mistfavor", c.MistFavor),
         ("$loadouts", c.Loadouts.Count > 0 ? JsonSerializer.Serialize(c.Loadouts) : null),
         ("$played", c.PlayedMilliseconds),
+        ("$tutorial", c.Tutorial is null ? null : JsonSerializer.Serialize(c.Tutorial)),
     ];
 
     /// <summary>Inserts the items and the destiny board state of <paramref name="c"/> (the old rows are gone).</summary>
@@ -836,7 +841,8 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
                     MistFavor = r.GetInt64(41),
                     Loadouts = r.IsDBNull(42) ? [] : JsonSerializer.Deserialize<List<Loadout>>(r.GetString(42)) ?? [],
                     PlayedMilliseconds = r.GetInt64(43),
-                    Account = Guid.Parse(r.GetString(44)),
+                    Tutorial = r.IsDBNull(44) ? null : JsonSerializer.Deserialize<OpeningTutorialProgress>(r.GetString(44)),
+                    Account = Guid.Parse(r.GetString(45)),
 
                 });
             }

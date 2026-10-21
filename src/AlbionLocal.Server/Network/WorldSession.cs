@@ -233,6 +233,7 @@ public sealed partial class WorldSession(IPeer peer, World world) : AlbionSessio
         SendEvent(new JoinFinishedEvent { ddn = jr.a8a });
         if (Player is not { } player) return;
         player.Visibility.SendAccessStatus();
+        Systems.OpeningTutorial.Joined(player);
         player.Visibility.FlushLists();
         var scripted = false;
         for (var slot = 0; slot < Inventory.EquipmentSlots; slot++)

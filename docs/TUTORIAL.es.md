@@ -4,6 +4,15 @@ Análisis del 21 de octubre de 2026 sobre cliente Windows `1.32.030.345319` y se
 Objetivo solicitado: reproducir el recorrido inicial del juego, empezando por el tutorial y sus misiones.
 La fidelidad se comprobará por comportamiento y versión; no se deducirá de poder entrar al mundo.
 
+## Estado actual: integración experimental del primer tramo
+
+Ya existe una implementación optativa de las transiciones hasta «Busca el barco», el NPC y sus operaciones
+de interacción/aceptación/entrega, con avance por personaje guardado en SQLite v31. Se habilita mediante
+`Tutorial:Opening=true`; el script de laboratorio ofrece `-OpeningTutorial` con guardados separados.
+La [guía de prueba](TUTORIAL-PRUEBA.es.md) describe el arranque, recorrido y limitaciones.
+La presentación en el cliente real sigue pendiente de validación; la animación inicial tumbado aún no está implementada.
+Las secciones de diagnóstico siguientes conservan los hallazgos previos a esta integración.
+
 ## Primera implementación: lector y comprobación de definiciones
 
 Se añadió `TutorialData`: carga los estados en el orden del archivo, asigna identificadores desde cero y
@@ -35,7 +44,42 @@ El [registro de referencia](TUTORIAL-REFERENCIA.es.md) recoge el recorrido que o
 El usuario aportó la primera escena original: The Lighthouse, aparición inicial tumbado (la captura posterior muestra
 al personaje de pie), chaqueta y zapatos T1 de mercenario, poderes seleccionados, 0 de plata, indicación «El primer paso»
 y botones superiores restringidos a inventario/configuración. La ficha recién creada muestra The Lighthouse y 0s.
-El inventario restante y la condición que termina el primer objetivo aún no se han observado.
+El inventario restante sigue pendiente. En una segunda entrega, el usuario observa que al entrar en un
+círculo blanco este cambia a verde y desaparece junto con el aviso superior; aparece otro círculo más adelante.
+El panel Misiones conserva «Primeros pasos» y «Encuentra un camino para salir de la playa.» en la captura posterior.
+Se distingue por tanto la retirada del aviso de la finalización de la misión: no se ha demostrado esta última.
+La correspondencia entre círculos, volúmenes de activación y estados del protocolo sigue pendiente de verificar.
+
+Una tercera entrega confirma que al pasar al segundo círculo cambia la tarea de «Primeros pasos» a
+«Acercate al mirador. Permanece en el círculo por», con contador visible (capturas de 1 s y 0 s).
+También se observa el texto del objetivo en el centro y un círculo amarillo/dorado en el mirador.
+El usuario informa de que el texto central desaparece después; posteriormente aparece un signo «?» naranja
+en el minimapa para hablar con un NPC aún no identificado. La duración total de permanencia y la condición
+exacta que habilita al NPC siguen pendientes. No basta una comprobación instantánea de llegada para modelar
+la tarea del mirador: habrá que contrastar también el tiempo dentro de la zona y su posible reinicio al salir.
+
+La cuarta entrega identifica al interlocutor por el encabezado «Artesano herido». La tarea pasa a
+«Habla con el sobreviviente. 0/1»: acercarse conserva el círculo, mientras que hablar lo retira y marca 1/1.
+El diálogo muestra «Primeros pasos», «Misión terminada» y un botón «Completar» aún disponible.
+Se requiere distinguir interacción, objetivo cumplido y entrega; el resultado de pulsar ese botón y una
+eventual misión posterior siguen pendientes de observar. No se ha confirmado ninguna recompensa.
+
+En la quinta entrega, el usuario comunica la desaparición de «Primeros pasos» y la aparición de «!»
+naranja tras la indicación de completar. La captura posterior muestra al mismo NPC ofreciendo
+«La información es la clave», objetivo «Sube a la torre.» y botón «Aceptar». Esto confirma la oferta
+de una misión distinta; no su aceptación automática. El seguimiento tras aceptar y la condición de
+cumplimiento en la torre siguen pendientes. No se han confirmado recompensas de la entrega anterior.
+
+La sexta entrega confirma la aceptación: aparece el seguimiento de «La información es la clave»,
+objetivo «Sube a la torre.» sin marcar y un círculo blanco en las escaleras. El diálogo se cierra
+y el indicador del NPC pasa de «!» naranja a «?» gris, también visible en el minimapa.
+El comportamiento al llegar al círculo o subir sigue pendiente; el cambio de color se registra
+como evidencia visual y todavía no como una regla general para todos los estados de misión.
+
+La séptima entrega documenta otro círculo durante el ascenso y el cambio al llegar al último escalón:
+«La información es la clave» conserva su título y sustituye «Sube a la torre.» por «Busca el barco.».
+La captura superior muestra un círculo blanco y la vista elevada del naufragio. No hay evidencia aún
+de una entrega, recompensa o transición especial de cámara; falta observar la condición del nuevo objetivo.
 
 El análisis del cliente identificó tres errores independientes de las misiones en la ficha del emulador:
 
@@ -96,6 +140,46 @@ experiencia posterior al tutorial: [mundo de Albion](https://albiononline.com/ne
 Estos artículos dan contexto; la referencia de implementación será esta versión instalada y la evidencia verificable.
 
 ## Brechas y orden de implementación
+
+### Primer tramo solicitado: playa hasta «Busca el barco»
+
+El usuario propone detener aquí la toma de referencias e integrar el recorrido observado por etapas.
+No necesita obtener coordenadas manualmente de cada círculo o NPC. La inspección de los datos instalados
+identificó el miembro `startpoint`, el interlocutor `WOUNDEDCRAFTER` y los marcadores referenciados por
+las misiones `MISSIONS_T2_TUTORIAL_TEST_A` y `MISSIONS_T2_TUTORIAL_TEST_B`. La primera contiene los dos
+puntos de salida de la playa, el mirador con `seconds=1` y la interacción con el artesano. La segunda
+contiene los marcadores de ascenso y la parte alta. Esta correspondencia es compatible con lo observado;
+no equivale todavía a verificar sus mensajes y numeración de tareas en el cliente real.
+
+El resolvedor ya transforma posiciones de plantillas al mapa: movimiento en el plano `(x,z)`, altura `y`
+separada y rotación de cada instancia aplicada. No deben usarse píxeles de las capturas ni sumarse de nuevo
+el origen o la posición de la plantilla. El radio del marcador describe su área; por sí solo no acredita
+que su entrada complete la tarea, como demuestra la conversación con el NPC.
+
+`--check-tutorial -v` ahora muestra punto inicial, interlocutores y marcadores con coordenadas, altura y radio.
+Comprueba además un único `startpoint`, la existencia de las dos definiciones iniciales y todas sus referencias
+de `locationmarkerid` en el mapa inicial. Conserva todas las posiciones si un identificador tiene varios
+marcadores. No abre puertos ni guardados. Los resultados y salidas con datos de la instalación permanecen
+ignorados en `data/lab/opening-foundation-*.log`.
+
+Validación de esta ampliación: compilación aislada con cero advertencias y errores, comprobación con cero fallos
+y cinco pruebas del lector correctas. Es validación de definiciones, **no un tutorial jugable implementado**.
+
+El alcance del primer tramo interactivo será:
+
+1. Personaje nuevo en el punto inicial de 1008, equipo inicial y aviso de movimiento.
+2. Puntos de salida de la playa, retirada del aviso y permanencia en el mirador.
+3. Artesano herido: interacción, objetivo cumplido, entrega explícita y siguiente oferta.
+4. Aceptación de «La información es la clave», ascenso y cambio a «Busca el barco».
+5. Conservación del avance al desconectar y pruebas que impidan saltar pasos o repetir entregas.
+
+La frontera de esta etapa es la aparición del objetivo «Busca el barco», no completar toda la segunda misión:
+sus tareas posteriores están en los datos pero todavía no se han contrastado con el recorrido del usuario.
+Se desarrollará como opción explícita de laboratorio para personajes nuevos. Los personajes existentes no
+se trasladarán ni perderán su equipo. Antes de dar instrucciones de prueba habrá que verificar los mensajes
+de misión, NPC y tutorial, su numeración y el inicio/animación; cambiar solo mapa y posición no cierra la etapa.
+La colaboración pendiente del usuario será una prueba visual de este mismo tramo cuando esté preparado;
+no hacen falta más capturas de fases posteriores para comenzar.
 
 | Etapa | Trabajo necesario | Evidencia para cerrarla |
 |---|---|---|

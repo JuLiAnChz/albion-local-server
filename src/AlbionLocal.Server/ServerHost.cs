@@ -63,6 +63,10 @@ public sealed class ServerHost : IDisposable
         ExpeditionData.SpawnAliases = Expeditions.SpawnAliases; // before the first cluster is resolved (the spawn binding reads it)
         // Answers of side requests without a handler; an unknown operation or field, a bad value or a stub for an
         // operation a session handles throws InvalidDataException here, before a port is opened.
+        var opening = config.TutorialOpening ? OpeningTutorialData.Load(config.ClientGameDataPath,
+            Client.Clusters ?? throw new InvalidDataException("Tutorial:Opening requires client clusters.")) : null;
+        if (opening is not null && GameData?.Board is null)
+            throw new InvalidDataException("Tutorial:Opening requires destiny board data.");
         Stubs = OpcodeStubs.Load(config.OpcodeStubsPath, code =>
             (OpcodeTable.For(typeof(LoginSession)).Find(code) ?? OpcodeTable.For(typeof(WorldSession)).Find(code) ?? OpcodeTable.For(typeof(ChatSession)).Find(code))?.Method);
         // The GM's saved rates (.rates … save) over the config's Rates: a bad data/rates.json throws here, before a port is opened.
@@ -107,6 +111,7 @@ public sealed class ServerHost : IDisposable
         Client.Record(Config.SavesPath);
         World = new World(Config, Characters, Items, GameData, Spells, Scripts)
         {
+            OpeningTutorial = opening,
             Sync = Sync, Clusters = Client.Clusters, Combat = Combat, Fishing = Fishing, DungeonSettings = Dungeons, Journals = Journals, BossSettings = Bosses, BossData = BossData, GvgSeasons = GvgSeasons, EventSettings = Events, ExpeditionSettings = Expeditions, Goals = Goals, BotSettings = Bots, CorruptedSettings = Corrupted, HellgateSettings = Hellgates, MistsSettings = Mists, Crafting = Client.Crafting, Stations = StationSpawns.Load(Config.SpawnsPath),
             // Checked against the item table of real client data (spells.bin with it); a self-test's hand-made table lacks the kits' items.
             Kits = Config.Corrupted is { Enabled: true, MapsOpenDungeons: true } ? Kits.Load(Config.KitsPath, Spells is null ? null : Items).MoveTickets()
@@ -247,7 +252,9 @@ public sealed class ServerHost : IDisposable
         LoginServer.Start();
         GameServer.Start();
         ChatServer?.Start();
-        Log.Info("main", $"{Characters.List().Count} persisted character(s); start cluster {Starter.Cluster}");
+        Log.Info("main", $"{Characters.List().Count} persisted character(s); new character start cluster {World.OpeningTutorial?.Tutorial.StartCluster ?? Starter.Cluster}");
+        if (World.OpeningTutorial is not null)
+            Log.Info("tutorial", "opening lab enabled for newly created characters; existing characters keep their start; route stops at boat-search");
     }
 
     /// <summary>

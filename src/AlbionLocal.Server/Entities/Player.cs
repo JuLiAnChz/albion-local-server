@@ -15,6 +15,8 @@ public sealed class Player(WorldSession session, World world, long id, Character
     private TimeSpan _playedAt = world.Clock.Now;
     private bool _playing = true;
 
+    internal TimeSpan? TutorialInsideSince { get; set; }
+
     /// <summary>Settle only elapsed online time; repeated save/disconnect snapshots cannot count it twice.</summary>
     public void StorePlayedTime()
     {

@@ -86,6 +86,8 @@ public static class MapSpawner
             else Skip("expedition agent not in expeditionagents.xml");
         }
         foreach (var m in template.LocationMarkers) objects.Add(new LocationMarker(Next(), m));
+        if (world.OpeningTutorial is { } opening && map.Cluster == opening.Tutorial.StartCluster)
+            objects.Add(new TutorialQuestGiver(Next(), opening.Crafter, opening.CrafterType));
         // StageG: the random dungeon exits on the cluster's markers (SPEC §8), and a dungeon floor's level factors (SPEC §7), with stageH's
         // dungeon of the day and group scaling.
         objects.AddRange(world.Dungeons.Populate(map, template));
