@@ -16,6 +16,7 @@ namespace AlbionLocal.SelfTest;
 /// <summary>Login chain against in-process login and game servers, checked the way the client reads it.</summary>
 public static class AlbionTests
 {
+    internal static string? ClientGameDataOverride { get; set; }
     public static IEnumerable<(string, Action)> All =>
     [
         ("albion serializer round trip", SerializerRoundTrip),
@@ -583,7 +584,8 @@ public static class AlbionTests
     internal static TimeSpan ClientLoadTime => LoadedClient.Value.Time;
 
     /// <summary>The default Paths:ClientGameData taken from the server folder (the parent of <see cref="DataDir"/>).</summary>
-    internal static string ClientGameDataDir() => Path.GetFullPath(ServerConfig.DefaultClientGameData, Path.Combine(DataDir(), ".."));
+    internal static string ClientGameDataDir() => ClientGameDataOverride
+        ?? Path.GetFullPath(ServerConfig.DefaultClientGameData, Path.Combine(DataDir(), ".."));
 
     /// <summary>A hand-made item table from rows in the data/items.tsv layout (index, uniquename, kind, slot, tier, durability).</summary>
     internal static ItemStore Items(params string[] rows) => new(rows.Select(TsvTemplate));
@@ -617,14 +619,13 @@ public static class AlbionTests
         throw new Exception("server/content/opcode-stubs.json not found");
     }
 
-    /// <summary>The path of golden file <paramref name="name"/> in <see cref="DataDir"/>, or null (with a note) when it was not generated:
-    /// a golden check then has nothing to compare against and passes.</summary>
+    /// <summary>The path of golden file <paramref name="name"/> in <see cref="DataDir"/>:
+    /// a missing reference is reported as skipped by the runner, never as a pass.</summary>
     internal static string? Golden(string name)
     {
         var path = Path.Combine(DataDir(), name);
         if (File.Exists(path)) return path;
-        Console.WriteLine($"      (golden {name} not generated: comparison skipped)");
-        return null;
+        throw new TestSkippedException($"golden reference {name} not published/generated");
     }
 
     /// <summary>The client's item table and game data, as the server runs on them.</summary>
