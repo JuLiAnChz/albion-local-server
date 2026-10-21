@@ -2,6 +2,10 @@
 
 Upstream: https://github.com/MrGreenCheezz/albion-local-server
 
+Working priorities and acceptance criteria: [Hoja de trabajo y contribuciones](HOJA-DE-RUTA.es.md).
+The first proposed review unit is the native SQLite dependency fix. Extract and validate each unit against
+current upstream before submitting it; the integration branch is not itself a single upstream proposal.
+
 Keep the MIT notice and attribution. No client files, GameData exports, private captures, account credentials,
 local settings or generated runtime reports belong in a contribution.
 
