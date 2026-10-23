@@ -21,7 +21,7 @@ public static class CharacterEntryTest
         ("character entry: selection preview restores customization JSON and equipped items after login", SelectionPreview),
         ("character entry: bald and beardless previews use empty mesh ids without changing saved appearance", EmptyMeshes),
         ("character entry: online time counts once across snapshots and disconnect, not while offline", OnlineTime),
-        ("character entry: schema v29 keeps characters and initializes unknown historic playtime to zero", Migration),
+        ("character entry: schema v35 keeps characters and initializes unknown historic playtime to zero", Migration),
     ];
 
     private static void Check(bool value, string why) => AlbionTests.Check(value, why);
@@ -217,7 +217,7 @@ public static class CharacterEntryTest
             {
                 connection.Open();
                 using var command = connection.CreateCommand();
-                command.CommandText = "ALTER TABLE characters DROP COLUMN tutorial_opening; ALTER TABLE characters DROP COLUMN played_ms; PRAGMA user_version=29;";
+                command.CommandText = "ALTER TABLE characters DROP COLUMN tutorial_opening; ALTER TABLE characters DROP COLUMN played_ms; PRAGMA user_version=35;";
                 command.ExecuteNonQuery();
             }
             using var migrated = new SqliteCharacterRepository(path);

@@ -85,6 +85,9 @@ public sealed partial class WorldSession
             StationAction.RerollQuality when !building.Template.RerollsQuality => Generic($"{building.Template.Name} does not reroll quality"),
             StationAction.RerollQuality when far => StationRefused(player, req, StationComponentError, (byte)RerollError.OutOfRange, "out of range"),
             StationAction.RerollQuality => StartReroll(player, building, req),
+            StationAction.Awaken when !building.Template.Awakens => Generic($"{building.Template.Name} does not awaken"),
+            StationAction.Awaken when far => StationRefused(player, req, StationComponentError, (byte)AwakenError.OutOfRange, "out of range"),
+            StationAction.Awaken => StartLegendary(player, building, req),
             _ => Generic($"ACT {req.p} is not made yet"),
         };
     }
@@ -316,10 +319,11 @@ public sealed partial class WorldSession
         var recipe = item.Recipes[req.v];
         if (req.w <= 0 || req.w > 9999) return Generic($"amount {req.w}");
         // StageL mists phase B: the City Trader's standing gates and FAVOR (Systems/Mists) are kept; every other kind is not yet.
-        if (recipe.Gold > 0 || recipe.Unsupported.Any(u => !Systems.Mists.Supports(u)))
+        if (recipe.Gold > 0 || recipe.Unsupported.Any(u => !Systems.Mists.Supports(u) && !Systems.Factions.Supports(u)))
             return Refuse(CraftError.NotEnoughResources, $"the recipe needs {(recipe.Gold > 0 ? "gold" : string.Join(", ", recipe.Unsupported))}, not made here yet");
         var crafts = Pricing.Crafts(req.w, recipe.AmountCrafted);
         if (world.Mists.TraderRefusal(player, recipe, crafts) is { } gated) return Refuse(CraftError.NotEnoughResources, gated);
+        if (world.Factions.ShopRefusal(player, recipe, crafts, building.Template) is { } faction) return Refuse(CraftError.NotEnoughResources, faction); // stageN faction SPEC §3
         var price = Pricing.CraftPrice(recipe, crafts);
         if (!Pricing.Accepts(req.r, price))
             return Refuse(CraftError.PriceChanged, string.Create(CultureInfo.InvariantCulture, $"the client's price {req.r / 10000.0:0.####} is not the server's {price / 10000.0:0.####}"));
@@ -347,6 +351,7 @@ public sealed partial class WorldSession
         SendEvent(building.NewBuilding(inUse: true));                                          // 1.
         Wallet.TrySpend(player, req.r, $"{crafts} x {item.Name} at {building.Template.Name}"); // 2. UpdateMoney
         world.Mists.PayFavor(player, recipe, crafts); // stageL mists phase B: the City Trader's FAVOR
+        world.Factions.Pay(player, recipe, crafts);   // stageN faction SPEC §3: the faction trader's FACTION_* points
 
         double focusUsed = 0, focusShare = 0;
         if (!building.Template.IsShop)

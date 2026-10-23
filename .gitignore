@@ -22,3 +22,11 @@ data/gamedata.json
 data/spells.json
 data/items.tsv
 data/journal-ids.tsv
+
+# Capture-derived self-test fixtures are never published
+tests/AlbionLocal.SelfTest/Fixtures/stage2_joins*.json
+tests/AlbionLocal.SelfTest/Fixtures/fishing_zones_*.json
+
+# Runtime folders
+data/backups/
+logs/

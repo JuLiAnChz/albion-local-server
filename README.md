@@ -40,7 +40,20 @@ The server implements a large part of what a PvE player meets in the game, as a 
   Roads of Avalon, the Mists, season goals and bounties.
 - **Social:** chat server (whispers, guild, party, world), friends, mail, trading, guilds with ranks, contracts and goals,
   emotes, loadouts, map pings.
-- **Bots:** simple player bots (city walkers, gatherers, patrols).
+- **Bots:** player bots (city walkers, gatherers, patrols, stronger hostile bots), companions you hire into the party
+  (tank, healer, melee, ranged).
+- **More systems:** arena queues (1v1/2v2/5v5) with bots and Elo ladders, hunts (tracking toolkits, wild tracks, hunt
+  quest chains), island construction, labourers and furniture, awakened weapons and item traits, the PvE side of
+  faction warfare, gathering tomes and fishing bait, expedition bonus chests, market price history, cosmetics from
+  content, a richer starter kit.
+- **Opening tutorial (opt-in, `Tutorial:Opening`):** new characters start on the tutorial island at The Lighthouse
+  and follow its quests through departure to a starter town, in a private instance per character (contributed in
+  PR #1; not every branch is visually verified yet).
+- **Web panel** (`http://127.0.0.1:8080/`): status, registration, admin pages (players, accounts, bans, log, backups).
+
+Modding (C# plugins, no-code rules, the Studio editor, ModKit content packs, extra action bars) and optional client
+mods are kept apart from this classic server, in the
+[`modifications`](https://github.com/MrGreenCheezz/albion-local-server/tree/modifications) branch.
 
 The detailed, per-feature reference (English) is in [docs/REFERENCE.md](docs/REFERENCE.md); the architecture notes
 (Russian) are in [docs/ARCHITECTURE.ru.md](docs/ARCHITECTURE.ru.md). Both mention a private analysis workspace
@@ -55,6 +68,7 @@ The detailed, per-feature reference (English) is in [docs/REFERENCE.md](docs/REF
 | `src/AlbionLocal.Server` | Login (5055), game (5056) and chat (5057) servers, world simulation, systems, persistence |
 | `tests/AlbionLocal.SelfTest` | Offline self-test with an in-process client (no network, no real client needed to run it, but it reads the GameData files) |
 | `tools/AlbionLocal.CapDecode` | Decoder for packet captures of your own sessions |
+| `tools/start-server.ps1` | Builds the server and starts it against your client's GameData (`-GameDir`) |
 | `config/albionlocal.json` | Server settings (every key optional, commented) |
 | `content/` | Server-side content: spawns, kits, events, dungeons, goals, bots and other tunables |
 
@@ -92,13 +106,16 @@ On start it prints the database schema version and the three listening ports. By
 only; see the "second PC" part of [docs/REFERENCE.md](docs/REFERENCE.md) for LAN settings (`Network:BindAddress`,
 `Network:PublicAddress`) and the firewall ports.
 
-Run the self-test. It reads the GameData folder from the fixed path `../game-local/Albion-Online_Data/StreamingAssets/GameData`
-next to the repository, so put a link there to your client installation (for example a directory junction or symlink
-named `game-local` next to this folder):
+Run the self-test. By default it reads the GameData folder from `../game-local/Albion-Online_Data/StreamingAssets/GameData`
+next to the repository (for example a directory junction named `game-local` to your client installation), or pass the
+folder yourself:
 
 ```bash
-dotnet run --project tests/AlbionLocal.SelfTest
+dotnet run --project tests/AlbionLocal.SelfTest -- --client-gamedata="C:/Games/AlbionOnline/game/Albion-Online_Data/StreamingAssets/GameData"
 ```
+
+`--only=<text>` runs the tests whose names contain the text, `--report=<file>` writes a JSON report, `--help` lists the
+options.
 
 Comparisons against generated "golden" data files are skipped, because those files are not published.
 

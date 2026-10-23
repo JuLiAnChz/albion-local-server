@@ -60,6 +60,13 @@ public sealed class PlayerCombat
     /// </summary>
     public Dictionary<byte, Systems.MultiSlot> Multi { get; } = [];
 
+    /// <summary>
+    /// Its stored targets (stageN spells2, storetargets): a unit or a point (a spell area's centre) under a tag until a GameTimeStamp, oldest
+    /// first; a target="storedtarget" spell (the multispell follow-ups: AFTER_IMAGE_RETURN, SHOCKWAVE_PUNCH2, ICE_SCULPTURE_EXPLODE) is cast at
+    /// the newest of its storedtargettag (<see cref="Systems.SpellCasts.Stored"/>).
+    /// </summary>
+    public List<Systems.StoredTarget> Stored { get; } = [];
+
     /// <summary>The batch use from the inventory under way (UseConsumableFromInventory, <see cref="Systems.Consumables"/>); null when none.</summary>
     public Systems.Consumables.Batch? Batch { get; internal set; }
 

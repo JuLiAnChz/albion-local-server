@@ -115,7 +115,7 @@ public sealed class ServerHost : IDisposable
         World = new World(Config, Characters, Items, GameData, Spells, Scripts)
         {
             OpeningTutorial = opening,
-            Sync = Sync, Clusters = Client.Clusters, Combat = Combat, Fishing = Fishing, DungeonSettings = Dungeons, Journals = Journals, BossSettings = Bosses, BossData = BossData, GvgSeasons = GvgSeasons, EventSettings = Events, ExpeditionSettings = Expeditions, Goals = Goals, BotSettings = Bots, CorruptedSettings = Corrupted, HellgateSettings = Hellgates, MistsSettings = Mists, Crafting = Client.Crafting, Stations = StationSpawns.Load(Config.SpawnsPath),
+            Sync = Sync, Clusters = Client.Clusters, Combat = Combat, Fishing = Fishing, DungeonSettings = Dungeons, Journals = Journals, BossSettings = Bosses, BossData = BossData, GvgSeasons = GvgSeasons, EventSettings = Events, ExpeditionSettings = Expeditions, Goals = Goals, BotSettings = Bots, CorruptedSettings = Corrupted, HellgateSettings = Hellgates, MistsSettings = Mists, Crafting = Client.Crafting, Legendary = Client.Legendary, Stations = StationSpawns.Load(Config.SpawnsPath),
             // Checked against the item table of real client data (spells.bin with it); a self-test's hand-made table lacks the kits' items.
             Kits = Config.Corrupted is { Enabled: true, MapsOpenDungeons: true } ? Kits.Load(Config.KitsPath, Spells is null ? null : Items).MoveTickets()
                 : Kits.Load(Config.KitsPath, Spells is null ? null : Items),
@@ -249,12 +249,29 @@ public sealed class ServerHost : IDisposable
     /// <summary>The chat listener (stageJ chat SPEC §2.2); null with Chat:Enabled false.</summary>
     public PhotonServer? ChatServer { get; }
 
+    /// <summary>The database backups (the panel's button, Backup:EveryHours); set by <see cref="Start"/>.</summary>
+    public Web.DbBackup? Backups { get; private set; }
+
+    /// <summary>The web panel (Web:Enabled); null when off or its port could not be opened.</summary>
+    public Web.WebPanel? WebPanel { get; private set; }
+
     public void Start()
     {
         Loop.Start(); // first: a bad World:TickMs throws before a listener runs
         LoginServer.Start();
         GameServer.Start();
         ChatServer?.Start();
+        Backups = new Web.DbBackup(Config.DatabasePath, Path.Combine(Config.SavesPath, "backups"), Config.Backup, () =>
+        {
+            lock (World.Sync) World.Saves.SaveAll(); // the characters' unsaved changes, then written (not under the lock)
+            World.Saves.Flush();
+        });
+        if (Config.Web.Enabled)
+        {
+            // A port in use leaves the game running without the panel (it is not needed to play): said in the log.
+            try { WebPanel = new Web.WebPanel(World, Config.Web, Backups, Client.Build); }
+            catch (System.Net.Sockets.SocketException e) { Log.Error("web", $"web panel not started on {Config.Web.BindAddress}:{Config.Web.Port}: {e.Message} (Web:Port)"); }
+        }
         Log.Info("main", $"{Characters.List().Count} persisted character(s); new character start cluster {World.OpeningTutorial?.Tutorial.StartCluster ?? Starter.Cluster}");
         if (World.OpeningTutorial is not null)
             Log.Info("tutorial", "tutorial lab enabled for newly created characters; existing progress is retained; client-authored island route continues through starter-town departure (visual validation pending)");
@@ -269,6 +286,8 @@ public sealed class ServerHost : IDisposable
     {
         if (_disposed) return;
         _disposed = true;
+        WebPanel?.Dispose();
+        Backups?.Dispose();
         Loop.Dispose();
         lock (World.Sync) World.Duels.CancelAll(); // the wagers back before the sessions close (a disconnect would lose the duel)
         lock (World.Sync) World.Trades.CancelAll(); // the trades end (nothing has moved before a commit)

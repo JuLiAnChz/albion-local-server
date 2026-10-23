@@ -599,13 +599,18 @@ public static class Mounts
     /// Mounted (210, asz): 0 me, 1 <paramref name="t"/>, 2 the mount item's index (absent = dismounted), 4 the mount bar at t, 5 its
     /// regeneration, 6 t (Int64 ticks), 7 true, 8 <paramref name="quick"/> (remount / dismount), 9 <paramref name="full"/> (full mount,
     /// forced dismount, catch-up), 10 <paramref name="facing"/> (-1 on a mount: ≥ 0 would turn the player), 11 <paramref name="catchUp"/>.
-    /// Key 3 (the skin) is left out: no skins here.
+    /// Key 3: the mount skin number of the mount's category (stageN vanity SPEC §1.5), through Extra so that skin 0 goes out too; left out without one.
     /// </summary>
-    private static MountedEvent Mounted(Player p, long t, Item? item, bool quick, bool full, float facing, bool catchUp = false, bool hostile = false) => new()
+    private static MountedEvent Mounted(Player p, long t, Item? item, bool quick, bool full, float facing, bool catchUp = false, bool hostile = false)
     {
-        ddn = p.Id, csg = t, csh = item?.Template.Index ?? 0, csj = p.MountHealth.At(t), csk = p.MountHealth.RegenPerSecond, csl = t,
-        csm = true, csn = quick, cso = full, csp = facing, csq = catchUp, css = hostile,
-    };
+        var e = new MountedEvent
+        {
+            ddn = p.Id, csg = t, csh = item?.Template.Index ?? 0, csj = p.MountHealth.At(t), csk = p.MountHealth.RegenPerSecond, csl = t,
+            csm = true, csn = quick, cso = full, csp = facing, csq = catchUp, css = hostile,
+        };
+        if (item is not null && p.World.Vanity.MountSkinFor(p.Character, item.Template) is var skin and >= 0) e.Extra = new() { [3] = skin };
+        return e;
+    }
 
     /// <summary>CastSpell (19) of a mount buff on the player: {0 me, 1 me, 2 its position, 3 the spell, 4 t, 5 t}.</summary>
     private static CastSpellEvent CastSpell(Player p, SpellTemplate spell, Vector2 at, long t) =>

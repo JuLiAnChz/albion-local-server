@@ -149,6 +149,14 @@ public sealed class EffectList
 
     public int Count => _spells.Count;
 
+    /// <summary>
+    /// GameTimeStamp and type of the last damage on its health (stageN spells2: the &lt;AI&gt; IfTargetTookDamage); 0 = none yet. Set by
+    /// <see cref="SpellEffects.Damaged"/> from the three damage paths (player → mob, mob → player, player → player).
+    /// </summary>
+    public long DamagedAt { get; internal set; }
+
+    public EffectType DamagedType { get; internal set; }
+
     /// <summary>A player's worn passives as last worked out (<see cref="Passives.Of"/>); null until then and for mobs.</summary>
     internal PassiveSet? Passive { get; set; }
 
@@ -381,6 +389,7 @@ public static class SpellEffects
             entry = new ActiveSpell
             {
                 Spell = spell, Caster = caster, Subs = [.. spell.Effects.Select((node, i) => new SubEffect(node, i))], Pending = pending,
+                Stacks = (byte)Math.Clamp(Math.Min(spell.StartCharges, spell.StackLimit), 1, byte.MaxValue), // startcharges (the bait's 10 charges)
             };
             list.Add(entry);
         }
@@ -527,7 +536,7 @@ public static class SpellEffects
         var e = attacker.Effects;
         var boss = attacker is Mob { DamageFactor: var f } ? f : 1;
         var name = $"{(type == EffectType.Magic ? "magic" : "physical")}{(spell ? "spell" : "attack")}damagebonus";
-        var worn = spell && attacker is Player { World.Config.GearDamageBonus: true } p && (p.Bot is null || p.World.Config.Bots.GearDamageBonus)
+        var worn = spell && attacker is Player { World.Config.GearDamageBonus: true } p && (p.Bot is null || (p.IsCompanion ? p.World.Config.Companions.GearDamageBonus : p.World.Config.Bots.GearDamageBonus))
             ? Combat.Worn(p, name) : 0;
         if (e.Idle) return Math.Max(0, 1 + worn) * boss;
         var bonus = worn + e.Sum(name, now);
@@ -721,6 +730,14 @@ public static class SpellEffects
 
     /// <summary>No auto-attack: stunned or cannotattack.</summary>
     public static bool CannotAttack(IUnit unit, long now) => unit.Effects.Count > 0 && (unit.Effects.Has("cannotattack", now) || unit.Effects.Has("stun", now));
+
+    /// <summary>Damage of <paramref name="type"/> came off <paramref name="unit"/>'s health at <paramref name="ticks"/> (IfTargetTookDamage).</summary>
+    public static void Damaged(IUnit unit, EffectType type, long ticks)
+    {
+        if (ticks < unit.Effects.DamagedAt) return;
+        unit.Effects.DamagedAt = ticks;
+        unit.Effects.DamagedType = type;
+    }
 
     /// <summary>invincibility: damage on the unit is ignored (no HealthUpdate).</summary>
     public static bool Invincible(IUnit unit, long now) => unit.Effects.Count > 0 && unit.Effects.Has("invincibility", now);

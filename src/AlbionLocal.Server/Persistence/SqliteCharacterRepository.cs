@@ -396,11 +396,79 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
         """
         ALTER TABLE characters ADD COLUMN loadouts TEXT;                             -- JSON Loadout[]; NULL = none
         """,
-        // v30: online duration for Login key 34. Existing saves have no reliable historic counter.
+        // v30 (analysis/work/stageN/faction/SPEC.md §2): the faction standing and points per faction, and the last enlistment change.
+        """
+        ALTER TABLE characters ADD COLUMN faction_standing TEXT;                     -- JSON a7m[6] by FlaggingStatus - 1; NULL = none
+        ALTER TABLE characters ADD COLUMN faction_points TEXT;                       -- JSON a7m[6] (the FACTION_* currencies); NULL = none
+        ALTER TABLE characters ADD COLUMN faction_changed_at INTEGER NOT NULL DEFAULT 0; -- GameTimeStamp of the last enlistment change; 0 = never
+        """,
+        // v31 (analysis/work/stageN/econ/SPEC.md §1): the market's sales per
+        // city, for the price-history chart (AuctionGetItemAverageStats). IF NOT EXISTS: safe at whichever position the merge gives it.
+        """
+        CREATE TABLE IF NOT EXISTS market_sales (
+            location    TEXT NOT NULL,                      -- the marketplace's cluster id (per city, as the orders)
+            uniquename  TEXT NOT NULL,                      -- ItemTypeId (T4_X@n)
+            quality     INTEGER NOT NULL,
+            amount      INTEGER NOT NULL,
+            unit_price  INTEGER NOT NULL,                   -- a7m raw
+            at          INTEGER NOT NULL                    -- UTC ticks (GameTimeStamp)
+        );
+        CREATE INDEX IF NOT EXISTS market_sales_item ON market_sales (location, uniquename, at);
+        """,
+        // v32 (analysis/work/stageN/arena/SPEC.md §5): the duel and arena ladders (Elo), one row per character and ladder.
+        // IF NOT EXISTS: safe at whichever position the merge gives it.
+        """
+        CREATE TABLE IF NOT EXISTS ratings (
+            character_id TEXT NOT NULL,                     -- Character.Id
+            ladder       TEXT NOT NULL,                     -- duel, 1v1, 2v2, 5v5
+            name         TEXT NOT NULL,                     -- the character's name at its last result
+            rating       INTEGER NOT NULL,
+            wins         INTEGER NOT NULL DEFAULT 0,
+            losses       INTEGER NOT NULL DEFAULT 0,
+            draws        INTEGER NOT NULL DEFAULT 0,
+            updated      INTEGER NOT NULL DEFAULT 0,        -- UTC ticks of the last result
+            PRIMARY KEY (character_id, ladder)
+        );
+        CREATE INDEX IF NOT EXISTS ratings_ladder ON ratings (ladder, rating);
+        """,
+        // v33 (analysis/work/stageN/labourers/SPEC.md §2.5): the labourers living in the houses of the islands (rows go with the house).
+        // IF NOT EXISTS: safe at whichever position the merge gives it (the furniture of the houses are island_farmables rows).
+        """
+        CREATE TABLE IF NOT EXISTS island_labourers (
+            id            TEXT PRIMARY KEY,                 -- Guid (NewBuilding key 1)
+            island        TEXT NOT NULL REFERENCES islands (id) ON DELETE CASCADE,
+            building      TEXT NOT NULL REFERENCES island_buildings (id) ON DELETE CASCADE, -- the house
+            type          TEXT NOT NULL,                    -- buildings.xml labourer uniquename (T2_LABOURER_WOOD)
+            name          TEXT NOT NULL,
+            x             REAL NOT NULL,
+            z             REAL NOT NULL,
+            rotation      REAL NOT NULL DEFAULT 0,
+            hired         INTEGER NOT NULL,                 -- GameTimeStamp
+            fame          INTEGER NOT NULL DEFAULT 0,       -- labourer fame, a7m raw
+            happiness     REAL NOT NULL DEFAULT 0,          -- whole happiness at happiness_at
+            happiness_at  INTEGER NOT NULL DEFAULT 0,
+            journal       TEXT,                             -- the _FULL journal of the job; NULL = none
+            job_start     INTEGER NOT NULL DEFAULT 0,
+            job_end       INTEGER NOT NULL DEFAULT 0,
+            job_yield     REAL NOT NULL DEFAULT 0
+        );
+        CREATE INDEX IF NOT EXISTS island_labourers_island ON island_labourers (island);
+        """,
+        // v34 (analysis/work/stageN/awakening/SPEC.md §2): an awakened weapon's legendary soul (traits, attunement) per item row.
+        // ADD COLUMN only, independent of the other steps: safe at whichever position the merge gives it.
+        """
+        ALTER TABLE items ADD COLUMN soul TEXT;                                      -- JSON ItemSoul; NULL = not awakened
+        ALTER TABLE bank_items ADD COLUMN soul TEXT;
+        """,
+        // v35 (analysis/work/stageN/vanity/SPEC.md §2): the cosmetics of a character (unlocks, wardrobe, mount skins), one JSON column.
+        """
+        ALTER TABLE characters ADD COLUMN vanity TEXT;                               -- JSON VanityLog; NULL = none
+        """,
+        // v36: online duration for Login key 34. Existing saves have no reliable historic counter.
         """
         ALTER TABLE characters ADD COLUMN played_ms INTEGER NOT NULL DEFAULT 0 CHECK (played_ms >= 0);
         """,
-        // v31: opt-in, bounded opening tutorial; NULL preserves existing characters.
+        // v37: opt-in, bounded opening tutorial; NULL preserves existing characters.
         """
         ALTER TABLE characters ADD COLUMN tutorial_opening TEXT;
         """,
@@ -412,7 +480,8 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
         "id, name, template, appearance, customization, clothes, cluster, position_x, position_y, created, equipment_container, inventory_container, "
         + "direction, previous_cluster, last_left_at, last_city, pending_transfer, fame, silver, gold, effects, cooldowns, focus, mounted_since, mount_cooldown, "
         + "flag, faction, reputation, reputation_at, dungeon_return, journal_tracked, expeditions, goals, black_market, "
-        + "focus_stamp, learning_points, lp_stamp, use_flags, autolearn, infamy, mist_standing, mist_favor, loadouts, played_ms, tutorial_opening";
+        + "focus_stamp, learning_points, lp_stamp, use_flags, autolearn, infamy, mist_standing, mist_favor, loadouts, "
+        + "faction_standing, faction_points, faction_changed_at, vanity, played_ms, tutorial_opening";
 
     private readonly object _sync = new();
     private readonly SqliteConnection _db;
@@ -570,7 +639,8 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
                         VALUES ($account, $id, $name, $template, $appearance, $customization, $clothes, $cluster, $x, $y, $created, $eq, $inv,
                             $direction, $previous, $left, $city, $transfer, $fame, $silver, $gold, $effects, $cooldowns, $focus, $mounted, $mountcd,
                             $flag, $faction, $reputation, $reputationat, $dungeon, $journal, $expeditions, $goals, $bm,
-                            $focusstamp, $lp, $lpstamp, $useflags, $autolearn, $infamy, $miststanding, $mistfavor, $loadouts, $played, $tutorial)
+                            $focusstamp, $lp, $lpstamp, $useflags, $autolearn, $infamy, $miststanding, $mistfavor, $loadouts,
+                            $fstanding, $fpoints, $fchanged, $vanity, $played, $tutorial)
                         """, tx, [("$account", c.Account.ToString()), .. CharacterValues(c)]))
                     insert.ExecuteNonQuery();
                 WriteContents(c, tx);
@@ -616,7 +686,9 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
                     reputation = $reputation, reputation_at = $reputationat, dungeon_return = $dungeon,
                     journal_tracked = $journal, expeditions = $expeditions, goals = $goals, black_market = $bm,
                     focus_stamp = $focusstamp, learning_points = $lp, lp_stamp = $lpstamp, use_flags = $useflags, autolearn = $autolearn,
-                    infamy = $infamy, mist_standing = $miststanding, mist_favor = $mistfavor, loadouts = $loadouts, played_ms = $played, tutorial_opening = $tutorial
+                    infamy = $infamy, mist_standing = $miststanding, mist_favor = $mistfavor, loadouts = $loadouts,
+                    faction_standing = $fstanding, faction_points = $fpoints, faction_changed_at = $fchanged,
+                    vanity = $vanity, played_ms = $played, tutorial_opening = $tutorial
                 WHERE id = $id
                 """, tx, CharacterValues(c)))
             if (update.ExecuteNonQuery() == 0) return false;
@@ -681,6 +753,10 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
         ("$infamy", c.Infamy is { } inf ? JsonSerializer.Serialize(inf) : null),
         ("$miststanding", c.MistStanding), ("$mistfavor", c.MistFavor),
         ("$loadouts", c.Loadouts.Count > 0 ? JsonSerializer.Serialize(c.Loadouts) : null),
+        ("$fstanding", c.FactionStanding.Any(x => x != 0) ? JsonSerializer.Serialize(c.FactionStanding) : null),
+        ("$fpoints", c.FactionPoints.Any(x => x != 0) ? JsonSerializer.Serialize(c.FactionPoints) : null),
+        ("$fchanged", c.FactionChangedAt),
+        ("$vanity", c.Vanity is { } v ? JsonSerializer.Serialize(v) : null),
         ("$played", c.PlayedMilliseconds),
         ("$tutorial", c.Tutorial is null ? null : JsonSerializer.Serialize(c.Tutorial)),
     ];
@@ -689,10 +765,10 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
     private void WriteContents(Character c, SqliteTransaction tx)
     {
         using var insert = Command("""
-            INSERT INTO items (character, container, slot, uniquename, count, quality, durability, active, passive, fame)
-            VALUES ($id, $container, $slot, $name, $count, $quality, $durability, $active, $passive, $fame)
+            INSERT INTO items (character, container, slot, uniquename, count, quality, durability, active, passive, fame, soul)
+            VALUES ($id, $container, $slot, $name, $count, $quality, $durability, $active, $passive, $fame, $soul)
             """, tx, ("$id", c.Id.ToString()), ("$container", 0), ("$slot", 0), ("$name", null), ("$count", 0), ("$quality", 0),
-            ("$durability", null), ("$active", null), ("$passive", null), ("$fame", null));
+            ("$durability", null), ("$active", null), ("$passive", null), ("$fame", null), ("$soul", null));
         void Put(int container, int slot, InventoryItem it)
         {
             var p = insert.Parameters;
@@ -705,6 +781,7 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
             p["$active"].Value = it.Active is null ? DBNull.Value : JsonSerializer.Serialize(it.Active);
             p["$passive"].Value = it.Passive is null ? DBNull.Value : JsonSerializer.Serialize(it.Passive);
             p["$fame"].Value = (object?)it.Fame ?? DBNull.Value;
+            p["$soul"].Value = it.Soul is null ? DBNull.Value : JsonSerializer.Serialize(it.Soul);
             insert.ExecuteNonQuery();
         }
         for (var slot = 0; slot < c.Equipment.Length; slot++)
@@ -714,10 +791,10 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
         if (c.Vaults.Count > 0)
         {
             using var bank = Command("""
-                INSERT INTO bank_items (character, location, tab, slot, uniquename, count, quality, durability, active, passive, fame)
-                VALUES ($id, $location, $tab, $slot, $name, $count, $quality, $durability, $active, $passive, $fame)
+                INSERT INTO bank_items (character, location, tab, slot, uniquename, count, quality, durability, active, passive, fame, soul)
+                VALUES ($id, $location, $tab, $slot, $name, $count, $quality, $durability, $active, $passive, $fame, $soul)
                 """, tx, ("$id", c.Id.ToString()), ("$location", ""), ("$tab", ""), ("$slot", 0), ("$name", ""), ("$count", 0), ("$quality", 0),
-                ("$durability", null), ("$active", null), ("$passive", null), ("$fame", null));
+                ("$durability", null), ("$active", null), ("$passive", null), ("$fame", null), ("$soul", null));
             foreach (var (key, slots) in c.Vaults)
             {
                 var bar = key.LastIndexOf('|');
@@ -735,6 +812,7 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
                     p["$active"].Value = it.Active is null ? DBNull.Value : JsonSerializer.Serialize(it.Active);
                     p["$passive"].Value = it.Passive is null ? DBNull.Value : JsonSerializer.Serialize(it.Passive);
                     p["$fame"].Value = (object?)it.Fame ?? DBNull.Value;
+                    p["$soul"].Value = it.Soul is null ? DBNull.Value : JsonSerializer.Serialize(it.Soul);
                     bank.ExecuteNonQuery();
                 }
             }
@@ -840,9 +918,13 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
                     MistStanding = r.GetInt64(40),
                     MistFavor = r.GetInt64(41),
                     Loadouts = r.IsDBNull(42) ? [] : JsonSerializer.Deserialize<List<Loadout>>(r.GetString(42)) ?? [],
-                    PlayedMilliseconds = r.GetInt64(43),
-                    Tutorial = r.IsDBNull(44) ? null : JsonSerializer.Deserialize<OpeningTutorialProgress>(r.GetString(44)),
-                    Account = Guid.Parse(r.GetString(45)),
+                    FactionStanding = Six(r, 43),
+                    FactionPoints = Six(r, 44),
+                    FactionChangedAt = r.GetInt64(45),
+                    Vanity = r.IsDBNull(46) ? null : JsonSerializer.Deserialize<VanityLog>(r.GetString(46)),
+                    PlayedMilliseconds = r.GetInt64(47),
+                    Tutorial = r.IsDBNull(48) ? null : JsonSerializer.Deserialize<OpeningTutorialProgress>(r.GetString(48)),
+                    Account = Guid.Parse(r.GetString(49)),
 
                 });
             }
@@ -851,12 +933,21 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
         return list;
     }
 
+    /// <summary>A JSON a7m[6] column (v30 faction standing / points); NULL or another length reads as six zeros.</summary>
+    private static long[] Six(SqliteDataReader r, int column)
+    {
+        var six = new long[6];
+        if (!r.IsDBNull(column) && JsonSerializer.Deserialize<long[]>(r.GetString(column)) is { } saved)
+            Array.Copy(saved, six, Math.Min(6, saved.Length));
+        return six;
+    }
+
     private void ReadContents(Character c)
     {
         var equipment = new List<InventoryItem?>();
         var inventory = new List<InventoryItem?>();
         using (var select = Command("""
-                   SELECT container, slot, uniquename, count, quality, durability, active, passive, fame
+                   SELECT container, slot, uniquename, count, quality, durability, active, passive, fame, soul
                    FROM items WHERE character = $id ORDER BY container, slot
                    """, null, ("$id", c.Id.ToString())))
         using (var r = select.ExecuteReader())
@@ -873,6 +964,7 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
                     Active = r.IsDBNull(6) ? null : JsonSerializer.Deserialize<string?[]>(r.GetString(6)),
                     Passive = r.IsDBNull(7) ? null : JsonSerializer.Deserialize<string?[]>(r.GetString(7)),
                     Fame = r.IsDBNull(8) ? null : r.GetInt64(8),
+                    Soul = r.IsDBNull(9) ? null : JsonSerializer.Deserialize<ItemSoul>(r.GetString(9)),
                 };
             }
         }
@@ -880,7 +972,7 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
         c.Equipment = [.. equipment];
         c.Inventory = inventory;
         using (var select = Command("""
-                   SELECT location, tab, slot, uniquename, count, quality, durability, active, passive, fame
+                   SELECT location, tab, slot, uniquename, count, quality, durability, active, passive, fame, soul
                    FROM bank_items WHERE character = $id ORDER BY location, tab, slot
                    """, null, ("$id", c.Id.ToString())))
         using (var r = select.ExecuteReader())
@@ -898,6 +990,7 @@ public sealed partial class SqliteCharacterRepository : IGameRepository
                     Active = r.IsDBNull(7) ? null : JsonSerializer.Deserialize<string?[]>(r.GetString(7)),
                     Passive = r.IsDBNull(8) ? null : JsonSerializer.Deserialize<string?[]>(r.GetString(8)),
                     Fame = r.IsDBNull(9) ? null : r.GetInt64(9),
+                    Soul = r.IsDBNull(10) ? null : JsonSerializer.Deserialize<ItemSoul>(r.GetString(10)),
                 };
             }
         }

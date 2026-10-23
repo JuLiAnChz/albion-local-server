@@ -290,7 +290,7 @@ public static class Death
         var inventory = victim.Inventory;
         Part(inventory.Equipment, rule.EquipmentWear, rule.EquipmentStack);
         Part(inventory.Bag, rule.InventoryWear, rule.InventoryStack);
-        foreach (var item in worn.Where(i => !dropped.Contains(i))) victim.Session.Send(Network.WorldSession.ItemObject(item)); // what stays, worn
+        foreach (var item in worn.Where(i => !dropped.Contains(i))) Network.WorldSession.SendItemTo(victim, item); // what stays, worn
         if (rule.EquipmentDrops) victim.Session.Send(new InventoryStateEvent { ck0 = inventory.Equipment.ObjectIds(), ck2 = inventory.Equipment.Id });
         if (rule.InventoryDrops) victim.Session.Send(new InventoryStateEvent { ck0 = inventory.Bag.ObjectIds(), ck2 = inventory.Bag.Id });
         victim.SaveItems();
@@ -566,6 +566,7 @@ public static class Death
         if (p == target || p.Map is null || target.Map != p.Map) return "no target";
         if (target.Combat.Down is not { Kind: KnockdownKind.Pve or KnockdownKind.Pvp }) return "the target is not knocked down";
         if (p.World.Duels.OpponentOf(p) == target) return "the duel opponent";
+        if (p.World.Arenas.Find(p.Map.Cluster) is not null) return "no execute in the arena"; // stage N arena: a defeat is a knockdown there
         var relation = Pvp.Of(p, target);
         if (relation != Relation.Hostile) return "not hostile";
         var lethal = Pvp.RulesOf(p.World, p.Map).PlayersAreLethal;
