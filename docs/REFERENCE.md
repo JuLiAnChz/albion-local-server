@@ -1164,11 +1164,13 @@ server build refuses the converted file).
   (`1000.json`), Bridgewatch (`2000.json`), Martlock (`3004.json`), Fort Sterling (`4000.json`), Caerleon (`3003.json`)
   and Brecilien (`5000.json`), on real-estate plots near the bank; each city refines and crafts with its own bonus
   (Martlock hide, Lymhurst fiber, Bridgewatch rock, Fort Sterling wood +40 %, plus its weapon and armour lines). The recipe's silver and
-  resources are taken at the start, one craft takes 0.4 s, moving or casting cancels the rest (its silver and resources
+  resources are taken at the start, duration follows the client's recipe time and CraftTime factor, and moving or casting cancels the rest (its silver and resources
   come back). Part of the resources come back by the city's bonus (Thetford ore 36.7 %; `Crafting:Returns` false turns it
-  off). Crafted equipment gets a random quality (normal 68.9 % … masterpiece 0.1 %). Each craft gives crafting fame
-  (item value × count × 1.5^(tier + enchantment − 2): a T3 plank 12, a T4 sword 864) to the total and the destiny board;
-  shop purchases give none. With the craft window's "use focus" on, a craft spends crafting focus for more resources back
+  off). Crafted equipment gets a random quality (normal 68.9 % … masterpiece 0.1 %). Each batch gives crafting fame once
+  (item value × count × 1.5^(tier + enchantment − 2): a T3 plank 12, a T4 sword 864) to the total and the destiny board
+  on completion; cancellation or logout settles only the units already produced, and shop purchases give none.
+  Output whose deadline has elapsed is settled before cancellation, including movement after the batch end but before the next world tick.
+  With the craft window's "use focus" on, a craft spends crafting focus for more resources back
   (see Premium, focus and learning points).
 - **Stables:** every city above (Thetford and Brecilien too) also has a public stable (`T8_STABLE`) on a free plot near
   the bank. It makes the mounts of its list: a T3-T8 riding horse or ox from one grown animal of the same tier (raised on

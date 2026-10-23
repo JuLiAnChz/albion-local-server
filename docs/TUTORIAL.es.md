@@ -4,13 +4,24 @@ Análisis del 21 de octubre de 2026 sobre cliente Windows `1.32.030.345319` y se
 Objetivo solicitado: reproducir el recorrido inicial del juego, empezando por el tutorial y sus misiones.
 La fidelidad se comprobará por comportamiento y versión; no se deducirá de poder entrar al mundo.
 
-## Estado actual: integración experimental del primer tramo
+## Estado actual: integración experimental de la isla
 
-Ya existe una implementación optativa de las transiciones hasta «Busca el barco», el NPC y sus operaciones
+Ya existe una implementación optativa hasta fabricar y equipar la primera espada, elegir su habilidad
+y entregar esa misión para recibir un escudo, con el NPC y sus operaciones
 de interacción/aceptación/entrega, con avance por personaje guardado en SQLite v31. Se habilita mediante
 `Tutorial:Opening=true`; el script de laboratorio ofrece `-OpeningTutorial` con guardados separados.
-La [guía de prueba](TUTORIAL-PRUEBA.es.md) describe el arranque, recorrido y limitaciones.
-La presentación en el cliente real sigue pendiente de validación; la animación inicial tumbado aún no está implementada.
+La [guía de prueba](TUTORIAL-PRUEBA.es.md) describe el arranque y el primer tramo.
+La continuación incorpora las misiones restantes de la isla, sus variantes de arma, cuatro mapas
+privados, comercio local y salida por el planificador. El [recorrido completo](TUTORIAL-RECORRIDO.es.md)
+describe los pasos y las diferencias conocidas. Esta continuación requiere comprobación visual;
+la cobertura de pruebas automáticas no equivale a una partida completa en el cliente.
+El usuario confirmó visualmente la llegada con `TUTORIAL_STUN`, las misiones del primer tramo y la
+apertura del panel tras desactivar `TrackerCollapse`. La continuación desde «Busca el barco» hasta
+la entrega de la segunda misión fue confirmada visualmente por el usuario.
+El usuario confirmó después la primera recolección y su entrega. Se añadió el tramo de fabricación,
+que requiere su comprobación visual con el juego.
+El escenario de apertura se separa ahora en instancias privadas por personaje; sus misiones conservan
+el mapa base para resolver textos y marcadores. La prueba de aislamiento con el juego queda pendiente.
 Las secciones de diagnóstico siguientes conservan los hallazgos previos a esta integración.
 
 ## Primera implementación: lector y comprobación de definiciones

@@ -18,12 +18,22 @@ try {
         $ClientGameData = (Get-Content -LiteralPath 'lab.local.json' -Raw | ConvertFrom-Json).clientGameData
     }
     if ($ClientGameData) { $ClientGameData = [IO.Path]::GetFullPath($ClientGameData) }
+    if ($OpeningTutorial -and !$ArtifactsPath) { $ArtifactsPath = 'data/lab/onboarding-build' }
     if ($ArtifactsPath) { $ArtifactsPath = [IO.Path]::GetFullPath($ArtifactsPath) }
     if ($Mode -eq 'build') {
         $buildArgs = @('build', 'AlbionLocal.slnx', '--nologo', '-m:1', '-nr:false', '-p:UseSharedCompilation=false', '-p:NuGetAudit=true', '-p:NuGetAuditMode=all')
         if ($ArtifactsPath) { $buildArgs += '--artifacts-path', $ArtifactsPath }
         & dotnet @buildArgs
         exit $LASTEXITCODE
+    }
+    # A prior isolated build does not update src/.../bin. Always compile the selected server output
+    # before launching, so the familiar -Mode server command cannot silently run an older assembly.
+    if ($Mode -eq 'server') {
+        $serverBuildArgs = @('build', 'src/AlbionLocal.Server/AlbionLocal.Server.csproj', '--nologo', '-m:1', '-nr:false', '-p:UseSharedCompilation=false', '-p:NuGetAudit=true', '-p:NuGetAuditMode=all')
+        if ($ArtifactsPath) { $serverBuildArgs += '--artifacts-path', $ArtifactsPath }
+        Write-Host 'Compilando el servidor que se va a ejecutar...'
+        & dotnet @serverBuildArgs
+        if ($LASTEXITCODE -ne 0) { throw 'No se pudo actualizar el servidor. Cierra el emulador anterior y revisa los errores de compilacion.' }
     }
     $project = if ($Mode -in 'learn', 'test') { 'tests/AlbionLocal.SelfTest' } else { 'src/AlbionLocal.Server' }
     $assembly = if ($Mode -in 'learn', 'test') { 'AlbionLocal.SelfTest' } else { 'AlbionLocal.Server' }
@@ -47,9 +57,13 @@ try {
             Write-Host 'Tutorial de laboratorio: personajes nuevos; guardados separados en data/lab/tutorial-server.'
             Write-Host 'El recorrido implementado se detiene en el objetivo Busca el barco.'
         }
-        else { $runArgs += '--Paths:Saves=data/lab/server', '--Log:File=data/lab/server/server.log' }
+        else {
+            $runArgs += '--Paths:Saves=data/lab/server', '--Log:File=data/lab/server/server.log'
+            Write-Warning 'Modo habitual del laboratorio. Para recorrer el tutorial inicia con -Mode server -OpeningTutorial.'
+        }
     }
     if ($Trace) { $runArgs += '--protocol-trace' }
+    if ($Mode -eq 'server') { Write-Host "Compilacion seleccionada: $binary" }
     & dotnet $binary @runArgs
     exit $LASTEXITCODE
 } finally { Pop-Location }
