@@ -1,16 +1,19 @@
 param(
-    [ValidateSet('build', 'learn', 'test', 'content', 'tutorial', 'server')]
+    [ValidateSet('build', 'learn', 'test', 'content', 'tutorial', 'config', 'server')]
     [string]$Mode = 'learn',
     [ValidateSet('all', 'serialization', 'transport', 'session', 'messages')]
     [string]$Stage = 'all',
     [string]$ClientGameData = $env:ALBION_GAMEDATA,
     [string]$Only,
     [string]$ArtifactsPath,
+    [string]$ConfigDir,
     [switch]$OpeningTutorial,
     [switch]$Trace
 )
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
+if (!$ConfigDir) { $ConfigDir = Join-Path $repoRoot 'config' }
+$ConfigDir = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($ConfigDir)
 Push-Location $repoRoot
 try {
     if ($OpeningTutorial -and $Mode -ne 'server') { throw '-OpeningTutorial se usa con -Mode server.' }
@@ -28,7 +31,7 @@ try {
     }
     # A prior isolated build does not update src/.../bin. Always compile the selected server output
     # before launching, so the familiar -Mode server command cannot silently run an older assembly.
-    if ($Mode -eq 'server') {
+    if ($Mode -in 'server', 'config') {
         $serverBuildArgs = @('build', 'src/AlbionLocal.Server/AlbionLocal.Server.csproj', '--nologo', '-m:1', '-nr:false', '-p:UseSharedCompilation=false', '-p:NuGetAudit=true', '-p:NuGetAuditMode=all')
         if ($ArtifactsPath) { $serverBuildArgs += '--artifacts-path', $ArtifactsPath }
         Write-Host 'Compilando el servidor que se va a ejecutar...'
@@ -47,20 +50,25 @@ try {
         if ($Only) { $runArgs += "--only=$Only" }
         $runArgs += "--report=data/lab/$Mode-$Stage.json"
     } else {
-        if (!$ClientGameData) { throw 'Indica -ClientGameData, ALBION_GAMEDATA o lab.local.json.' }
-        if (!(Test-Path -LiteralPath $ClientGameData -PathType Container)) { throw 'No existe la carpeta GameData indicada.' }
-        $runArgs += "--Paths:ClientGameData=$ClientGameData"
-        if ($Mode -eq 'content') { $runArgs += '--check-content' }
+        $runArgs += "--config-dir=$ConfigDir"
+        if ($ClientGameData) {
+            if ($Mode -ne 'config' -and !(Test-Path -LiteralPath $ClientGameData -PathType Container)) { throw 'No existe la carpeta GameData indicada.' }
+            $runArgs += "--Paths:ClientGameData=$ClientGameData"
+        }
+        if ($Mode -eq 'config') { $runArgs += '--check-config' }
+        elseif ($Mode -eq 'content') { $runArgs += '--check-content' }
         elseif ($Mode -eq 'tutorial') { $runArgs += '--check-tutorial' }
         elseif ($OpeningTutorial) {
-            $runArgs += '--Tutorial:Opening=true', '--Preset=official', '--Paths:Saves=data/lab/tutorial-server', '--Log:File=data/lab/tutorial-server/server.log'
+            $runArgs += '--Tutorial:Opening=true', "--Paths:Saves=$(Join-Path $repoRoot 'data/lab/tutorial-server')", "--Log:File=$(Join-Path $repoRoot 'data/lab/tutorial-server/server.log')"
             Write-Host 'Tutorial de laboratorio: personajes nuevos; guardados separados en data/lab/tutorial-server.'
-            Write-Host 'El recorrido implementado se detiene en el objetivo Busca el barco.'
+            Write-Host 'El recorrido implementado permite completar la isla y viajar al continente.'
         }
         else {
-            $runArgs += '--Paths:Saves=data/lab/server', '--Log:File=data/lab/server/server.log'
-            Write-Warning 'Modo habitual del laboratorio. Para recorrer el tutorial inicia con -Mode server -OpeningTutorial.'
+            $runArgs += "--Paths:Saves=$(Join-Path $repoRoot 'data/lab/server')", "--Log:File=$(Join-Path $repoRoot 'data/lab/server/server.log')"
+            Write-Host 'Laboratorio habitual: el preset y el tutorial se leen de los archivos de configuracion.'
         }
+        Write-Host "Directorio de configuracion: $ConfigDir"
+        Write-Host "Opciones explicitas: $($runArgs -join ' ')"
     }
     if ($Trace) { $runArgs += '--protocol-trace' }
     if ($Mode -eq 'server') { Write-Host "Compilacion seleccionada: $binary" }

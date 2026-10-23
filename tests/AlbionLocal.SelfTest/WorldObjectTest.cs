@@ -462,12 +462,12 @@ public static class WorldObjectTest
         try { Directory.Delete(dir2, true); } catch (IOException) { }
 
         var none = Path.Combine(dir2, "none.json");
-        Check(ServerConfig.Load(none, ["--World:AnnounceAll=true", "--Visibility:EnterCells=2", "--Visibility:LeaveCells=4", "--Visibility:CellSize=20"]) is
+        Check(LoadTestConfig(none, ["--World:AnnounceAll=true", "--Visibility:EnterCells=2", "--Visibility:LeaveCells=4", "--Visibility:CellSize=20"]) is
               { AnnounceAll: true, Visibility: { EnterCells: 2, LeaveCells: 4, CellSize: 20 } }
               && new ServerConfig() is { AnnounceAll: false, Visibility: { CellSize: 10, EnterCells: 4, LeaveCells: 6 } }
-              && ServerConfig.Load(none, []).Visibility == new VisibilityOptions(),
+              && LoadTestConfig(none, []).Visibility == new VisibilityOptions(),
               "World:AnnounceAll and Visibility:CellSize/EnterCells/LeaveCells; defaults off, 10, 4, 6 (Load as the record)");
-        try { ServerConfig.Load(none, ["--Visibility:EnterCells=6"]); Check(false, "LeaveCells not above EnterCells was accepted"); }
+        try { LoadTestConfig(none, ["--Visibility:EnterCells=6"]); Check(false, "LeaveCells not above EnterCells was accepted"); }
         catch (InvalidDataException e) { Check(e.Message.Contains("LeaveCells"), $"the error names LeaveCells (got {e.Message})"); }
 
         var (world3, characters3, dir3) = NewWorld();

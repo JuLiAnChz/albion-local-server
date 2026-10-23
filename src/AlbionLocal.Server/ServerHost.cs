@@ -29,6 +29,9 @@ public sealed class ServerHost : IDisposable
     /// <param name="repositoryFactory">Persistence backend; null keeps SQLite. The host owns the opened repository.</param>
     public ServerHost(ServerConfig config, ClientData? client = null, IGameRepositoryFactory? repositoryFactory = null)
     {
+        if (!string.Equals(config.PersistenceProvider, "SQLite", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidDataException($"Persistence:Provider '{config.PersistenceProvider}' is not supported; use SQLite.");
+        config.Rates.Validate();
         // Bind the handlers now: a handler on the wrong request class, a second handler for an operation or a
         // [Handles] outside the three sessions throws here and stops the server at startup, not at the first
         // connection (principle 6).
@@ -72,9 +75,10 @@ public sealed class ServerHost : IDisposable
             throw new InvalidDataException("Tutorial:Opening requires TUTORIAL_STUN with one timed stun effect.");
         Stubs = OpcodeStubs.Load(config.OpcodeStubsPath, code =>
             (OpcodeTable.For(typeof(LoginSession)).Find(code) ?? OpcodeTable.For(typeof(WorldSession)).Find(code) ?? OpcodeTable.For(typeof(ChatSession)).Find(code))?.Method);
-        // The GM's saved rates (.rates … save) over the config's Rates: a bad data/rates.json throws here, before a port is opened.
+        // Legacy saved overrides no longer participate in configuration; leave the file intact.
         var ratesFile = Game.Rates.FilePath(config.SavesPath);
-        var rates = Game.Rates.Load(ratesFile, config.Rates);
+        if (File.Exists(ratesFile))
+            Log.Warn("config", $"{ratesFile} is ignored; set permanent rates in world.jsonc. GM changes are temporary.");
         // Both ports before the saves: a start that fails on a port in use (another server still running) stops
         // before the one-time import renames a characters.json that the other server keeps writing.
         // The factories run when a peer connects, after Start: World (it needs the bound config) and Characters are set by then.
@@ -120,10 +124,10 @@ public sealed class ServerHost : IDisposable
             Kits = Config.Corrupted is { Enabled: true, MapsOpenDungeons: true } ? Kits.Load(Config.KitsPath, Spells is null ? null : Items).MoveTickets()
                 : Kits.Load(Config.KitsPath, Spells is null ? null : Items),
         };
-        // The rates loaded above; the ones that are not 1 go to the log.
-        World.Rates = rates;
+        // Apply a complete validated set; later GM changes remain session-only.
+        World.ApplyRates(Config.Rates);
         if (World.Rates != new Game.Rates())
-            Log.Info("config", $"rates: {World.Rates.Describe(changedOnly: true)}{(File.Exists(ratesFile) ? $" (with {ratesFile})" : "")}");
+            Log.Info("config", $"rates: {World.Rates.Describe(changedOnly: true)}");
         World.Bots.LoadNames(); // stage I: the names bots never take, read here rather than in a tick
         Loop = new WorldLoop(World);
     }

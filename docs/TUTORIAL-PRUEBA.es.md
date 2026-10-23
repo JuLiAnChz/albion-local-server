@@ -23,10 +23,12 @@ Desde la raíz del clon, con `lab.local.json` apuntando a los datos de la instal
 El modo servidor compila antes de ejecutar. Con `-OpeningTutorial`, la salida predeterminada es
 `data/lab/onboarding-build`; así se ejecuta la versión recién compilada. El arranque debe indicar
 `new character start cluster 1008` y `opening lab enabled`. Sin `-OpeningTutorial`, el script
-avisa que se está iniciando el laboratorio habitual.
+usa los ajustes de los archivos y los guardados del laboratorio habitual.
 
-El script activa `Tutorial:Opening=true`, usa el preset `official` y guarda exclusivamente en
+El script activa `Tutorial:Opening=true`, conserva el preset de `config/common.jsonc` y guarda exclusivamente en
 `data/lab/tutorial-server/albionlocal.db`. El registro es `data/lab/tutorial-server/server.log`.
+La configuración distribuida usa `official` y rates ×1. `-ConfigDir <carpeta>` selecciona los cinco
+archivos; `-Mode config` comprueba sus valores sin abrir una partida.
 La ruta habitual `data/lab/server` no se abre con este comando. No borrar ni copiar sus guardados para
 esta prueba. Una ejecución directa con otra ruta de guardados sí puede migrar la base indicada.
 

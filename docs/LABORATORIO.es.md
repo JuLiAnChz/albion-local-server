@@ -40,13 +40,23 @@ de **GameData**, no la del ejecutable ni la del launcher. Ese archivo local est�
 
 También puedes pasar `-ClientGameData 'ruta con espacios'` o usar `ALBION_GAMEDATA`.
 La prioridad del script es argumento/variable de entorno, archivo local y, para SelfTest, la ruta histórica del proyecto.
-El servidor y la comprobación de contenido requieren una ruta explícita o local configurada.
+El servidor también puede leer `Paths:ClientGameData` de `config/common.jsonc`; un argumento,
+variable de entorno o `lab.local.json` del laboratorio sobrescribe ese valor.
 
 ```powershell
 ./scripts/lab.ps1 -Mode test
+./scripts/lab.ps1 -Mode config
 ./scripts/lab.ps1 -Mode content
 ./scripts/lab.ps1 -Mode server -Trace
 ```
+
+Los cinco archivos de `config` centralizan los ajustes del emulador, sin archivo principal.
+`-ConfigDir <carpeta>` permite seleccionar otra carpeta. `-Mode config` compila y valida sin
+abrir puertos, registros ni partidas, y no requiere que GameData exista. Consulta la
+[referencia de configuración](CONFIGURATION.md) para las áreas y las reglas de rutas.
+La configuración distribuida usa preset `official`, rates ×1 y tutorial activado para personajes
+nuevos. El script no cambia el preset ni desactiva el tutorial; `-OpeningTutorial` lo activa
+explícitamente y selecciona guardados separados en `data/lab/tutorial-server`.
 
 El servidor conserva sus valores predeterminados de loopback: login UDP 5055, juego 5056 y chat 5057.
 El script guarda su base y registro en `data/lab/server/`; Ctrl+C lo detiene. No usa tu cuenta oficial:

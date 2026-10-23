@@ -141,7 +141,7 @@ public static class DefenseTest
         {
             var file = Path.Combine(dir, name + ".json");
             File.WriteAllText(file, $$"""{ "Preset": "{{name}}" }""");
-            return ServerConfig.Load(file, []).Bots;
+            return LoadTestConfig(file, []).Bots;
         }
         var (official, pve) = (Preset("official"), Preset("pve"));
         Check(official is { GearMastery: 1, HealthFactor: 1, GearDamageBonus: true } && pve is { GearMastery: 0.5, HealthFactor: 0.7, GearDamageBonus: false },

@@ -8,7 +8,7 @@ namespace AlbionLocal.Server.Content;
 /// <summary>
 /// Stage I bots, the tables (analysis/work/stageI/bots/SPEC.md §3.2): content/bots.json, as content/events.json. How many bots of each
 /// role a map gets by its zone class (<see cref="Counts"/>, scaled by the humans on it), the clusters left out or overridden, the tiers of
-/// city bots, their avatars and emotes, the name syllables, the gear patterns and a defeat's silver and extras. The switches, timings and rules are albionlocal.json's
+/// city bots, their avatars and emotes, the name syllables, the gear patterns and a defeat's silver and extras. The switches, timings and rules are world.jsonc's
 /// Bots section (<see cref="BotOptions"/>). Every key is optional: a key the file leaves out keeps the built-in value (<see cref="Default"/>),
 /// a missing file or one that does not parse gives the built-in values with a log line. Immutable.
 /// </summary>

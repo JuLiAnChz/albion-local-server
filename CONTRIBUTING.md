@@ -57,6 +57,11 @@ the tested client build, and distinguish automated checks from real-client obser
 Missing private references remain explicit skips; do not manufacture golden references
 from the implementation under test. Use temporary test databases and preserve real saves.
 
+For configuration changes, keep the five area files and their ownership consistent; see
+[configuration](docs/CONFIGURATION.md). Validate with `--check-config` and cover file parsing,
+in-memory validation and command-line precedence. Configuration validation must not open services,
+logs or save databases. Never use a real player's database as a test fixture.
+
 ## Review and publication
 
 Describe the problem, the resulting behavior, the validation and any remaining limitations.

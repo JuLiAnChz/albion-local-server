@@ -25,7 +25,7 @@ How the wire format and each response field were derived: `../analysis/NOTES-pro
 ```
 dotnet build
 dotnet run --project tests/AlbionLocal.SelfTest
-dotnet run --project src/AlbionLocal.Server -- -v
+dotnet run --project src/AlbionLocal.Server --no-launch-profile -- -v
 ```
 
 No game client, client file or client patch is part of this repository. Characters are stored in the SQLite database
@@ -56,7 +56,7 @@ dotnet build src/AlbionLocal.Server -o bin/check
 dotnet bin/check/AlbionLocal.Server.dll --check-content      # summary, exit code 0 = all pass; -v lists every failure
 ```
 
-With no server running, `dotnet run --project src/AlbionLocal.Server -- --check-content` does the same. It checks the
+With no server running, `dotnet run --project src/AlbionLocal.Server --no-launch-profile -- --check-content` does the same. It checks the
 default templates (what world.xml counts), without the day's dynamic templates and resource nodes.
 
 ## World objects
@@ -191,12 +191,11 @@ PvE changes (PVE-DESIGN step 10, `content/dungeons.json`, each with its own key)
 The one NuGet package, `Microsoft.Data.Sqlite`, is restored offline: `nuget.config` lists only the local
 package cache (`%USERPROFILE%\.nuget\packages`) as a source, so the package must already be there.
 
-Settings: `config/albionlocal.json` (ports, logout time, the client's GameData folder, save and content folders, log level and log file,
-the account levels; seasonal cluster layers `World:EventLayers`, `World:AnnounceAll`,
-`World:MapIdleUnloadMinutes`, `World:RareResources` (enchanted resource nodes, on), the `Visibility` window, the `Transfer` checks, `Crafting:Returns` and `ClientNumbering:BuildingIdOffset`, only
-as comments there; comments allowed, every key optional). Any key can be overridden on the command line, e.g.
-`dotnet run --project src/AlbionLocal.Server -- --Log:Level=Debug --Network:GamePort=6000`; an unknown
-key stops the start, and so do two listeners on one port (`Network:LoginPort` 5055, `GamePort` 5056, `ChatPort` 5057).
+Settings come from five required files: `config/common.jsonc`, `login.jsonc`, `world.jsonc`, `chat.jsonc`,
+`persistence.jsonc`. Individual keys are optional; the JSONC files support comments and trailing commas rather than standard JSON. See [configuration](CONFIGURATION.md).
+`--config-dir=<folder>` selects a directory; `--check-config` validates without opening services or a database.
+Arguments such as `--Log:Level=Debug --Network:GamePort=6000` override file settings. Unknown, duplicate or misplaced
+keys and conflicting listener ports stop startup (default login 5055, game 5056, chat 5057).
 
 The server also appends its log to `data/server.log` (`Log:File`, `""` turns it off), so a server started in
 another terminal can be followed with `tail -F data/server.log`. Over 16 MB the file is renamed to `server.log.1`
@@ -901,10 +900,10 @@ to you), `.mists wisp [rarity]` (a portal wisp next to you), `.mists standing ad
 
 ## PvE preset
 
-This server is set up for PvE (`../analysis/work/stageH/PVE-DESIGN.md` §1): the root key `"Preset": "pve"` of
-`config/albionlocal.json` (also the default when the key is missing) gives the keys below these values, and
-`"Preset": "official"` (or `--Preset=official`) the official rules and rates described in the rest of this README. Any key
-written in the file or on the command line wins over its preset's value.
+The optional PvE preset (`../analysis/work/stageH/PVE-DESIGN.md` §1) is selected with
+`"Preset": "pve"` in `config/common.jsonc`. The distributed configuration uses `official`, rates ×1 and the opening
+tutorial for new characters. The preset name does not establish complete fidelity to the original server.
+Explicit file options and command-line arguments override preset defaults.
 
 | Key | pve | official |
 |---|---|---|
@@ -1127,7 +1126,7 @@ premium the nodes get 1.5 × the fame of kills and harvests (the total stays × 
 for auto-learn spend learning points (see Premium, focus and learning points). Fishing gives fame too (see Fishing; tomes feed
 the board only).
 
-`Progression:NewCharacters` in `config/albionlocal.json` decides the board of a **new** character: `UnlockAll` (the
+`Progression:NewCharacters` in `config/world.jsonc` decides the board of a **new** character: `UnlockAll` (the
 default, as before) = no board of its own, everything unlocked, fame only raises the total; `FairStart` = an empty board
 (START in progress) and the kit of `content/starter-fair.json` (T1 sword, shield and leather set, T1 tools): 45 fame
 finish START (T2 bag and cape), 250 kill fame then COMBAT_TRAINEE (T2 weapons and armour), and so on. Existing
@@ -1367,7 +1366,7 @@ login, still warn).
 
 ## Rates
 
-The section `Rates` of `config/albionlocal.json` multiplies the rewards and timers; under `"Preset": "official"` every rate
+The section `Rates` of `config/world.jsonc` multiplies the rewards and timers; under `"Preset": "official"` every rate
 is 1 (the official numbers) unless set, the PvE preset starts from Fame 2, Silver 1.5, Loot 1.5, Respawn 2, Harvest 1.5 and
 Regrowth 2 (see PvE preset); fractions are allowed (`"Rates": { "Harvest": 2, "CombatFame": 3 }`, or `--Rates:Harvest=2` on the
 command line). Each applies where its quantity is worked out, so what the client shows (fame popups, harvest amounts,
@@ -1395,9 +1394,10 @@ stack (the item's stack limit) or rounds to nothing.
 `World:MobRespawnScale` of earlier versions is gone: it was a factor on the respawn time, `Rates:Respawn` is its inverse
 (MobRespawnScale 0.01 = Respawn 100). An old config with it still starts and reads it that way; giving both is refused.
 While the server runs, `.rates` shows them and an Admin's `.rates <name> <value>` changes one from the next kill, harvest
-or respawn on (a respawn or regrowth already scheduled keeps its time); `.rates <name> <value> save` also writes the
-rates that differ from the config's to `data/rates.json`, which the next start reads over the config (`.rates reset save`
-removes it).
+or respawn on (already scheduled timers keep their time). Changes affect the whole running world. Logging out does
+not reset them; restarting does. `.rates reset` restores effective startup rates. The `save` argument is rejected
+without changes. Old `rates.json` files are preserved but ignored with a warning. Permanent changes belong in
+`config/world.jsonc`; there is no reload command yet.
 
 ## Accounts
 
@@ -1468,7 +1468,7 @@ create and delete at the character selection act only on the logged-in account's
 A **second PC** on the LAN:
 
 1. On the host, let the server listen on the network and tell the clients the host's address, in
-   `config/albionlocal.json` (or on the command line):
+   `config/common.jsonc` (or on the command line):
    `"Network": { "BindAddress": "0.0.0.0", "PublicAddress": "192.168.1.10" }` with the host's LAN address
    (`PublicAddress` is required with `0.0.0.0`). Use `0.0.0.0` when the host plays too: a client on the host that
    connects to `127.0.0.1:5055` is not answered by a listener bound to the LAN address alone. The game server address handed out
@@ -1576,7 +1576,7 @@ bot's own (moved, never copied) and nothing of a bot is ever saved, so no duplic
 - **Turnover:** a bot stays 10-30 minutes, then walks into an exit (gone at the exit, as a player leaving) or logs out where
   it stands (10 s); the next one of its place arrives through an exit 20-90 s later, another "player" with another name.
 - 30 s after the last player left a cluster its bots are gone; nothing of them is ever saved.
-- `config/albionlocal.json` `"Bots"` has the switches and timings (Enabled, caps, the population pass, stay and arrival times,
+- `config/world.jsonc` `"Bots"` has the switches and timings (Enabled, caps, the population pass, stay and arrival times,
   think interval, look, the walk grid's lattice, emote chance, `PvpRules`, `PvpRulesByZone`; for gatherers `Gatherer` { Flag, RedShare, Radius,
   Nodes, AvoidPlayerRadius, AvoidMobRadius, FleeHealth, FleeChance }, `ConsumeNodes`, `MountDistance`, `Pvp` { EngageSeconds,
   EngageParty, CrimesAgainstBots, LethalToPlayers }, `Combat` { TickMs, ReactionMs, DamageFactor, HealthFactor, Spells, SpellChance }, `Gear` { Mastery, DamageBonus }, `Patrol` {
@@ -2023,7 +2023,7 @@ Commands start with a `.` and are typed either into the game's chat or into the 
 | `.bot grid` | GameMaster | the bots' walk grid at the player: the cell blocked or walkable, the nearest walkable point, the grid's numbers |
 | `.bot path <x> <z>` | GameMaster | the bots' path from the player to (x, z): legs and length; a new GM city bot walks it |
 | `.mob spells [on\|off]` | GameMaster | switches the mobs' `<AI>` spells (`MobSpells` in content/combat.json, on); without an argument: whether they are on |
-| `.rates [name value [save]]` | GameMaster / Admin | the rate modifiers in force (Rates above); Admin: `.rates harvest 2` sets one for the running server, `save` also writes `data/rates.json`; `.rates reset [save]` goes back to the config's |
+| `.rates [name value]` | GameMaster / Admin | show rates; Admin: `.rates harvest 2` changes the world temporarily; `.rates reset` restores startup values. Restart discards changes; `save` is unsupported |
 | `.damage <amount>` | GameMaster | takes `amount` health from the player (a HealthUpdate caused by itself, no combat); at 0 it is knocked down |
 | `.kill` | GameMaster | knocks the player down (PvE knockdown); it gets up by itself 18 s later |
 | `.heal` | GameMaster | full health and energy; a knocked-down player gets up at once |

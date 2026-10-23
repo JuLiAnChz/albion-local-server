@@ -34,7 +34,7 @@ The server implements a large part of what a PvE player meets in the game, as a 
   with city bonuses, enchanting, quality rolls.
 - **Combat:** auto-attacks, spells with conditions and effects, buffs and crowd control, mob AI with path finding and
   line of sight, boss mechanics (spawn/death casts, dashes, knockbacks), knock-down and party revive, PvP flags and
-  duels (PvP only by consent in the default PvE preset).
+  duels (the optional PvE preset limits PvP to consent).
 - **PvE content:** open-world camps and chests, elite mobs, world bosses, journals, on-demand invasions, expeditions,
   random dungeons with the client's own layout generator and shrines, static dungeons, corrupted dungeons, hellgates,
   Roads of Avalon, the Mists, season goals and bounties.
@@ -55,7 +55,7 @@ The detailed, per-feature reference (English) is in [docs/REFERENCE.md](docs/REF
 | `src/AlbionLocal.Server` | Login (5055), game (5056) and chat (5057) servers, world simulation, systems, persistence |
 | `tests/AlbionLocal.SelfTest` | Offline self-test with an in-process client (no network, no real client needed to run it, but it reads the GameData files) |
 | `tools/AlbionLocal.CapDecode` | Decoder for packet captures of your own sessions |
-| `config/albionlocal.json` | Server settings (every key optional, commented) |
+| `config/*.jsonc` | Five required configuration files by area (JSONC: JSON with comments; not standard JSON) |
 | `content/` | Server-side content: spawns, kits, events, dungeons, goals, bots and other tunables |
 
 ## Educational laboratory / Laboratorio educativo
@@ -99,11 +99,11 @@ file it reads, keeps them in `data/clientdata.json`, and warns when they differ 
 dotnet build
 ```
 
-Tell the server where the GameData folder is, either in `config/albionlocal.json` (`Paths:ClientGameData`) or on the
+Tell the server where the GameData folder is, either in `config/common.jsonc` (`Paths:ClientGameData`) or on the
 command line, then start it from the repository root (it keeps its database and log in `./data`):
 
 ```bash
-dotnet run --project src/AlbionLocal.Server -- -v --Paths:ClientGameData="C:/Games/AlbionOnline/game/Albion-Online_Data/StreamingAssets/GameData"
+dotnet run --project src/AlbionLocal.Server --no-launch-profile -- -v --Paths:ClientGameData="C:/Games/AlbionOnline/game/Albion-Online_Data/StreamingAssets/GameData"
 ```
 
 On start it prints the database schema version and the three listening ports. By default it listens on `127.0.0.1`
@@ -126,8 +126,10 @@ They do not count as passed tests. Exit code 0 means no selected test failed; in
 
 ## Configuration
 
-- `config/albionlocal.json` — ports, presets (`pve` by default: PvP by consent, no full loot, rate multipliers), world
-  and economy options. Any key can be overridden on the command line, e.g. `--Log:Level=Debug`.
+- `config/common.jsonc`, `login.jsonc`, `world.jsonc`, `chat.jsonc`, `persistence.jsonc` — five required files.
+  Distributed settings use `official`, rates ×1 and the opening tutorial for new characters.
+  See [configuration](docs/CONFIGURATION.md) for file ownership, validation, paths and temporary GM rates.
+  Any key can be overridden on the command line, e.g. `--Log:Level=Debug`.
 - `content/*.json` — gameplay content the server adds or tunes (events, bosses, dungeons, goals, bots, kits…).
 - Accounts: the first login creates the account (see "Accounts" in [docs/REFERENCE.md](docs/REFERENCE.md)); console
   commands such as `.account create <name> <password>` manage them.

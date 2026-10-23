@@ -104,8 +104,8 @@ public static class OpeningTutorialTest
             && lab.Peer.Events.Any(e => EventCode(e) == EventCodes.FullQuestInfo), "real Join emits tutorial and quest events");
         Check(p.Inventory.Equipment.Items.All(i => i.Active.Any(s => s >= 0)), "starter abilities selected by existing spell system");
         var settings = Path.Combine(lab.Dir, "absent-settings.json");
-        var defaults = ServerConfig.Load(settings, []);
-        Check(!defaults.TutorialOpening && ServerConfig.Load(settings, ["--Tutorial:Opening=true"]).TutorialOpening, "opening is explicit opt-in");
+        var defaults = LoadTestConfig(settings, []);
+        Check(!defaults.TutorialOpening && LoadTestConfig(settings, ["--Tutorial:Opening=true"]).TutorialOpening, "opening is explicit opt-in");
         var loginPeer = new FakePeer();
         var login = new LoginSession(loginPeer, lab.World.Config, lab.Repository, StarterKit.Default) { World = lab.World };
         login.OnRequest(Request(TestLogin(), 1), false);
