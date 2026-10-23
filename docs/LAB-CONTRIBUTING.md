@@ -2,9 +2,12 @@
 
 Upstream: https://github.com/MrGreenCheezz/albion-local-server
 
-Working priorities and acceptance criteria: [Hoja de trabajo y contribuciones](HOJA-DE-RUTA.es.md).
-The first proposed review unit is the native SQLite dependency fix. Extract and validate each unit against
-current upstream before submitting it; the integration branch is not itself a single upstream proposal.
+Shared contribution rules: [CONTRIBUTING.md](../CONTRIBUTING.md).
+Branch and release policy: [Git workflow](GIT-WORKFLOW.md).
+Personal learning priorities: [Spanish roadmap](HOJA-DE-RUTA.es.md).
+Extract and validate each review unit against current upstream before submitting it;
+the integration branch is not itself a single upstream proposal. Keep the published
+`contribution/tutorial-island` branch while its upstream PR is under review.
 
 Keep the MIT notice and attribution. No client files, GameData exports, private captures, account credentials,
 local settings or generated runtime reports belong in a contribution.
@@ -15,7 +18,8 @@ Suggested review units:
    JSON report, and a nonzero exit for an empty selection. Preserve the historical GameData path by default.
 2. **Educational protocol lab:** four opt-in stages reusing existing transport/crypto/login checks, synthetic
    examples, metadata-only tracing and tests proving that unknown/nested values and response tokens remain hidden.
-3. **Reproducible onboarding:** PowerShell entrypoint, ignored local settings and the Spanish walkthrough.
+3. **Reusable onboarding tools:** propose portable tooling separately, with English documentation.
+   The Spanish walkthrough and personal client launchers belong to the learning fork, not an upstream PR.
 
 The current branch assembles these units into a runnable lab. They can be extracted for separate upstream reviews;
 the runner's lab stage selection depends on the exercise definitions, so keep those together when extracting.
