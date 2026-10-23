@@ -144,6 +144,7 @@ public sealed partial class WorldSession(IPeer peer, World world) : AlbionSessio
     /// </summary>
     private void Leave(Player player)
     {
+        player.StopPlayedTime();
         if (world.Scripts.PlayerHooks.Count > 0)
         {
             world.Scripts.OnLogout(player);
@@ -229,8 +230,12 @@ public sealed partial class WorldSession(IPeer peer, World world) : AlbionSessio
             // Its list, the mount events and the slot cooldowns (stageD consumables SPEC §6, mounts SPEC §4.8).
             foreach (var e in Systems.Consumables.JoinEvents(joined, Systems.Mounts.JoinEvents(joined))) SendEvent(e);
         }
+        // OnEnterGame reads the active quest to decide whether the tracker opens. Install it before
+        // JoinFinished switches the client into the world; later progress events update that model.
+        if (Player is { } tutorialPlayer) Systems.OpeningTutorial.Joined(tutorialPlayer);
         SendEvent(new JoinFinishedEvent { ddn = jr.a8a });
         if (Player is not { } player) return;
+        Systems.OpeningTutorial.Entered(player);
         player.Visibility.SendAccessStatus();
         player.Visibility.FlushLists();
         var scripted = false;

@@ -212,6 +212,7 @@ public sealed partial class WorldSession
             bag.Put(slot, added);
             SendEvent(new InventoryPutItemEvent { ckw = added.Id, ckx = slot, cky = bag.Id });               //    + InventoryPutItem
         }
+        Systems.TutorialJourney.Gathered(player, item.Name, total);
         var finished = new HarvestFinishedEvent
         {
             HarvesterId = player.Id,               // [0]

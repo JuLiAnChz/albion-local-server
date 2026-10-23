@@ -124,6 +124,8 @@ public sealed partial class WorldSession
         if (equipped) SendEquipmentChanged(player, intoEquipment: false, spellChanged: true);
         player.SaveItems();
         Log.Info(Name, $"'{item.Template.Name}' {(req.kd ? "active" : "passive")} slot {req.ke} = {spells.Name(req.kf)}");
+        Systems.OpeningTutorial.Update(player);
+        Systems.OpeningTutorial.SwordSpellSelected(player, item, req.kd, req.ke);
         return null;
     }
 
