@@ -61,6 +61,14 @@ default templates (what world.xml counts), without the day's dynamic templates a
 
 ## World objects
 
+Simple-behaviour buildings receive their authored default state through
+`SimpleBehaviourBuildingStateUpdate` (645), immediately after `NewBuilding`. This is
+repeated on visibility reentry and reconnect. The journal version of Captain Tia in
+Swamp Cross defaults to `HIDDEN`; without an explicit state the client tries to resolve
+an empty name and reports `SimpleBehaviourObjectView: state not found`. Initialization
+is sent independently to each viewer. The subsequent journal quest transitions are
+not implemented by this default-state initialization.
+
 The server sends the objects of the cluster that the client cannot place or use on its own (stage 2, step 12): the NPC
 buildings (repair shop, vanity store, meld building, arena, faction trader; bank and market in their interiors), the exits
 (city gates, bank and market doors, portals), the fast travel point (harbour), the war wagon, the island seller, the
