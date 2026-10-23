@@ -4,10 +4,13 @@ using AlbionLocal.Server.Protocol;
 namespace AlbionLocal.Server.Entities;
 
 /// <summary>Standalone NPC bound to the GUID already placed by the client landscape.</summary>
-public sealed class TutorialQuestGiver(long id, CriticalMember spawn, int type) : WorldObject(id, spawn)
+public sealed class TutorialQuestGiver(long id, CriticalMember spawn, int type, int? questGiverType = null) : WorldObject(id, spawn)
 {
     public override string Kind => "tutorial quest giver";
-    public override string TypeName => "WOUNDEDCRAFTER";
+    public string Reference => (string?)spawn.Component.Attribute("reference") ?? "WOUNDEDCRAFTER";
+    public int ObjectType => type;
+    public int QuestGiverType => questGiverType ?? type;
+    public override string TypeName => Reference;
     public override bool LeaveOnRange => true;
     public override IEnumerable<AlbionEvent> BuildCreate(Player viewer)
     {

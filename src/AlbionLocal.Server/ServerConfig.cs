@@ -169,7 +169,7 @@ public sealed record ServerConfig
     /// </summary>
     public NewCharacterProgression NewCharacters { get; init; } = NewCharacterProgression.UnlockAll;
 
-    /// <summary>Explicit lab opening for NEW characters, bounded at the tower's boat-search task.</summary>
+    /// <summary>Explicit tutorial lab for NEW characters, from the beach through departure to a starter town.</summary>
     public bool TutorialOpening { get; init; }
 
     /// <summary>Answers of side requests without a handler (Content/OpcodeStubs).</summary>

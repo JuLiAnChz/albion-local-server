@@ -48,9 +48,10 @@ public static class AlbionTests
         OpcodeTable.Build(typeof(LoginSession), typeof(WorldSession), typeof(ChatSession));
         var login = OpcodeTable.For(typeof(LoginSession));
         var game = OpcodeTable.For(typeof(WorldSession));
-        Check(login.Handlers.Count == 8 && game.Handlers.Count == 167 && OpcodeTable.For(typeof(ChatSession)).Handlers.Count == 6 && game.Find(OperationCodes.Move) is { Quiet: true, Status: SessionStatus.InWorld }
+        Check(login.Handlers.Count == 8 && game.Handlers.Count == 168 && OpcodeTable.For(typeof(ChatSession)).Handlers.Count == 6 && game.Find(OperationCodes.Move) is { Quiet: true, Status: SessionStatus.InWorld }
               && game.Find(OperationCodes.QuestGiverRequest) is { Status: SessionStatus.InWorld }
               && game.Find(OperationCodes.SetNextTutorialState) is { Status: SessionStatus.InWorld }
+              && game.Find(OperationCodes.UseFunction) is { Status: SessionStatus.InWorld }
               && game.Find(OperationCodes.Join) is { Status: SessionStatus.Connected } && login.Find(OperationCodes.SelectCharacter) is { Status: SessionStatus.Authed }
               && login.Find(OperationCodes.GetGameServerByCluster) is { Status: SessionStatus.Authed } && game.Find(OperationCodes.ChangeCluster) is { Status: SessionStatus.InWorld }
               && game.Find(OperationCodes.HarvestStart) is { Status: SessionStatus.InWorld } && game.Find(OperationCodes.HarvestCancel) is { Status: SessionStatus.InWorld }

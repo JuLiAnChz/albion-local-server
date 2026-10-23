@@ -595,6 +595,7 @@ public sealed class World : IDisposable
         if (map.Template is not null) return; // the fast path of a later Join was first
         if (map.Unloaded) return; // unloaded while its cluster was read: the next Join builds a new map
         MapSpawner.Populate(map, template, this);
+        foreach (var player in map.Players.Values) Systems.TutorialWorld.Prepare(map, player.Character);
         var now = DateTime.UtcNow;
         // Every player's cell off the temporary origin-(0, 0) grid first: a Refresh compares its new cell with the others'
         // cells, which must not be on the old grid (30 cells off at 0000: Leave and NewCharacter again for every pair).

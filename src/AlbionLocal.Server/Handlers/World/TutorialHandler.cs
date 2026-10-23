@@ -4,6 +4,12 @@ namespace AlbionLocal.Server.Network;
 
 public sealed partial class WorldSession
 {
+    [Handles(OperationCodes.UseFunction, Status = SessionStatus.InWorld)]
+    private AlbionResponse? UseTutorialFunction(UseFunctionRequest req)
+    {
+        if (Player is { } p) Systems.OpeningTutorial.FunctionUsed(p, req.aia);
+        return null;
+    }
     [Handles(OperationCodes.QuestGiverRequest, Status = SessionStatus.InWorld)]
     private AlbionResponse QuestGiver(QuestGiverRequestRequest req) => new GenericResponse
     {

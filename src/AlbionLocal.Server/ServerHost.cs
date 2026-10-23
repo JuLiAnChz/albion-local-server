@@ -67,6 +67,9 @@ public sealed class ServerHost : IDisposable
             Client.Clusters ?? throw new InvalidDataException("Tutorial:Opening requires client clusters.")) : null;
         if (opening is not null && GameData?.Board is null)
             throw new InvalidDataException("Tutorial:Opening requires destiny board data.");
+        if (opening is not null && (Spells?.Template(Systems.OpeningTutorial.IntroSpell)?.Effects is not [var introStun]
+            || introStun.Name.LocalName != "stun" || Data.SpellTemplate.Float(introStun, "time") is not (> 0 and <= 60)))
+            throw new InvalidDataException("Tutorial:Opening requires TUTORIAL_STUN with one timed stun effect.");
         Stubs = OpcodeStubs.Load(config.OpcodeStubsPath, code =>
             (OpcodeTable.For(typeof(LoginSession)).Find(code) ?? OpcodeTable.For(typeof(WorldSession)).Find(code) ?? OpcodeTable.For(typeof(ChatSession)).Find(code))?.Method);
         // The GM's saved rates (.rates … save) over the config's Rates: a bad data/rates.json throws here, before a port is opened.
@@ -254,7 +257,7 @@ public sealed class ServerHost : IDisposable
         ChatServer?.Start();
         Log.Info("main", $"{Characters.List().Count} persisted character(s); new character start cluster {World.OpeningTutorial?.Tutorial.StartCluster ?? Starter.Cluster}");
         if (World.OpeningTutorial is not null)
-            Log.Info("tutorial", "opening lab enabled for newly created characters; existing characters keep their start; route stops at boat-search");
+            Log.Info("tutorial", "tutorial lab enabled for newly created characters; existing progress is retained; client-authored island route continues through starter-town departure (visual validation pending)");
     }
 
     /// <summary>
