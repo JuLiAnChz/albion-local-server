@@ -4,5 +4,5 @@
 // Command-line overrides: --Section:Key=value. Restart applies file edits.
 {
   "Persistence": { "Provider": "SQLite" }, // Only SQLite is currently supported.
-  "Paths": { "Saves": "data/lab/tutorial-server" } // Existing albionlocal.db and legacy character imports remain here.
+  "Paths": { "Saves": "data" } // Existing albionlocal.db and legacy character imports remain here.
 }

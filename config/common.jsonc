@@ -10,7 +10,7 @@
     // "PublicAddress": "192.168.1.10", // Required when listening on 0.0.0.0.
   },
   "Paths": {
-    "ClientGameData": "G:/SteamLibrary/steamapps/common/Albion Online/game/Albion-Online_Data/StreamingAssets/GameData",
+    "ClientGameData": "../game-local/Albion-Online_Data/StreamingAssets/GameData",
     "Content": "content"
   },
   "Log": { "Level": "Info", "File": "data/server.log" } // Empty File means console only.

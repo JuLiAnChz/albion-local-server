@@ -8,7 +8,7 @@ Keep the MIT license, copyright notice and attribution.
 
 Use English for new shared code comments, documentation, commit messages, branch names,
 pull request titles and pull request descriptions. Conversations and personal learning
-notes may remain in Spanish. Existing upstream documents in other languages are not
+notes remain outside this repository and may use Spanish. Existing upstream documents in other languages are not
 renamed or translated as part of an unrelated change.
 
 An upstream pull request should contain one coherent change: implementation, relevant
@@ -17,8 +17,8 @@ the behavior. Do not submit the fork's complete development history as one propo
 
 Keep personal launchers, machine-specific paths, local settings, save databases, logs,
 private captures, client binaries, GameData exports and generated analysis out of upstream
-contributions. Personal Spanish walkthroughs and session notes stay in the learning fork
-or ignored local storage. A reusable tool may be proposed separately with portable
+contributions. Personal walkthroughs and session notes stay outside the repository
+or in ignored local storage. A reusable tool may be proposed separately with portable
 defaults and English documentation.
 
 ## Branches and pull requests

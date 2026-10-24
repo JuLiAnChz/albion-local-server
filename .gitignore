@@ -26,3 +26,10 @@ data/gamedata.json
 data/spells.json
 data/items.tsv
 data/journal-ids.tsv
+
+# Machine-specific launch settings and configuration
+/config.private/
+/src/AlbionLocal.Server/Properties/launchSettings.json
+/scripts/lab.ps1
+/scripts/start-client.ps1
+/lab.local.example.json

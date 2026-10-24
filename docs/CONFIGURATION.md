@@ -33,33 +33,14 @@ options, invalid values and conflicting ports stop startup before services or sa
 
 ## Visual Studio: F5
 
-1. Open `AlbionLocal.slnx` in Visual Studio and set `AlbionLocal.Server` as the startup project.
-2. In the launch-profile selector next to the start button, select **Check configuration** and press
-   **F5** to validate the five files without starting services or opening saves.
-3. Select **Albion Local Server** and press **F5** to start the emulator. This starts the server;
-   launch the game client separately using its existing launcher.
+Copy `src/AlbionLocal.Server/Properties/launchSettings.example.json` to `launchSettings.json`
+beside it. The actual launch settings are ignored so machine-specific choices stay private.
+Open the solution and select AlbionLocal.Server as the startup project. The **Check configuration**
+profile validates without starting services; **Albion Local Server** starts the emulator.
+Both example profiles use the repository root and `--config-dir=config`.
 
-Both profiles use the repository root as their working directory and read `config/*.jsonc` directly.
-F5 does not read `lab.local.json` and does not require the laboratory launcher.
-They do not override GameData, save paths, rates or tutorial settings. Before starting the server,
-set `Paths:ClientGameData` in `common.jsonc` to your installed client's GameData folder, and verify
-`Paths:Saves` in `persistence.jsonc` points to the save folder you intend to use.
-
-The profiles in `Properties/launchSettings.json` target Visual Studio, which expands MSBuild properties
-such as `$(MSBuildProjectDirectory)`. The .NET CLI interprets launch profiles differently and may not
-expand this property in the installed SDK. For command-line use, run the commands above from the
-repository root with `--no-launch-profile`, or use the laboratory launcher below. See the official
-[Visual Studio launch-profile documentation](https://github.com/dotnet/project-system/blob/main/docs/launch-profiles.md)
-and [.NET CLI launch-profile behavior](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-run#visual-studio-and-debugger-extensions).
-
-The **Check configuration** profile has also been verified with `dotnet run` from the repository root:
-
-```powershell
-dotnet run --project src/AlbionLocal.Server --launch-profile "Check configuration"
-```
-
-For this CLI invocation, start in the repository root explicitly; do not rely on Visual Studio's
-working-directory property to relocate the command-line process.
+Visual Studio expands `MSBuildProjectDirectory` in the example working directory. For command-line
+use, start in the repository root and use `--no-launch-profile` as shown above.
 
 ## Rates and future administration
 
@@ -77,27 +58,21 @@ require restart. There is no reload command, file watcher or administrative pane
 model and in-memory validation are shared extension points for those features. Already awarded rewards
 and scheduled timers are not recalculated by a rate change.
 
-## Laboratory launcher
+## Private configuration and first login
 
-New save databases start without characters, with or without the opening tutorial. With
-`Accounts:AutoRegister` disabled, unknown login names are refused: create an account through the client
-when `Accounts:Registration` is enabled, or use `.account create` on the server console. Automatic
-registration, when enabled, creates an account at `Accounts:DefaultLevel`. Legacy account claiming
-only applies when that unnamed account already owns characters; it cannot claim an empty local account.
+Copy all five files from `config` to the ignored `config.private` directory. The two directories
+share the same parent, so relative operational paths retain their meaning. Set the private GameData
+path and verify the existing save path before starting; no database needs to be copied or replaced.
 
 ```powershell
-./scripts/lab.ps1 -Mode config -ConfigDir ./config -ArtifactsPath data/lab/server-configuration-build
-./scripts/lab.ps1 -Mode server -ConfigDir ./config
-./scripts/lab.ps1 -Mode server -ConfigDir ./config -OpeningTutorial
+dotnet run --project src/AlbionLocal.Server --no-launch-profile -- --config-dir=config.private --check-config
+dotnet run --project src/AlbionLocal.Server --no-launch-profile -- --config-dir=config.private
 ```
 
-`-ConfigDir` defaults to the repository's `config` folder. A supplied relative directory is resolved
-from the caller's directory before the launcher enters the repository. Server and configuration-check
-modes build the selected output before running it. Configuration checks may use a nonexistent GameData
-path because they validate settings without loading the data.
+For F5, select `--config-dir=config.private` in the ignored `launchSettings.json`.
+There is no additional main configuration file. Never commit the private directory or actual launch settings.
 
-The normal laboratory server explicitly overrides saves/logs to `data/lab/server` under the repository;
-`-OpeningTutorial` uses `data/lab/tutorial-server`, enables the tutorial and selects an isolated build
-output by default. It does not change the preset. The launcher prints its overrides. All other values,
-including tutorial settings in normal mode, come from the selected files. Content and tutorial checks
-do not override the selected saves/log paths.
+New save databases start without characters, with or without the tutorial. Unknown logins are
+refused when `Accounts:AutoRegister` is false. Register through the client when Registration is
+enabled or use `.account create` on the server console. Automatic registration creates an account
+at DefaultLevel. Legacy account claiming only applies when that unnamed account owns characters.

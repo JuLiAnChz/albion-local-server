@@ -58,23 +58,13 @@ The detailed, per-feature reference (English) is in [docs/REFERENCE.md](docs/REF
 | `config/*.jsonc` | Five required configuration files by area (JSONC: JSON with comments; not standard JSON) |
 | `content/` | Server-side content: spawns, kits, events, dungeons, goals, bots and other tunables |
 
-## Educational laboratory / Laboratorio educativo
+## Offline protocol exercises
 
-See [docs/LABORATORIO.es.md](docs/LABORATORIO.es.md) for a Spanish walkthrough, synthetic protocol exercises,
-local configuration and repeatable validation. The original client and anti-cheat boundaries above still apply.
-
-Persistence extension points and the SQLite/PostgreSQL roadmap are described in
-[docs/PERSISTENCIA.es.md](docs/PERSISTENCIA.es.md). SQLite remains the only implemented backend.
-
-```powershell
-./scripts/lab.ps1 -Mode build
-./scripts/lab.ps1 -Mode learn -Stage serialization -Trace
-```
-
-The self-test now accepts `--client-gamedata=<folder>` (the old `../game-local` path remains the default),
-`--only=<text>`, `--report=<file.json>` and `--lab=all|serialization|transport|session|messages`.
-Missing private golden references are reported as **SKIP**, separately from **PASS** and **FAIL**.
-`--protocol-trace` enables parameter-key/type traces without parameter values, in both the server and self-test.
+The self-test accepts `--client-gamedata=<folder>`, `--only=<text>`, `--report=<file.json>`
+and `--lab=all|serialization|transport|session|messages` for repeatable offline checks.
+Missing private golden references are reported as SKIP, separately from PASS and FAIL.
+`--protocol-trace` enables parameter-key/type traces without parameter values.
+SQLite is the only implemented persistence backend; repository contracts allow future extensions.
 
 ## Requirements
 
@@ -131,8 +121,8 @@ They do not count as passed tests. Exit code 0 means no selected test failed; in
   See [configuration](docs/CONFIGURATION.md) for file ownership, validation, paths and temporary GM rates.
   Any key can be overridden on the command line, e.g. `--Log:Level=Debug`.
 - `content/*.json` — gameplay content the server adds or tunes (events, bosses, dungeons, goals, bots, kits…).
-- Accounts: the first login creates the account (see "Accounts" in [docs/REFERENCE.md](docs/REFERENCE.md)); console
-  commands such as `.account create <name> <password>` manage them.
+- Accounts: unknown logins are rejected when `Accounts:AutoRegister` is false. Register through the client
+  or use `.account create <name> <password>` on the server console; see [configuration](docs/CONFIGURATION.md).
 
 ## Status
 
