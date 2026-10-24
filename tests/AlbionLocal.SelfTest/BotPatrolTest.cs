@@ -441,19 +441,19 @@ public static class BotPatrolTest
         var dir = NewDir();
         var file = Path.Combine(dir, "albionlocal.json");
         File.WriteAllText(file, """{ "Bots": { "Patrol": { "AggroRadius": 12, "GroupSize": "2-3" }, "Rewards": { "LootProtectionSeconds": null }, "PvpRulesByZone": { "Red": "Official" } } }""");
-        var c = ServerConfig.Load(file, []).Bots;
+        var c = LoadTestConfig(file, []).Bots;
         Check(c is { AggroRadius: 12, GroupSize: (2, 3), LootProtectionSeconds: null, SpareMinutes: 5, JoinGraceSeconds: 10, AttackMounted: true, LethalToPlayers: false,
                   DamageFactor: 1, HealthFactor: 1 /* the pve preset since stageN botpower (0.7 before) */, FameFactor: 0.5, GearDropChance: 0.2, ResourceDropShare: 0.5, BagsPerHour: 30, SameBotMinutes: 10 }
-              && ServerConfig.Load(file, ["--Bots:Rewards:LootProtectionSeconds=60"]).Bots.LootProtectionSeconds == 60
+              && LoadTestConfig(file, ["--Bots:Rewards:LootProtectionSeconds=60"]).Bots.LootProtectionSeconds == 60
               && c.PvpRulesIn("red") == BotPvpRules.Official && c.PvpRulesIn("black") == BotPvpRules.Consent && new BotOptions().PvpRulesByZone.Count == 0,
               "Patrol:* and Rewards:* keys with their defaults; LootProtectionSeconds null (gamedata) or seconds; PvpRulesByZone red Official, the rest PvpRules");
-        var pve = ServerConfig.Load(Path.Combine(dir, "none.json"), []).Bots;
+        var pve = LoadTestConfig(Path.Combine(dir, "none.json"), []).Bots;
         Check(pve.PvpRulesIn("red") == BotPvpRules.Official && pve.PvpRulesIn("black") == BotPvpRules.Official && pve.PvpRulesIn("yellow") == BotPvpRules.Consent
-              && ServerConfig.Load(Path.Combine(dir, "none.json"), ["--Preset=official"]).Bots.PvpRulesByZone.Count == 0,
+              && LoadTestConfig(Path.Combine(dir, "none.json"), ["--Preset=official"]).Bots.PvpRulesByZone.Count == 0,
               "pve preset: patrols use the official rules in red and black zones, consent elsewhere; official preset: no zone rules");
         static bool Refused(string file, string arg)
         {
-            try { ServerConfig.Load(file, [arg]); return false; }
+            try { LoadTestConfig(file, [arg]); return false; }
             catch (InvalidDataException) { return true; }
         }
         Check(Refused(file, "--Bots:Rewards:GearDropChance=2") && Refused(file, "--Bots:Patrol:GroupSize=0-3") && Refused(file, "--Bots:Rewards:LootProtectionSeconds=soon")

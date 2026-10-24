@@ -148,6 +148,8 @@ public sealed record ServerConfig
     public string SavesPath { get; init; } = Path.Combine(Environment.CurrentDirectory, "data");
 
     /// <summary>The character database (SQLite, Persistence/SqliteCharacterRepository).</summary>
+    public string PersistenceProvider { get; init; } = "SQLite";
+
     public string DatabasePath => Path.Combine(SavesPath, "albionlocal.db");
 
     /// <summary>The JSON save of the server before step 7; imported once into the database, then renamed (Persistence/JsonSaveImport).</summary>
@@ -259,6 +261,7 @@ public sealed record ServerConfig
     /// <summary>
     /// The login name that takes over the local account with the characters saved before stage 7 (Accounts:LegacyName);
     /// "" = the first name that logs in after the upgrade (with a password: the one it types becomes the account's).
+    /// An unnamed local account without characters cannot be claimed; new databases use normal registration.
     /// </summary>
     public string LegacyAccountName { get; init; } = "";
 
@@ -346,7 +349,7 @@ public sealed record ServerConfig
 
     /// <summary>
     /// The rate modifiers (section Rates: Fame, CombatFame, GatheringFame, CraftingFame, Harvest, Silver, Loot, Respawn,
-    /// Regrowth, CraftingReturn; all 1). The world starts from these, with data/rates.json over them (<see cref="Game.Rates.Load"/>);
+    /// Regrowth, CraftingReturn; all 1). The world starts from these;
     /// a GM changes them while the server runs (.rates). World:MobRespawnScale, the respawn time factor of before, is read
     /// as Rates:Respawn = 1 / it (0 = the fastest, <see cref="Game.Rates.Max"/>).
     /// </summary>
@@ -808,59 +811,24 @@ public sealed record ServerConfig
     /// <summary>The settings of the cluster resolver (Data/ClusterStore).</summary>
     public ClusterOptions Clusters => new() { EventLayers = new HashSet<string>(EventLayers, StringComparer.Ordinal), BuildingIdOffset = BuildingIdOffset };
 
-    /// <summary>
-    /// Reads <paramref name="path"/> (JSON, comments allowed; missing file = all defaults of the pve preset), then applies
-    /// <c>--Section:Key=value</c> arguments over it. The root key Preset (pve, the default, or official; <c>--Preset=official</c>)
-    /// picks the defaults of the keys it sets (<see cref="Preset"/>). Keys:
-    /// Network:BindAddress (IPv4 the listeners bind to, 127.0.0.1; 0.0.0.0 = every interface), Network:PublicAddress (the
-    /// game server address given to clients; default = the bind address, required with 0.0.0.0), Network:LoginPort,
-    /// Network:GamePort, Network:ChatPort (none of the three equal unless 0), World:LogoutSeconds, World:TickMs, World:EventLayers (a JSON array or a
-    /// comma list of <see cref="KnownEventLayers"/>), World:AnnounceAll, World:RareResources, World:OpenWorldChests, Chests:PoiLimit, World:MapIdleUnloadMinutes, World:MobRespawnScale (old name, read as Rates:Respawn = 1 / it), World:MobAi, Visibility:CellSize,
-    /// Visibility:EnterCells, Visibility:LeaveCells (more than EnterCells), Transfer:PositionTolerance,
-    /// Transfer:CheckExitCooldown, Paths:ClientGameData (the client's GameData folder), Paths:Saves
-    /// (albionlocal.db), Paths:Content (starter.json, opcode-stubs.json, combat.json, kits.json), Log:Level, Log:File ("" = no file), Accounts:LocalAccountLevel, Accounts:DefaultLevel, Accounts:JoinByCharacterId,
-    /// Accounts:LegacyName, Accounts:AutoRegister, Accounts:Registration, Accounts:MaxFailedLogins, Accounts:LockMinutes,
-    /// Accounts:Maintenance, ClientNumbering:BuildingIdOffset, ClientNumbering:ItemBuildingBase, Progression:NewCharacters (UnlockAll or FairStart), Crafting:Returns, Combat:EquipCooldownSeconds, Combat:GearArmor, Combat:GearDamageBonus, Consumables:BatchInterval (seconds), Party:MaxSize, Party:ResendAfterClusterChange, Guilds:Enabled, Guilds:CreateCost, Guilds:MaxMembers, Guilds:InviteSeconds, Guilds:JoinRole, Guilds:RejoinCooldownMinutes, Guilds:CreateCooldownMinutes, Guilds:NoFriendlyFire, Guilds:XpShare, Guilds:ClearXp, Guilds:Levels (a JSON array or a comma list), Guilds:FamePerLevel, Guilds:SilverPerLevel, Guilds:GatheringPerLevel, Guilds:RepairPerLevel, Guilds:ShareWithoutParty, Guilds:SilverTax, Guilds:Contracts, Guilds:ContractCount, Guilds:ContractPeriod (Weekly or Daily), Guilds:ContractXp, Guilds:ContractSilver, Islands:Enabled, Islands:StarterIsland, Islands:StarterLevel, Islands:PremiumDays, Islands:FreeIslands, Islands:GrowthSpeed, Islands:FocusSeedReturn, Islands:WaterFocusFactor, Islands:StarterBuildings, Premium:Mode (None or Free), Premium:FameFactor, Premium:SilverFactor, Premium:GatherBonusChance, Premium:CropYieldFactor, Focus:Max, Focus:RegenPerDay, Focus:Start, Focus:Crafting, LearningPoints:SecondsPerPoint, LearningPoints:Start, LearningPoints:Max (the ones without a default: a number or data), Chat:Enabled, Chat:WorldChannel, Chat:MergeLanguageChannels, Chat:Announcements, Chat:GlobalCooldownMs, Chat:WhisperCooldownMs, Chat:MaxLineLength, Chat:StaffTags, Social:FriendLimit, Social:FriendRequestLimit, Social:MuteLimit, Mail:Enabled, Mail:Postage, Mail:DailyLimit, Mail:MarketExpiryDays, Mail:KeepDays, Mail:MaxPerBox, Mail:MarketNotices, Mail:RewardOverflow, Mail:SubjectMax, Mail:TextMax, Trade:Enabled, Trade:InviteRange, Trade:KeepRange, Trade:InviteSeconds, Trade:AcceptDelaySeconds, Trade:Slots, Trade:ClusterRules, Trade:AllowGold, Trade:AllowInCombat, Economy:SilverPickupFactor, Economy:SilverPickupTax, Loot:BlackMarketChance, Loot:BlackMarketSoftCap, Bank:Shared, Bm:BuyFactor, Bm:DailyLimit, Pvp:RespawnCluster, Pvp:DeathSilverDrop, Pvp:Mode, Pvp:LethalDeath, Pvp:FullLoot,
-    /// Pvp:KnockdownWear (0..1 or gamedata), Pvp:RedLockMinutes (minutes or spell), Pvp:FriendlySpells (All, Group or Self), Pvp:DuelIsolation, Pvp:Spells, Pve:KnockdownWear, Rates:<name> (<see cref="Game.Rates.Names"/>), Corrupted:* (<see cref="CorruptedOptions"/>), Hellgates:* (<see cref="HellgateOptions"/>), Roads:* (<see cref="RoadsOptions"/>), Mists:* (<see cref="MistsOptions"/>), Web:* and Backup:* (<see cref="WebOptions"/>), Bots:* (<see cref="BotOptions"/>; a nested
-    /// object in the file is a group of keys, "Bots": { "Nav": { "LatticeStep": 4 } }). Relative paths are taken from the working directory.
-    /// An unknown key or a bad value throws <see cref="InvalidDataException"/>, so a typo stops the start.
-    /// </summary>
-    public static ServerConfig Load(string path, IEnumerable<string> args)
+    /// <summary>Load the five required configuration files from a directory.</summary>
+    public static ServerConfig Load(string directory, IEnumerable<string> args) =>
+        Configuration.ServerConfiguration.Load(directory, args).Config;
+
+    /// <summary>Validate and compose editable values in memory without accessing services or saves.</summary>
+    public static ServerConfig Validate(IReadOnlyDictionary<string, string> settings, string baseDirectory, IEnumerable<string> args)
     {
-        var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        if (File.Exists(path))
-        {
-            using var doc = JsonDocument.Parse(File.ReadAllText(path),
-                new JsonDocumentOptions { CommentHandling = JsonCommentHandling.Skip, AllowTrailingCommas = true });
-            if (doc.RootElement.ValueKind != JsonValueKind.Object) throw new InvalidDataException($"{path}: expected an object of sections");
-            foreach (var section in doc.RootElement.EnumerateObject())
-            {
-                if (section.Name.Equals("Preset", StringComparison.OrdinalIgnoreCase) && section.Value.ValueKind == JsonValueKind.String)
-                {
-                    values["Preset"] = section.Value.GetString()!; // the one root key
-                    continue;
-                }
-                if (section.Value.ValueKind != JsonValueKind.Object) throw new InvalidDataException($"{path}: section {section.Name} is not an object");
-                Keys(section.Name, section.Value);
-                // A nested object is a group of keys (Bots: { Nav: { LatticeStep } } = Bots:Nav:LatticeStep, stage I).
-                void Keys(string prefix, JsonElement obj)
-                {
-                    foreach (var key in obj.EnumerateObject())
-                        if (key.Value.ValueKind == JsonValueKind.Object) Keys($"{prefix}:{key.Name}", key.Value);
-                        else values[$"{prefix}:{key.Name}"] = key.Value.ValueKind == JsonValueKind.String ? key.Value.GetString()! : key.Value.GetRawText();
-                }
-            }
-        }
+        baseDirectory = Path.GetFullPath(baseDirectory);
+        var values = new Dictionary<string, string>(settings, StringComparer.OrdinalIgnoreCase);
         foreach (var arg in args)
         {
             if (!arg.StartsWith("--") || arg.IndexOf('=') is not (> 2 and var eq)) continue;
             values[arg[2..eq]] = arg[(eq + 1)..];
         }
-
         string? Take(string key) => values.Remove(key, out var v) ? v : null;
         int Port(string key, int fallback) => Take(key) is not { } v ? fallback
             : int.TryParse(v, out var p) && p is >= 0 and <= 65535 ? p : throw new InvalidDataException($"{key}: '{v}' is not a port");
-        string Dir(string key, string fallback = "data") => Path.GetFullPath(Take(key) ?? fallback, Environment.CurrentDirectory);
+        string Dir(string key, string fallback = "data") => Path.GetFullPath(Take(key) ?? fallback, baseDirectory);
         int Int(string key, int fallback, int min, int max) => Take(key) is not { } v ? fallback
             : int.TryParse(v, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var i) && i >= min && i <= max
                 ? i : throw new InvalidDataException($"{key}: '{v}' is not {min}..{max}");
@@ -898,6 +866,7 @@ public sealed record ServerConfig
             Preset = preset,
             Web = web,
             Backup = backup,
+            PersistenceProvider = Take("Persistence:Provider") is not { } provider || provider.Equals("SQLite", StringComparison.OrdinalIgnoreCase) ? "SQLite" : throw new InvalidDataException($"Persistence:Provider: '{provider}' is not supported; use SQLite"),
             PvpMode = Take("Pvp:Mode") is not { } mode ? d.PvpMode
                 : Enum.TryParse<PvpMode>(mode, ignoreCase: true, out var pm) && Enum.IsDefined(pm) ? pm
                 : throw new InvalidDataException($"Pvp:Mode: '{mode}' is not one of {string.Join(", ", Enum.GetNames<PvpMode>())}"),
@@ -932,10 +901,10 @@ public sealed record ServerConfig
             ContentPath = Dir("Paths:Content", "content"),
             ClientGameDataPath = Dir("Paths:ClientGameData", DefaultClientGameData),
             LogLevel = Take("Log:Level") is not { } level ? LogLevel.Info
-                : Enum.TryParse<LogLevel>(level, ignoreCase: true, out var l) ? l
+                : Enum.TryParse<LogLevel>(level, ignoreCase: true, out var l) && Enum.IsDefined(l) ? l
                 : throw new InvalidDataException($"Log:Level: '{level}' is not one of {string.Join(", ", Enum.GetNames<LogLevel>())}"),
-            LogFile = Take("Log:File") is not { } file ? Path.Combine(Environment.CurrentDirectory, "data", "server.log")
-                : file.Length == 0 ? null : Path.GetFullPath(file, Environment.CurrentDirectory),
+            LogFile = Take("Log:File") is not { } file ? Path.Combine(baseDirectory, "data", "server.log")
+                : file.Length == 0 ? null : Path.GetFullPath(file, baseDirectory),
             JoinByCharacterId = Take("Accounts:JoinByCharacterId") is not { } byId ? false
                 : bool.TryParse(byId, out var join) ? join : throw new InvalidDataException($"Accounts:JoinByCharacterId: '{byId}' is not true or false"),
             LocalAccountLevel = Level("Accounts:LocalAccountLevel", AccountLevel.Admin),

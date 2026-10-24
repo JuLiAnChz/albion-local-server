@@ -1,0 +1,17 @@
+// JSONC (JSON with comments), including trailing commas; not standard JSON.
+// Optional keys use preset defaults.
+// Relative paths use the parent of this configuration directory.
+// Command-line overrides: --Section:Key=value. Restart applies file edits.
+{
+  "Network": { "ChatPort": 5057 },
+  "Chat": {
+    "Enabled": true,
+    "WorldChannel": false,
+    "MergeLanguageChannels": false,
+    "Announcements": true,
+    "GlobalCooldownMs": 2000,
+    "WhisperCooldownMs": 100,
+    "MaxLineLength": 1000,
+    "StaffTags": true
+  }
+}

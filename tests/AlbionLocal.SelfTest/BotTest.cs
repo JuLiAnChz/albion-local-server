@@ -348,18 +348,18 @@ public static class BotTest
         var dir = NewDir();
         var file = Path.Combine(dir, "albionlocal.json");
         File.WriteAllText(file, """{ "Bots": { "StayMinutes": "1-2", "Nav": { "LatticeStep": 6 }, "City": { "PerPoi": 2 } } }""");
-        var c = ServerConfig.Load(file, []);
+        var c = LoadTestConfig(file, []);
         Check(c.Bots is { Enabled: true, StayMinutes: (1, 2), LatticeStep: 6, CityPerPoi: 2, MaxPerMap: 40, PvpRules: BotPvpRules.Consent } && c.Bots.SpawnCells(c.Visibility) == 5
-              && !ServerConfig.Load(file, ["--Preset=official"]).Bots.Enabled && ServerConfig.Load(file, ["--Bots:ThinkSeconds=3"]).Bots.ThinkSeconds == (3, 3),
+              && !LoadTestConfig(file, ["--Preset=official"]).Bots.Enabled && LoadTestConfig(file, ["--Bots:ThinkSeconds=3"]).Bots.ThinkSeconds == (3, 3),
               "pve: bots on, \"1-2\" a range, Nav: { LatticeStep } a group, MinSpawnCells = EnterCells + 1; official: off; one number a range of one");
         static bool Refused(string file, string arg)
         {
-            try { ServerConfig.Load(file, [arg]); return false; }
+            try { LoadTestConfig(file, [arg]); return false; }
             catch (InvalidDataException) { return true; }
         }
         Check(Refused(file, "--Bots:StayMinutes=x-2") && Refused(file, "--Bots:Look=Pretty") && Refused(file, "--Bots:Nav:Lattice=4"), "a bad range, look or an unknown key refused");
         Check(c.Bots is { CrimesAgainstBots: false, GathererFlag: BotGathererFlag.Zone, ConsumeNodes: false, DownDespawnSeconds: 10, GathererNodes: (6, 20) }
-              && ServerConfig.Load(file, ["--Preset=official"]).Bots.CrimesAgainstBots && ServerConfig.Load(file, ["--Bots:Gatherer:FleeHealth=0.4"]).Bots.FleeHealth == 0.4
+              && LoadTestConfig(file, ["--Preset=official"]).Bots.CrimesAgainstBots && LoadTestConfig(file, ["--Bots:Gatherer:FleeHealth=0.4"]).Bots.FleeHealth == 0.4
               && Refused(file, "--Bots:DownDespawnSeconds=90") && Refused(file, "--Bots:Gatherer:Flag=Green"),
               "phase 2 keys: pve no crimes against bots (official yes), Gatherer:* a group, DownDespawnSeconds below the 90 s get-up, a bad flag refused");
         var looks = Client.GameData!.Looks;
@@ -376,8 +376,8 @@ public static class BotTest
               "content/bots.json: the built-in tables (stageM: 24 city bots in a royal city, 12 gatherers + 8 patrols in red zones, 10 patrols in black ones; no holy staff; 60 % armed gatherers carrying 5-20 from the spawn)");
         var pve = ServerConfig.PveDefaults.Bots;
         Check(new BotOptions() is { MaxTotal: 400, SpawnPerPass: 4, SpellChance: 0.6, DeathGearDropChance: 1.0, MinItems: 0 } && pve is { DeathGearDropChance: 0.5, MinItems: 1 }
-              && c.Bots is { MaxTotal: 400, DeathGearDropChance: 0.5, MinItems: 1 } && ServerConfig.Load(file, ["--Preset=official"]).Bots is { DeathGearDropChance: 1.0, MinItems: 0 }
-              && ServerConfig.Load(file, ["--Bots:Rewards:MinItems=2"]).Bots.MinItems == 2 && Refused(file, "--Bots:Rewards:MinItems=7") && Refused(file, "--Bots:Rewards:DeathGearDropChance=1.5"),
+              && c.Bots is { MaxTotal: 400, DeathGearDropChance: 0.5, MinItems: 1 } && LoadTestConfig(file, ["--Preset=official"]).Bots is { DeathGearDropChance: 1.0, MinItems: 0 }
+              && LoadTestConfig(file, ["--Bots:Rewards:MinItems=2"]).Bots.MinItems == 2 && Refused(file, "--Bots:Rewards:MinItems=7") && Refused(file, "--Bots:Rewards:DeathGearDropChance=1.5"),
               "stageM keys: MaxTotal 400, SpawnPerPass 4, SpellChance 0.6; Rewards:DeathGearDropChance official 1.0 / pve 0.5, Rewards:MinItems official 0 / pve 1 (0-6)");
         Check(BotSettings.Parse("""{ "Gear": { "GathererWeaponShare": 0.25, "GathererStartCarry": "3-4" } }""", "test") is { GathererWeaponShare: 0.25, GathererStartCarry: (3, 4) }
               && BotSettings.Parse("""{ "Gear": { "GathererStartCarry": 0 } }""", "test").GathererStartCarry == (0, 0),

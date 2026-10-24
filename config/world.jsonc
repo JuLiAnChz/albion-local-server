@@ -1,20 +1,13 @@
-// AlbionLocal server settings. Every key is optional; a missing key keeps the default shown here.
-// Any key can be overridden on the command line: --Section:Key=value (e.g. --Log:Level=Debug).
-// Relative paths are taken from the folder the server is started in (server/).
+// JSONC (JSON with comments), including trailing commas; not standard JSON.
+// Optional keys use preset defaults.
+// Relative paths use the parent of this configuration directory.
+// Command-line overrides: --Section:Key=value. Restart applies file edits.
 {
-  // The rule set the keys below default to: "pve" (this server's default; PvP only by consent, no deaths or full loot, more loot
-  // and fame, see README "PvE preset") or "official" (the official rules and rates). A key given here or on the command line wins.
-  "Preset": "pve",
-  "Network": {
-    "LoginPort": 5055,        // login server port
-    "GamePort": 5056,
-    "ChatPort": 5057,         // the chat server (channels and whispers; README "Chat"): open it next to the other two for remote friends
-    "BindAddress": "127.0.0.1", // IPv4 the listeners bind to; "0.0.0.0" = every interface (other PCs on the LAN, see README)
-    // "PublicAddress": "192.168.1.10", // game server address given to clients (default: BindAddress; required with 0.0.0.0)
-  },
+  "Network": { "GamePort": 5056 },
+  "Tutorial": { "Opening": true },
   "World": {
     "LogoutSeconds": 10,      // logout countdown (cities and safe areas: 10)
-    "TickMs": 50,             // world loop period; a tick that holds the lock over 20 ms is logged
+    "TickMs": 50              // world loop period; a tick that holds the lock over 20 ms is logged
     // "EventLayers": [],     // seasonal cluster layers to switch on: halloween, christmas, easter, anniversary, anniversary_prelude
     // "AnnounceAll": false,  // debug: every world object of the cluster at Join, never a Leave (rendering vs visibility problems)
     // "MapIdleUnloadMinutes": 5, // a cluster without players is unloaded after this (0 = never); the next Join builds it anew
@@ -22,54 +15,24 @@
     // "OpenWorldChests": true, // POI chests, boss reward chests and camp chests with their local quests (README "Open-world chests and camps")
     // "MobAi": true,         // mobs aggro, chase, hit back, leash home and roam (stage 5d); false = they stand and only take damage (.mob ai on|off)
   },
-  // Rate modifiers, all 1 under Preset official (the official numbers); Preset pve: Fame 2, Silver 1.5, Loot 1, Respawn 2, Harvest 1.5, Regrowth 2, ChampionWeight 2. Fractions allowed; .rates shows them, .rates <name> <value> [save] changes one
-  // while running (Admin; save writes data/rates.json, read over these at the next start).
-  // "Rates": {
-  //   "Fame": 1,            // every fame gain (kills, harvests, crafts, tomes); the three below multiply with it
-  //   "CombatFame": 1,      // fame of mob kills (3 = three times the UpdateFame of a kill)
-  //   "GatheringFame": 1,   // fame of harvests
-  //   "CraftingFame": 1,    // fame of crafts
-  //   "Harvest": 1,         // resources a harvest yields, nodes and corpses (1.5 of 3 = 4 or 5, the fraction at random)
-  //   "Silver": 1,          // a killed mob's silver pile and silver-giving items (awardsilver)
-  //   "Loot": 1,            // item drop chances of mob kills and opened chests (once, on the loot factor; not on Loot:BlackMarketChance); not the loot of opened items
-  //   "Respawn": 1,         // mob respawn speed: 2 = back in half the time, 100 = seconds (the old World:MobRespawnScale 0.01)
-  //   "Regrowth": 1,        // resource node regrowth speed: 2 = a charge back in half the time
-  //   "CraftingReturn": 1,  // factor on the share of resources a craft gives back (Crafting:Returns; at most all)
-  //   "ChampionWeight": 1,  // weight of champion, miniboss and boss mobs in a RANDOM spawn point's pick (Preset pve: 2)
-  //   "ChestRespawn": 1,    // open-world chest respawn and reroll speed: 2 = back in half the time
-  // },
+  // Rate modifiers multiply existing game rewards. .rates <name> <value> changes one temporarily
+  // while running (Admin); restarting restores configuration values. No command saves changes.
+  "Rates": {
+    "Fame": 1,            // every fame gain (kills, harvests, crafts, tomes); the three below multiply with it
+    "CombatFame": 1,      // fame of mob kills (3 = three times the UpdateFame of a kill)
+    "GatheringFame": 1,   // fame of harvests
+    "CraftingFame": 1,    // fame of crafts
+    "Harvest": 1,         // resources a harvest yields, nodes and corpses (1.5 of 3 = 4 or 5, the fraction at random)
+    "Silver": 1,          // a killed mob's silver pile and silver-giving items (awardsilver)
+    "Loot": 1,            // item drop chances of mob kills and opened chests; not applied again to Loot:BlackMarketChance
+    "Respawn": 1,         // mob respawn speed: 2 = back in half the time, 100 = seconds (the old World:MobRespawnScale 0.01)
+    "Regrowth": 1,        // resource node regrowth speed: 2 = a charge back in half the time
+    "CraftingReturn": 1,  // factor on the share of resources a craft gives back (Crafting:Returns; at most all)
+    "ChampionWeight": 1,  // weight of champion, miniboss and boss mobs in a RANDOM spawn point's pick (Preset pve: 2)
+    "ChestRespawn": 1     // open-world chest respawn and reroll speed: 2 = back in half the time
+  }
   // "Visibility": { "CellSize": 10, "EnterCells": 4, "LeaveCells": 6 }, // world objects: 10 m cells on the cluster origin, sent within 4 cells, left from 6 (5 = no hysteresis)
   // "Transfer": { "PositionTolerance": 2, "CheckExitCooldown": true }, // exits: metres allowed outside the exit square; refuse an exit used within 1 s (city) / 10 s of the Join
-  "Paths": {
-    // the client's GameData folder: items, spells, stats and destiny board are read from its .bin files at startup
-    "ClientGameData": "../game-local/Albion-Online_Data/StreamingAssets/GameData",
-    "Saves": "data",          // albionlocal.db (characters; a characters.json there is imported once), clientdata.json (client build and hashes of the last start)
-    "Content": "content"      // server content: starter.json (start cluster, position and kit of new characters), opcode-stubs.json (answers of side requests)
-  },
-  "Log": {
-    "Level": "Info",          // Trace, Debug, Info, Warn, Error; -v / -vv on the command line win
-    "File": "data/server.log" // the log lines are appended here too (follow with tail -F); "" = console only
-  },
-  "Accounts": {
-    "LocalAccountLevel": "Admin", // Player, GameMaster, Admin: the level the local account (the characters of before the multiplayer upgrade) gets in a new database
-    // "DefaultLevel": "Player",  // level of every account made from now on (registration, AutoRegister, .account create); chat GM commands check the speaker's account (.account level <name> <level> on the console)
-    "LegacyName": "",             // login name that takes over the characters of before the multiplayer upgrade; "" = the first name to log in from this PC (its first password becomes the account's)
-    "JoinByCharacterId": false,   // true: a Join naming a character id plays it whatever the login (the self-test); false: own characters only
-    // "AutoRegister": false,      // true: a login with a new name and a password makes the account; false: refused (register in the client or .account create)
-    // "Registration": true,      // the client's "Create account" dialog may make accounts (at DefaultLevel; false on a server others reach if you want no strangers)
-    // "MaxFailedLogins": 5,      // wrong passwords in a row that lock the account (0 = never)
-    // "LockMinutes": 15,         // how long that lock lasts
-    // "Maintenance": false,      // true: every login is refused with the client's maintenance message
-  },
-  // The built-in web panel (README "Web panel"): status, registration, and for Admin accounts players, accounts, log and backups.
-  // "Web": {
-  //   "Enabled": true,           // Preset pve: true, official: false
-  //   "BindAddress": "127.0.0.1", // "0.0.0.0" = every interface (plain HTTP: other PCs too)
-  //   "Port": 8080,              // http://127.0.0.1:8080/ (not one of the game's ports)
-  //   "Registration": true,      // the public registration page (Accounts:Registration false closes it too)
-  //   "SessionMinutes": 30,      // an admin session ends after this long without a request
-  // },
-  // "Backup": { "EveryHours": 0, "Keep": 10 }, // database copies into data/backups every N hours (0 = only the panel's "Back up now"); the newest Keep stay
   // "Progression": { "NewCharacters": "UnlockAll" }, // new characters: UnlockAll = everything unlocked (fame only raises the total); FairStart = an empty destiny board that fame fills, with content/starter-fair.json
   // "Crafting": { "Returns": true },  // a craft at a station gives back part of the resources by the city's bonus (craftingmodifiers.xml); false = none
   // "Combat": { "EquipCooldownSeconds": 0, "GearArmor": true }, // seconds of the potion/food slot cooldown after an item goes into it (gamedata onequipmentchange is 10; whether it applies is open); 0 = none.
@@ -84,7 +47,7 @@
   //   personal islands (README Personal islands), the values of Preset pve: StarterIsland = a free island at the first island merchant (at level 0-5), StarterBuildings = with a farm and a herb garden,
   //   GrowthSpeed = crops grow 4 x as fast, WaterFocusFactor 0 = watering takes no focus; Preset official: StarterIsland false, StarterBuildings false, GrowthSpeed 1, WaterFocusFactor 1.
   //   PremiumDays = Join key 91 (the merchant sells and upgrades from 7; 0 = none), FreeIslands = buying and upgrading for 0 silver
-  // "Chat": { "Enabled": true, "WorldChannel": true, "MergeLanguageChannels": true, "Announcements": true, "GlobalCooldownMs": 2000, "WhisperCooldownMs": 100, "MaxLineLength": 1000, "StaffTags": true },
+
   //   the chat server (README Chat) as Preset pve: WorldChannel = the GENERAL tab holds the world channel, MergeLanguageChannels = one channel for every client language;
   //   Preset official: both false. Enabled false = no chat server (Say, party lines and .g only). Announcements = server-wide announcements on the Announcement channel
   // "Social": { "FriendLimit": 200, "FriendRequestLimit": 50, "MuteLimit": 100 }, // friends per character, open friend requests sent (or received), muted players

@@ -184,7 +184,7 @@ PvE changes (PVE-DESIGN step 10, `content/dungeons.json`, each with its own key)
 The one NuGet package, `Microsoft.Data.Sqlite`, is restored offline: `nuget.config` lists only the local
 package cache (`%USERPROFILE%\.nuget\packages`) as a source, so the package must already be there.
 
-Settings: `config/albionlocal.json` (ports, logout time, the client's GameData folder, save and content folders, log level and log file,
+Settings: `config/*.jsonc` (ports, logout time, the client's GameData folder, save and content folders, log level and log file,
 the account levels; seasonal cluster layers `World:EventLayers`, `World:AnnounceAll`,
 `World:MapIdleUnloadMinutes`, `World:RareResources` (enchanted resource nodes, on), the `Visibility` window, the `Transfer` checks, `Crafting:Returns` and `ClientNumbering:BuildingIdOffset`, only
 as comments there; comments allowed, every key optional). Any key can be overridden on the command line, e.g.
@@ -958,7 +958,7 @@ payouts, the weekly upkeep and reports, campaign rewards, the faction's PvE fame
 ## PvE preset
 
 This server is set up for PvE (`../analysis/work/stageH/PVE-DESIGN.md` §1): the root key `"Preset": "pve"` of
-`config/albionlocal.json` (also the default when the key is missing) gives the keys below these values, and
+`config/*.jsonc` (also the default when the key is missing) gives the keys below these values, and
 `"Preset": "official"` (or `--Preset=official`) the official rules and rates described in the rest of this README. Any key
 written in the file or on the command line wins over its preset's value.
 
@@ -1214,7 +1214,7 @@ premium the nodes get 1.5 × the fame of kills and harvests (the total stays × 
 for auto-learn spend learning points (see Premium, focus and learning points). Fishing gives fame too (see Fishing; tomes feed
 the board only).
 
-`Progression:NewCharacters` in `config/albionlocal.json` decides the board of a **new** character: `UnlockAll` (the
+`Progression:NewCharacters` in `config/*.jsonc` decides the board of a **new** character: `UnlockAll` (the
 default, as before) = no board of its own, everything unlocked, fame only raises the total; `FairStart` = an empty board
 (START in progress) and the kit of `content/starter-fair.json` (T1 sword, shield and leather set, T1 tools): 45 fame
 finish START (T2 bag and cape), 250 kill fame then COMBAT_TRAINEE (T2 weapons and armour), and so on. Existing
@@ -1470,7 +1470,7 @@ login, still warn).
 
 ## Rates
 
-The section `Rates` of `config/albionlocal.json` multiplies the rewards and timers; under `"Preset": "official"` every rate
+The section `Rates` of `config/world.jsonc` multiplies the rewards and timers; under `"Preset": "official"` every rate
 is 1 (the official numbers) unless set, the PvE preset starts from Fame 2, Silver 1.5, Loot 1, Respawn 2, Harvest 1.5 and
 Regrowth 2 (see PvE preset); fractions are allowed (`"Rates": { "Harvest": 2, "CombatFame": 3 }`, or `--Rates:Harvest=2` on the
 command line). Each applies where its quantity is worked out, so what the client shows (fame popups, harvest amounts,
@@ -1497,12 +1497,15 @@ stack (the item's stack limit) or rounds to nothing.
 
 `World:MobRespawnScale` of earlier versions is gone: it was a factor on the respawn time, `Rates:Respawn` is its inverse
 (MobRespawnScale 0.01 = Respawn 100). An old config with it still starts and reads it that way; giving both is refused.
-While the server runs, `.rates` shows them and an Admin's `.rates <name> <value>` changes one from the next kill, harvest
-or respawn on (a respawn or regrowth already scheduled keeps its time); `.rates <name> <value> save` also writes the
-rates that differ from the config's to `data/rates.json`, which the next start reads over the config (`.rates reset save`
-removes it).
+While the server runs, `.rates` shows the active values. An Admin can change the whole running world
+with `.rates <name> <value>`; `.rates reset` restores effective startup values. These changes do not
+write files and are discarded on restart. The `save` argument is rejected. Old `rates.json` files
+are preserved but ignored with a warning. Edit `Rates` in world.jsonc for permanent changes.
+Already scheduled timers and awarded rewards are not recalculated. See [configuration](CONFIGURATION.md).
 
 ## Accounts
+
+New databases start without characters. With AutoRegister disabled, create an account through client registration or the server console. Legacy claiming requires existing characters.
 
 Logging in needs a login name and a password (the two fields of the login screen; analysis/work/accounts). The server
 keeps only a PBKDF2-SHA256 hash of each password (100 000 iterations, random salt) in `albionlocal.db`; names count
@@ -1612,7 +1615,7 @@ create and delete at the character selection act only on the logged-in account's
 A **second PC** on the LAN:
 
 1. On the host, let the server listen on the network and tell the clients the host's address, in
-   `config/albionlocal.json` (or on the command line):
+   `config/*.jsonc` (or on the command line):
    `"Network": { "BindAddress": "0.0.0.0", "PublicAddress": "192.168.1.10" }` with the host's LAN address
    (`PublicAddress` is required with `0.0.0.0`). Use `0.0.0.0` when the host plays too: a client on the host that
    connects to `127.0.0.1:5055` is not answered by a listener bound to the LAN address alone. The game server address handed out
@@ -1748,7 +1751,7 @@ bot's own (moved, never copied) and nothing of a bot is ever saved, so no duplic
 - **Turnover:** a bot stays 10-30 minutes, then walks into an exit (gone at the exit, as a player leaving) or logs out where
   it stands (10 s); the next one of its place arrives through an exit 20-90 s later, another "player" with another name.
 - 30 s after the last player left a cluster its bots are gone; nothing of them is ever saved.
-- `config/albionlocal.json` `"Bots"` has the switches and timings (Enabled, caps, the population pass, stay and arrival times,
+- `config/*.jsonc` `"Bots"` has the switches and timings (Enabled, caps, the population pass, stay and arrival times,
   think interval, look, the walk grid's lattice, emote chance, `PvpRules`, `PvpRulesByZone`; for gatherers `Gatherer` { Flag, RedShare, Radius,
   Nodes, AvoidPlayerRadius, AvoidMobRadius, FleeHealth, FleeChance }, `ConsumeNodes`, `MountDistance`, `Pvp` { EngageSeconds,
   EngageParty, CrimesAgainstBots, LethalToPlayers }, `Combat` { TickMs, ReactionMs, DamageFactor, HealthFactor, Spells, SpellChance,
@@ -1829,7 +1832,7 @@ does after the fight, or is revived by you or a healer. **Loot and fame:** a com
 bag and its rights); companions take no loot and no fame share, and your fame is not split with them (the party's fame share and
 group bonus count players only). They are never in a PvP fight (Friendly to everyone, every bot too). Nothing of them is saved:
 they go when you log out (after `Companions:OwnerGraceSeconds` without you in game), leave the party, or at a restart.
-`Companions:*` in `config/albionlocal.json` (all on under the pve preset, off under official).
+`Companions:*` in `config/*.jsonc` (all on under the pve preset, off under official).
 
 What to check in the client: the party frame lists the companions with your character (names, the leader crown on you); they
 stand behind you, walk after you and come with you through an exit (after your loading screen); in a fight the tank's taunt pulls
@@ -2273,7 +2276,7 @@ Commands start with a `.` and are typed either into the game's chat or into the 
 | `.bot grid` | GameMaster | the bots' walk grid at the player: the cell blocked or walkable, the nearest walkable point, the grid's numbers |
 | `.bot path <x> <z>` | GameMaster | the bots' path from the player to (x, z): legs and length; a new GM city bot walks it |
 | `.mob spells [on\|off]` | GameMaster | switches the mobs' `<AI>` spells (`MobSpells` in content/combat.json, on); without an argument: whether they are on |
-| `.rates [name value [save]]` | GameMaster / Admin | the rate modifiers in force (Rates above); Admin: `.rates harvest 2` sets one for the running server, `save` also writes `data/rates.json`; `.rates reset [save]` goes back to the config's |
+| `.rates [name value]` | GameMaster / Admin | display active rates; Admin changes are temporary and global; `.rates reset` restores startup values; `save` is rejected |
 | `.vanity list [text]`, `.vanity grant <id\|name>`, `.vanity revoke <id\|name>`, `.vanity drop [theme]` | GameMaster | the cosmetics (Cosmetics above): owned or catalogue search, unlock, take back, a drop now |
 | `.damage <amount>` | GameMaster | takes `amount` health from the player (a HealthUpdate caused by itself, no combat); at 0 it is knocked down |
 | `.kill` | GameMaster | knocks the player down (PvE knockdown); it gets up by itself 18 s later |

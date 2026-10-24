@@ -29,6 +29,7 @@ var tests = new List<(string Name, Action Body)>
     ("udp handshake, encryption, fragmentation", () => EndToEnd(0)),
     ("udp with 20% packet loss", () => EndToEnd(0.2)),
 };
+tests.AddRange(ConfigurationTest.All);
 tests.AddRange(ClientDataTest.All);
 tests.AddRange(AlbionTests.All);
 tests.AddRange(WorldTest.All);
