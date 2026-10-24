@@ -32,6 +32,7 @@ public static class CharacterEntryTest
         try
         {
             using var repository = new SqliteCharacterRepository(Path.Combine(dir, "save.db"));
+            repository.CreateAccount("user", Passwords.Hash("password1"), AccountLevel.Player);
             using var world = new World(new ServerConfig(), repository, Client.Items, Client.GameData) { Sync = new object() };
             var starter = new StarterKit { Equipment = [new("T4_MAIN_SWORD"), new("T4_OFF_SHIELD"), new("T4_HEAD_PLATE_SET1"),
                 new("T4_ARMOR_PLATE_SET1"), new("T4_SHOES_PLATE_SET1"), null, new("T4_CAPE")] };
@@ -172,6 +173,7 @@ public static class CharacterEntryTest
         try
         {
             using var repository = new SqliteCharacterRepository(Path.Combine(dir, "save.db"));
+            repository.CreateAccount("user", Passwords.Hash("password1"), AccountLevel.Player);
             var peer = new FakePeer();
             var starter = new StarterKit { Cluster = "1008" };
             var session = new LoginSession(peer, new ServerConfig { PremiumMode = PremiumMode.None }, repository, starter);
@@ -191,6 +193,7 @@ public static class CharacterEntryTest
         try
         {
             using var repository = new SqliteCharacterRepository(Path.Combine(dir, "save.db"));
+            repository.CreateAccount("user", Passwords.Hash("password1"), AccountLevel.Player);
             var peer = new FakePeer();
             var session = new LoginSession(peer, new ServerConfig(), repository, StarterKit.Default);
             session.OnRequest(Request(TestLogin(), 1), false);

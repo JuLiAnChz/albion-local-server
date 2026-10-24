@@ -643,13 +643,19 @@ public static class OpeningTutorialTest
         {
             using var host = new ServerHost(new ServerConfig
             {
-                TutorialOpening = true, ClientGameDataPath = ClientGameDataDir(), SavesPath = dir,
+                TutorialOpening = true, AutoRegister = true, ClientGameDataPath = ClientGameDataDir(), SavesPath = dir,
                 LoginEndPoint = new IPEndPoint(IPAddress.Loopback, 0),
                 GameEndPoint = new IPEndPoint(IPAddress.Loopback, 0),
                 ChatEndPoint = new IPEndPoint(IPAddress.Loopback, 0),
             }, Client);
             Check(host.Characters.List().Count == 0, "empty tutorial host stays empty rather than creating LocalHero");
             Check(host.Characters.Accounts().All(a => string.IsNullOrEmpty(a.Name)), "no registered user accounts on a fresh host");
+            var refusedPeer = new FakePeer();
+            new LoginSession(refusedPeer, host.Config with { AutoRegister = false }, host.Characters, host.Starter)
+                .OnRequest(Request(TestLogin(), 1), false);
+            Check(refusedPeer.Responses.Last().ReturnCode == LoginCodes.InvalidAccountNameOrPassword
+                && host.Characters.FindAccount("user") is null,
+                "fresh tutorial host refuses unknown login with auto-registration disabled");
             var peer = new FakePeer();
             var login = new LoginSession(peer, host.Config, host.Characters, host.Starter) { World = host.World };
             login.OnRequest(Request(TestLogin(), 1), false);

@@ -528,7 +528,7 @@ public static class AlbionTests
         return dir;
     }
 
-    /// <summary>A repository in <paramref name="dir"/> holding the default character, as <see cref="ServerHost"/> starts an empty one.</summary>
+    /// <summary>A repository in <paramref name="dir"/> holding an explicit legacy character fixture.</summary>
     internal static SqliteCharacterRepository Repository(string dir)
     {
         var characters = new SqliteCharacterRepository(Path.Combine(dir, "albionlocal.db"));
@@ -565,6 +565,13 @@ public static class AlbionTests
             JoinByCharacterId = true, // the tests' Joins name the character
         }, items is not null ? new ClientData(items, null, null)
             : Client with { GameData = gameData ? Client.GameData : null, Spells = spells ? Client.Spells : null, Clusters = clusters ? Client.Clusters : null });
+        // Gameplay tests supply their own legacy fixture; production startup no longer creates characters.
+        if (host.Characters.List().Count == 0)
+        {
+            var hero = host.Starter.NewCharacter("LocalHero");
+            AlbionLocal.Server.Systems.Focus.NewCharacter(hero, host.Config);
+            host.Characters.Create(hero);
+        }
         host.Start();
         return host;
     }

@@ -1426,6 +1426,9 @@ ignoring case and spaces at either end. Steam and console logins are refused.
   password itself). So log in with your usual name once and pick the password then.
 - **Unknown names** are refused like a wrong password ("incorrect credentials"), unless `Accounts:AutoRegister` is true:
   then a login with a new name and a password makes the account (handy on a LAN of friends).
+  An unnamed local account can only be claimed if it holds existing characters. An empty database does not grant the
+  first login access to the local account, even with an explicit `Accounts:LegacyName`. Normal registration creates a
+  separate account at `Accounts:DefaultLevel`, rather than inheriting the local account's privileges.
 - **Wrong passwords:** `Accounts:MaxFailedLogins` (5) in a row lock the account for `Accounts:LockMinutes` (15); the
   client shows how long. `.account unban <name>` or `.account password <name> <new>` ends a lock early.
 - **Bans:** `.account ban <name> <minutes> [reason]` (0 minutes = for good) closes the account's connections; its next

@@ -79,6 +79,12 @@ and scheduled timers are not recalculated by a rate change.
 
 ## Laboratory launcher
 
+New save databases start without characters, with or without the opening tutorial. With
+`Accounts:AutoRegister` disabled, unknown login names are refused: create an account through the client
+when `Accounts:Registration` is enabled, or use `.account create` on the server console. Automatic
+registration, when enabled, creates an account at `Accounts:DefaultLevel`. Legacy account claiming
+only applies when that unnamed account already owns characters; it cannot claim an empty local account.
+
 ```powershell
 ./scripts/lab.ps1 -Mode config -ConfigDir ./config -ArtifactsPath data/lab/server-configuration-build
 ./scripts/lab.ps1 -Mode server -ConfigDir ./config

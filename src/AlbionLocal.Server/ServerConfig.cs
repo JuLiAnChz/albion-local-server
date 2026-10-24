@@ -257,6 +257,7 @@ public sealed record ServerConfig
     /// <summary>
     /// The login name that takes over the local account with the characters saved before stage 7 (Accounts:LegacyName);
     /// "" = the first name that logs in after the upgrade (with a password: the one it types becomes the account's).
+    /// An unnamed local account without characters cannot be claimed; new databases use normal registration.
     /// </summary>
     public string LegacyAccountName { get; init; } = "";
 
