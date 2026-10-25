@@ -33,7 +33,7 @@ public static class CharacterEntryTest
         {
             using var repository = new SqliteCharacterRepository(Path.Combine(dir, "save.db"));
             repository.CreateAccount("user", Passwords.Hash("password1"), AccountLevel.Player);
-            using var world = new World(new ServerConfig(), repository, Client.Items, Client.GameData) { Sync = new object() };
+            using var world = new World(new ServerConfig { NewCharacters = NewCharacterProgression.UnlockAll }, repository, Client.Items, Client.GameData) { Sync = new object() }; // the given kit, not the fair one
             var starter = new StarterKit { Equipment = [new("T4_MAIN_SWORD"), new("T4_OFF_SHIELD"), new("T4_HEAD_PLATE_SET1"),
                 new("T4_ARMOR_PLATE_SET1"), new("T4_SHOES_PLATE_SET1"), null, new("T4_CAPE")] };
             var peer = new FakePeer();
@@ -176,7 +176,7 @@ public static class CharacterEntryTest
             repository.CreateAccount("user", Passwords.Hash("password1"), AccountLevel.Player);
             var peer = new FakePeer();
             var starter = new StarterKit { Cluster = "1008" };
-            var session = new LoginSession(peer, new ServerConfig { PremiumMode = PremiumMode.None }, repository, starter);
+            var session = new LoginSession(peer, new ServerConfig { PremiumMode = PremiumMode.None, NewCharacters = NewCharacterProgression.UnlockAll }, repository, starter);
             session.OnRequest(Request(TestLogin(), 1), encrypted: false);
             session.OnRequest(Request(new CreateCharacterRequest { h7 = "SceneProbe" }, 2), encrypted: false);
             var response = peer.Responses.Last();

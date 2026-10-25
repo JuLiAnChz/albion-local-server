@@ -24,7 +24,9 @@ own machine or LAN, for one player or a few friends.
 
 ## What works
 
-The server implements a large part of what a PvE player meets in the game, as a local, self-contained emulation:
+The server implements a large part of the game as a local, self-contained emulation. Like TrinityCore or AzerothCore,
+it behaves like the official game by default (`Preset: official`); everything it adds on top is behind a config key, and
+the `pve` preset turns the PvE-friendly additions on. What changed lately: [docs/CHANGELOG.md](docs/CHANGELOG.md).
 
 - **Core:** login and game servers over Photon UDP (reliable channels, fragmentation, DH/AES encryption), accounts
   with PBKDF2 passwords, several characters per account, GM levels and a chat command system, SQLite persistence with
@@ -34,19 +36,21 @@ The server implements a large part of what a PvE player meets in the game, as a 
   with city bonuses, enchanting, quality rolls.
 - **Combat:** auto-attacks, spells with conditions and effects, buffs and crowd control, mob AI with path finding and
   line of sight, boss mechanics (spawn/death casts, dashes, knockbacks), knock-down and party revive, PvP flags and
-  duels (PvP only by consent in the default PvE preset).
-- **PvE content:** open-world camps and chests, elite mobs, world bosses, journals, on-demand invasions, expeditions,
+  duels; zone-based PvP with full loot under `official`, PvP only by consent under `pve`.
+- **PvE content:** open-world camps and chests, elite mobs, world bosses, journals, expeditions,
   random dungeons with the client's own layout generator and shrines, static dungeons, corrupted dungeons, hellgates,
-  Roads of Avalon, the Mists, season goals and bounties.
+  Roads of Avalon, the Mists, the Adventurer's Challenge; under `pve` also on-demand invasions, bounties and PvP goals.
 - **Social:** chat server (whispers, guild, party, world), friends, mail, trading, guilds with ranks, contracts and goals,
   emotes, loadouts, map pings.
-- **Bots:** player bots (city walkers, gatherers, patrols, stronger hostile bots), companions you hire into the party
-  (tank, healer, melee, ranged).
-- **More systems:** arena queues (1v1/2v2/5v5) with bots and Elo ladders, hunts (tracking toolkits, wild tracks, hunt
+- **Bots (optional, off under `official`):** player bots (city walkers, gatherers, patrols, hostile bots in red and
+  black zones) with a switch per kind, a stable roster of names, population by hour of day, whispers and local chat,
+  and bots that accept your party invite and play along; companions you hire into the party (tank, healer, melee,
+  ranged).
+- **More systems:** arena queues (1v1/2v2/5v5; bots and Elo ladders under `pve`), hunts (tracking toolkits, wild tracks, hunt
   quest chains), island construction, labourers and furniture, awakened weapons and item traits, the PvE side of
   faction warfare, gathering tomes and fishing bait, expedition bonus chests, market price history, cosmetics from
   content, a richer starter kit.
-- **Opening tutorial (opt-in, `Tutorial:Opening`):** new characters start on the tutorial island at The Lighthouse
+- **Opening tutorial (`Tutorial:Opening`, on by default):** new characters start on the tutorial island at The Lighthouse
   and follow its quests through departure to a starter town, in a private instance per character (contributed in
   PR #1; not every branch is visually verified yet).
 - **Web panel** (`http://127.0.0.1:8080/`): status, registration, admin pages (players, accounts, bans, log, backups).
@@ -121,8 +125,9 @@ Comparisons against generated "golden" data files are skipped, because those fil
 
 ## Configuration
 
-- `config/common.jsonc` — ports, presets (`pve` by default: PvP by consent, no full loot, rate multipliers), world
-  and economy options. Any key can be overridden on the command line, e.g. `--Log:Level=Debug`.
+- `config/*.jsonc` — five area files (common, login, world, chat, persistence). `Preset` is `official` by default
+  (the official rules, rates ×1); `pve` turns on PvP by consent, no full loot, rate multipliers and the server's PvE
+  additions. Any key can be overridden on the command line, e.g. `--Log:Level=Debug`.
 - `content/*.json` — gameplay content the server adds or tunes (events, bosses, dungeons, goals, bots, kits…).
 - Accounts: unknown logins are refused when AutoRegister is disabled; register through the client or console (see "Accounts" in [docs/REFERENCE.md](docs/REFERENCE.md)); console
   commands such as `.account create <name> <password>` manage them.

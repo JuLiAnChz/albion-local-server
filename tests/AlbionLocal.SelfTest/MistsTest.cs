@@ -83,7 +83,7 @@ public static class MistsTest
         var none = Path.Combine(cfg, "albionlocal.json");
         var file = MistsSettings.Parse(File.ReadAllText(Path.Combine(DataDir(), "..", "content", "mists.json")), "mists.json");
         var stations = StationSpawns.Load(Path.Combine(DataDir(), "..", "content", "spawns"));
-        Check(LoadTestConfig(none, []).Mists is { Matchmaking: MistsMatchmaking.Private, LifetimeFactor: 2, BlockFactor: 0.5, DuoSoloScaling: 0.6, OpenWorldExit: MistsExitTarget.Entrance, BossChest: true, RarityWeights.Count: 5 }
+        Check(LoadTestConfig(none, ["--Preset=pve"]).Mists is { Matchmaking: MistsMatchmaking.Private, LifetimeFactor: 2, BlockFactor: 0.5, DuoSoloScaling: 0.6, OpenWorldExit: MistsExitTarget.Entrance, BossChest: true, RarityWeights.Count: 5 }
               && LoadTestConfig(none, ["--Preset=official"]).Mists == new MistsOptions()
               && LoadTestConfig(none, ["--Preset=official", "--Mists:LifetimeFactor=3"]).Mists is { LifetimeFactor: 3, Matchmaking: MistsMatchmaking.Shared }
               && file.Texts.OrderBy(t => t.Key).SequenceEqual(MistsSettings.DefaultTexts.OrderBy(t => t.Key)) && file.Treasures.Count == MistsSettings.DefaultTreasures.Count

@@ -281,7 +281,7 @@ public static class CombatTest
     /// </summary>
     private static void LootBalance()
     {
-        var pve = LoadTestConfig(Path.Combine(NewDir(), "none.json"), []);
+        var pve = LoadTestConfig(Path.Combine(NewDir(), "none.json"), ["--Preset=pve"]);
         Check(pve is { LootBlackMarketChance: 0.15, LootBlackMarketSoftCap: 4 } && pve.Rates.Loot == 1, "pve preset: Loot:BlackMarketChance 0.15, soft cap 4, Rates:Loot 1");
         var chest = Store.LootChests!.Chests["CORRUPTED_HERETIC_CHEST_RARE"].States[0].LootFor(5)!;
         (double Items, double Gear, double High, int Max) Roll(int rounds, double factor, double bm, int tier, int cap)

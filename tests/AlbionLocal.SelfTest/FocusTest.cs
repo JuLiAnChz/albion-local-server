@@ -36,7 +36,7 @@ public static class FocusTest
 
     private static void PremiumState()
     {
-        var pve = LoadTestConfig(Path.Combine(NewDir(), "none.json"), []);
+        var pve = LoadTestConfig(Path.Combine(NewDir(), "none.json"), ["--Preset=pve"]);
         var official = LoadTestConfig(Path.Combine(NewDir(), "none.json"), ["--Preset=official"]);
         Check(pve is { PremiumMode: PremiumMode.Free, FocusStart: 30_000, LearningPointsStart: 500, FocusCrafting: true, FocusMax: null }
               && official is { PremiumMode: PremiumMode.None, FocusStart: 0, LearningPointsStart: 0 }

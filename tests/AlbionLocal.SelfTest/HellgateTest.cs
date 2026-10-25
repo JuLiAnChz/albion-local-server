@@ -73,7 +73,7 @@ public static class HellgateTest
         var file = HellgateSettings.Parse(File.ReadAllText(Path.Combine(DataDir(), "..", "content", "hellgates.json")), "hellgates.json");
         var cfg = NewDir();
         var none = Path.Combine(cfg, "albionlocal.json");
-        var pve = LoadTestConfig(none, []).Hellgates;
+        var pve = LoadTestConfig(none, ["--Preset=pve"]).Hellgates;
         var off = LoadTestConfig(none, ["--Preset=official"]).Hellgates;
         Check(file.Maps.Count == 0 && file.Texts.OrderBy(t => t.Key).SequenceEqual(HellgateSettings.DefaultTexts.OrderBy(t => t.Key))
               && pve is { ShrineMode: HellgateShrineMode.Fixed, CheckItemPower: false, BossMapFactor: 3, GroupScaling: true, EnemyTeamSize: HellgateEnemyTeam.Party, KnockdownSeconds: 30, LeaveCommand: true }
@@ -358,7 +358,7 @@ public static class HellgateTest
     {
         var cfg = NewDir();
         var none = Path.Combine(cfg, "albionlocal.json");
-        var pve = LoadTestConfig(none, []).Hellgates;
+        var pve = LoadTestConfig(none, ["--Preset=pve"]).Hellgates;
         var off = LoadTestConfig(none, ["--Preset=official"]).Hellgates;
         var data = Store.Hellgates;
         var mode = data.At(1)!;

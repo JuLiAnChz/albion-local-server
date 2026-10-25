@@ -65,7 +65,7 @@ public static class CorruptedTest
               "content/corrupted.json holds the built-in completion rewards, map weights and texts");
         var cfg = NewDir();
         var none = Path.Combine(cfg, "albionlocal.json");
-        Check(LoadTestConfig(none, []).Corrupted is { ExitPortal: CorruptedExitMode.Always, InfamyFactor: 2, EarlyLeaveShare: 0.5, RewardFactor: 1.5, EmptyCloseSeconds: 30, CheckItemPower: false, CheckInfamy: true }
+        Check(LoadTestConfig(none, ["--Preset=pve"]).Corrupted is { ExitPortal: CorruptedExitMode.Always, InfamyFactor: 2, EarlyLeaveShare: 0.5, RewardFactor: 1.5, EmptyCloseSeconds: 30, CheckItemPower: false, CheckInfamy: true }
               && LoadTestConfig(none, ["--Preset=official"]).Corrupted == new CorruptedOptions()
               && LoadTestConfig(none, ["--Preset=official", "--Corrupted:ExitPortal=Off"]).Corrupted is { ExitPortal: CorruptedExitMode.Off, InfamyFactor: 1 },
               "Corrupted:* under pve (portal Always, infamy x2, early leave 0.5, rewards x1.5, no server item power gate), official (the record's), an explicit key wins");

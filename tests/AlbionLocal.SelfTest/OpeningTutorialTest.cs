@@ -105,7 +105,8 @@ public static class OpeningTutorialTest
         Check(p.Inventory.Equipment.Items.All(i => i.Active.Any(s => s >= 0)), "starter abilities selected by existing spell system");
         var settings = Path.Combine(lab.Dir, "absent-settings.json");
         var defaults = LoadTestConfig(settings, []);
-        Check(!defaults.TutorialOpening && LoadTestConfig(settings, ["--Tutorial:Opening=true"]).TutorialOpening, "opening is explicit opt-in");
+        Check(defaults.TutorialOpening && LoadTestConfig(settings, ["--Preset=pve"]).TutorialOpening && !LoadTestConfig(settings, ["--Tutorial:Opening=false"]).TutorialOpening
+              && !new ServerConfig().TutorialOpening, "opening: on without the key in both presets (as officially), off by key; a config built in code has none");
         var loginPeer = new FakePeer();
         var login = new LoginSession(loginPeer, lab.World.Config, lab.Repository, StarterKit.Default) { World = lab.World };
         login.OnRequest(Request(TestLogin(), 1), false);
