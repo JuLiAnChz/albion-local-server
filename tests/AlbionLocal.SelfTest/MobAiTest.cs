@@ -39,6 +39,10 @@ public static class MobAiTest
     private static (Arena Arena, Map Map) Quiet(Arena arena)
     {
         var map = arena.World.Maps.Find("0204")!;
+        // Timing and threat tests need open ground, independent of the asynchronous real-map nav cache.
+        // AroundWall installs its own obstacle grid below.
+        var x = (int)Math.Floor(arena.Stand.X); var z = (int)Math.Floor(arena.Stand.Y);
+        MobNav.Use(map, WalkGrid.FromCells(x - 180, z - 180, x + 180, z + 180, [], [arena.Stand]));
         lock (arena.World.Sync)
             foreach (var m in map.Objects.Values.OfType<Mob>().Where(m => Vector2.Distance(m.Position, arena.Stand) < 150).ToList())
                 SpawnManager.Despawn(m, arena.World, respawn: false);

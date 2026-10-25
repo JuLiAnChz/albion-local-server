@@ -124,6 +124,19 @@ They do not count as passed tests. Exit code 0 means no selected test failed; in
 - Accounts: unknown logins are rejected when `Accounts:AutoRegister` is false. Register through the client
   or use `.account create <name> <password>` on the server console; see [configuration](docs/CONFIGURATION.md).
 
+With the opening tutorial enabled, the Lighthouse (`1008`) is private to each character.
+The Cove (`1011`), forest (`1009`) and fort (`1010`) are shared: nearby players can see one another,
+while quest progress and tutorial obstacles remain individual. Reconnecting preserves the authored
+cluster and saved quest state. Tutorial merchant offers show one item and remain available after purchase.
+
+Timed crafting delivers the whole batch and its fame together at the end of the progress bar.
+Cancelling or logging out settles only the portion completed by elapsed crafting time and refunds
+the uncompleted portion; crafting still dismounts a rider before starting.
+
+The Destiny Board HUD automatically tracks a node from the latest fame gain, preferring
+activity-specific nodes over general fame. The selection persists across map changes and reconnects.
+This selection policy has automated coverage; its exact match to the official game's policy remains unverified.
+
 ## Status
 
 Work in progress and built for learning: expect gaps, guesses (marked in the docs as inferences) and breaking changes.

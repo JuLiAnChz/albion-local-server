@@ -237,7 +237,8 @@ public class AggressiveAI(Mob me) : MobAI(me)
         _lastSwing = world.Now;
         _aim = null;
         _idleUntil = null;
-        Log.Debug("ai", $"{Me} fights '{target.Character.Name}'");
+        Log.Debug("ai", string.Create(CultureInfo.InvariantCulture,
+            $"{Me} fights '{target.Character.Name}': first basic attack ready in {(_nextSwing - world.GameNow) / (double)TimeSpan.TicksPerSecond:0.###} s"));
         OnEnterCombat(world);
         if (!alert || Me.Template.AlertRadius <= 0) return;
         var here = Me.Position;
@@ -426,6 +427,8 @@ public class AggressiveAI(Mob me) : MobAI(me)
         WindupEnd = damageAt;
         var flight = melee ? 0 : Vector2.Distance(Me.Position, target.PositionAt(DateTime.UtcNow)) / world.Combat.AutoAttackProjectileSpeed;
         var impact = damageAt + SpellCasts.Seconds(flight);
+        Log.Debug("ai", string.Create(CultureInfo.InvariantCulture,
+            $"{Me} starts a basic attack on '{target.Character.Name}': hit in {(impact - now) / (double)TimeSpan.TicksPerSecond:0.###} s"));
         byte type = t.AttackType switch { "ranged" => 2, "magic" => 4, _ => 1 };
         map.SendToObservers(Me, new AttackEvent
         {

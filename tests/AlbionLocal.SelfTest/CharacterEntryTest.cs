@@ -215,17 +215,23 @@ public static class CharacterEntryTest
         try
         {
             var path = Path.Combine(dir, "legacy.db");
-            using (var repository = new SqliteCharacterRepository(path)) repository.Create(StarterKit.Default.NewCharacter("LegacyProbe"));
+            using (var repository = new SqliteCharacterRepository(path))
+            {
+                var legacy = StarterKit.Default.NewCharacter("LegacyProbe");
+                legacy.Progression = Client.GameData!.Board!.FairStart();
+                repository.Create(legacy);
+            }
             using (var connection = new SqliteConnection($"Data Source={path};Pooling=False"))
             {
                 connection.Open();
                 using var command = connection.CreateCommand();
-                command.CommandText = "ALTER TABLE characters DROP COLUMN tutorial_opening; ALTER TABLE characters DROP COLUMN played_ms; PRAGMA user_version=29;";
+                command.CommandText = "ALTER TABLE progression DROP COLUMN tracked; ALTER TABLE characters DROP COLUMN tutorial_opening; ALTER TABLE characters DROP COLUMN played_ms; PRAGMA user_version=29;";
                 command.ExecuteNonQuery();
             }
             using var migrated = new SqliteCharacterRepository(path);
             Check(migrated.Find("LegacyProbe") is { PlayedMilliseconds: 0, Cluster: "0000" } c
-                && c.Equipment[0]?.Name == "T4_MAIN_SWORD", "legacy position and equipment preserved; duration is not invented from creation date");
+                && c.Equipment[0]?.Name == "T4_MAIN_SWORD" && c.Progression is { Tracked: null, Levels.Count: 1 },
+                "legacy position, equipment and board preserved; duration and tracked node are not invented");
         }
         finally { Directory.Delete(dir, true); }
     }
