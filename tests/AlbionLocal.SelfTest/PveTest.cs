@@ -30,29 +30,29 @@ public static class PveTest
     {
         var dir = NewDir();
         var path = Path.Combine(dir, "albionlocal.json");
-        var pve = ServerConfig.Load(path, []);
+        var pve = LoadTestConfig(path, []);
         Check(pve is { Preset: ServerPreset.Pve, PvpMode: PvpMode.Consensual, PvpLethalDeath: false, PvpFullLoot: false, PvpKnockdownWear: 0,
                   PvpRedLockMinutes: 0, PveKnockdownWear: 0, LootBlackMarketChance: 0.15, PvpDeathSilverDrop: false, SilverPickupTax: 0,
                   OpenWorldChests: true, ChestsPoiLimit: 0 }
               && pve.Rates == new Rates { Fame = 2, Silver = 1.5, Loot = 1, Respawn = 2, Harvest = 1.5, Regrowth = 2, ChampionWeight = 2 },
               "no file: the pve preset (Consensual, no lethal death or full loot, no knockdown wear, no Red lock, BM 0.15, every POI chest, Fame 2 Silver 1.5 Loot 1 Respawn 2 Harvest 1.5 Regrowth 2 ChampionWeight 2)");
-        var official = ServerConfig.Load(path, ["--Preset=official"]);
+        var official = LoadTestConfig(path, ["--Preset=official"]);
         var record = new ServerConfig();
         Check(official == record with { ContentPath = official.ContentPath, ClientGameDataPath = official.ClientGameDataPath, SavesPath = official.SavesPath, Preset = ServerPreset.Official }
               && official is { PvpMode: PvpMode.Official, PvpLethalDeath: true, PvpFullLoot: true, PvpKnockdownWear: null, PvpRedLockMinutes: null, LootBlackMarketChance: 0.1 }
               && official.Rates == new Rates(), "--Preset=official: exactly the record's (today's) defaults");
-        var mixed = ServerConfig.Load(path, ["--Pvp:Mode=Official", "--Pvp:LethalDeath=true", "--Rates:Fame=1", "--Loot:BlackMarketChance=0.2", "--Pvp:RedLockMinutes=spell", "--Pvp:KnockdownWear=gamedata"]);
+        var mixed = LoadTestConfig(path, ["--Pvp:Mode=Official", "--Pvp:LethalDeath=true", "--Rates:Fame=1", "--Loot:BlackMarketChance=0.2", "--Pvp:RedLockMinutes=spell", "--Pvp:KnockdownWear=gamedata"]);
         Check(mixed is { Preset: ServerPreset.Pve, PvpMode: PvpMode.Official, PvpLethalDeath: true, PvpFullLoot: false, LootBlackMarketChance: 0.2, PvpRedLockMinutes: null, PvpKnockdownWear: null }
               && mixed.Rates is { Fame: 1, Silver: 1.5, Respawn: 2 }, "explicit keys win over the preset, the others keep its values");
         File.WriteAllText(path, """{ "Preset": "official", "Pvp": { "Mode": "Consensual", "KnockdownWear": 0.02 }, "Pve": { "KnockdownWear": 0.01 } }""");
-        Check(ServerConfig.Load(path, []) is { Preset: ServerPreset.Official, PvpMode: PvpMode.Consensual, PvpLethalDeath: true, PvpKnockdownWear: 0.02, PveKnockdownWear: 0.01, LootBlackMarketChance: 0.1 },
+        Check(LoadTestConfig(path, []) is { Preset: ServerPreset.Official, PvpMode: PvpMode.Consensual, PvpLethalDeath: true, PvpKnockdownWear: 0.02, PveKnockdownWear: 0.01, LootBlackMarketChance: 0.1 },
               "the file's root Preset official with its own Pvp:Mode and wear keys");
         foreach (var bad in new[] { "--Preset=pvp", "--Pvp:Mode=Friendly", "--Pvp:KnockdownWear=2", "--Pve:KnockdownWear=-1" })
         {
-            try { ServerConfig.Load(path, [bad]); Check(false, $"{bad} accepted"); }
+            try { LoadTestConfig(path, [bad]); Check(false, $"{bad} accepted"); }
             catch (InvalidDataException e) { Check(e.Message.Contains(bad[2..bad.IndexOf('=')]), $"{bad} refused, naming its key"); }
         }
-        Check(ServerConfig.Load(Path.Combine(DataDir(), "..", "config", "albionlocal.json"), []).Preset == ServerPreset.Pve, "config/albionlocal.json: Preset pve");
+        Check(ServerConfig.Load(Path.Combine(DataDir(), "..", "config"), []).Preset == ServerPreset.Official, "shipped area configuration: Preset official");
         try { Directory.Delete(dir, true); } catch (IOException) { }
     }
 

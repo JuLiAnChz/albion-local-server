@@ -59,14 +59,14 @@ public static class AvalonRoadsTest
               "§6.2: the split TUNNEL_ROYAL 6 = [1, 1, 1, 3], TUNNEL_BLACK_MEDIUM 5 = [2, 1, 2]; the RO biome token is Roads");
         var cfg = NewDir();
         var none = Path.Combine(cfg, "albionlocal.json");
-        Check(ServerConfig.Load(none, []).Roads == new RoadsOptions { Command = RoadsCommandAccess.All, LogoutSeconds = null, ThrowOutAfterMinutes = 0 }
-              && ServerConfig.Load(none, ["--Preset=official"]).Roads == new RoadsOptions() && ServerConfig.Load(none, ["--Preset=official", "--Roads:LogoutSeconds=world"]).Roads.LogoutSeconds is null
-              && ServerConfig.Load(none, ["--Roads:LifetimeMinutes=70-70", "--Roads:Charges:GROUP:MaxCharges=3", "--Roads:Layers=ROYAL"]).Roads is
+        Check(LoadTestConfig(none, []).Roads == new RoadsOptions { Command = RoadsCommandAccess.All, LogoutSeconds = null, ThrowOutAfterMinutes = 0 }
+              && LoadTestConfig(none, ["--Preset=official"]).Roads == new RoadsOptions() && LoadTestConfig(none, ["--Preset=official", "--Roads:LogoutSeconds=world"]).Roads.LogoutSeconds is null
+              && LoadTestConfig(none, ["--Roads:LifetimeMinutes=70-70", "--Roads:Charges:GROUP:MaxCharges=3", "--Roads:Layers=ROYAL"]).Roads is
                   { LifetimeMinutes: (70, 70), Layers: ["ROYAL"] } r && r.Charges["GROUP"].MaxCharges == 3 && r.LayerOn("SAFEZONE") && !r.LayerOn("TUNNEL_DEEP")
-              && ServerConfig.Load(none, []).Bots.RoadsPatrolGroupSize == (2, 3) && BotSettings.Default.Counts["Roads"][BotRole.Patrol] == 2,
+              && LoadTestConfig(none, []).Bots.RoadsPatrolGroupSize == (2, 3) && BotSettings.Default.Counts["Roads"][BotRole.Patrol] == 2,
               "Roads:* under pve (.roads for all, the world's logout, never thrown out), official (the record's: 900 s, 60 min), explicit keys win; Bots:Roads:PatrolGroupSize 2-3, Counts.Roads");
         var typo = false;
-        try { _ = ServerConfig.Load(none, ["--Roads:Layers=ROYALS"]); }
+        try { _ = LoadTestConfig(none, ["--Roads:Layers=ROYALS"]); }
         catch (InvalidDataException) { typo = true; }
         Check(typo, "Roads:Layers: an unknown layer (ROYALS) stops the start");
         try { Directory.Delete(cfg, true); } catch (IOException) { }

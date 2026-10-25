@@ -69,7 +69,7 @@ The detailed, per-feature reference (English) is in [docs/REFERENCE.md](docs/REF
 | `tests/AlbionLocal.SelfTest` | Offline self-test with an in-process client (no network, no real client needed to run it, but it reads the GameData files) |
 | `tools/AlbionLocal.CapDecode` | Decoder for packet captures of your own sessions |
 | `tools/start-server.ps1` | Builds the server and starts it against your client's GameData (`-GameDir`) |
-| `config/albionlocal.json` | Server settings (every key optional, commented) |
+| `config/common.jsonc` | Server settings (every key optional, commented) |
 | `content/` | Server-side content: spawns, kits, events, dungeons, goals, bots and other tunables |
 
 ## Requirements
@@ -95,11 +95,11 @@ file it reads, keeps them in `data/clientdata.json`, and warns when they differ 
 dotnet build
 ```
 
-Tell the server where the GameData folder is, either in `config/albionlocal.json` (`Paths:ClientGameData`) or on the
+Tell the server where the GameData folder is, either in `config/common.jsonc` (`Paths:ClientGameData`) or on the
 command line, then start it from the repository root (it keeps its database and log in `./data`):
 
 ```bash
-dotnet run --project src/AlbionLocal.Server -- -v --Paths:ClientGameData="C:/Games/AlbionOnline/game/Albion-Online_Data/StreamingAssets/GameData"
+dotnet run --project src/AlbionLocal.Server --no-launch-profile -- -v --Paths:ClientGameData="C:/Games/AlbionOnline/game/Albion-Online_Data/StreamingAssets/GameData"
 ```
 
 On start it prints the database schema version and the three listening ports. By default it listens on `127.0.0.1`
@@ -121,10 +121,10 @@ Comparisons against generated "golden" data files are skipped, because those fil
 
 ## Configuration
 
-- `config/albionlocal.json` — ports, presets (`pve` by default: PvP by consent, no full loot, rate multipliers), world
+- `config/common.jsonc` — ports, presets (`pve` by default: PvP by consent, no full loot, rate multipliers), world
   and economy options. Any key can be overridden on the command line, e.g. `--Log:Level=Debug`.
 - `content/*.json` — gameplay content the server adds or tunes (events, bosses, dungeons, goals, bots, kits…).
-- Accounts: the first login creates the account (see "Accounts" in [docs/REFERENCE.md](docs/REFERENCE.md)); console
+- Accounts: unknown logins are refused when AutoRegister is disabled; register through the client or console (see "Accounts" in [docs/REFERENCE.md](docs/REFERENCE.md)); console
   commands such as `.account create <name> <password>` manage them.
 
 ## Status
@@ -138,3 +138,9 @@ its client or anti-cheat are not.
 MIT (see [LICENSE](LICENSE)): you may use, change and share the code freely, as long as you keep the copyright
 notice, i.e. credit the original source (https://github.com/MrGreenCheezz/albion-local-server). The license covers this
 repository's own code only; it grants nothing about the game, its client, its data or its trademarks.
+
+## Configuration files
+
+The server requires five JSONC area files: common, login, world, chat and persistence.
+See [configuration](docs/CONFIGURATION.md) for migration, private paths, validation and temporary rates.
+The old single configuration file and persisted rates are no longer read.
