@@ -162,10 +162,14 @@ public static class Combat
 
     /// <summary>The item power of <paramref name="item"/> as worn by <paramref name="p"/> (<see cref="StatCalculator.ItemPower"/>: quality, destiny board, wear); items.xml itempower without game data.</summary>
     /// <remarks>An awakened weapon attuned to <paramref name="p"/> adds its TRAIT_ITEM_POWER (<see cref="Passives.TraitItemPower"/>).</remarks>
-    public static double ItemPower(Player p, Item item) =>
-        (p.World.StatCalculator is { } calc ? calc.ItemPower(item.ForStats(), p.Progression?.Levels ?? new SortedDictionary<int, int>())
-            : double.TryParse(Attr(item.Template, "itempower"), NumberStyles.Float, CultureInfo.InvariantCulture, out var ip) ? ip : 0)
-        + (item.Soul is null ? 0 : Passives.TraitItemPower(p, item));
+    /// <remarks>StageP: under an arena's item power cap (<see cref="Player.ItemPowerCap"/>) the capped figure.</remarks>
+    public static double ItemPower(Player p, Item item)
+    {
+        var ip = (p.World.StatCalculator is { } calc ? calc.ItemPower(item.ForStats(), p.Progression?.Levels ?? new SortedDictionary<int, int>())
+                : double.TryParse(Attr(item.Template, "itempower"), NumberStyles.Float, CultureInfo.InvariantCulture, out var raw) ? raw : 0)
+            + (item.Soul is null ? 0 : Passives.TraitItemPower(p, item));
+        return p.ItemPowerCap is { } cap ? cap.Apply(ip) : ip;
+    }
 
     /// <summary>The ItemPowerProgression section's combat progressions of <paramref name="item"/>; null = no scaling.</summary>
     public static CombatProgression? ProgressionOf(World world, Item item) =>
@@ -436,6 +440,7 @@ public static class Combat
             var e = HealthUpdate(target.Id, ticks, -damage, left, type, origin, attacker.Id, spell);
             target.Session.Send(e);
             target.SendToObservers(e);
+            DeathRecaps.Hit(target, attacker, spell, origin, -damage, ticks); // stageP: the death recap's mob rows
         }
         if (reflectable) SpellEffects.Reflect(target, attacker, raw, ticks); // reflectdamageactive (batch 2); not a reflectdamage="never" hit
         if (raw > 0) SpellEffects.EnergyOnDamage(target, ticks); // gainenergyondamage (batch 3), a hit on a shield too
@@ -486,6 +491,7 @@ public static class Combat
         var e = HealthUpdate(target.Id, ticks, after - before, after, EffectType.Magic, origin, caster.Id, spell);
         target.Session.Send(e);
         target.SendToObservers(e);
+        DeathRecaps.Hit(target, caster, spell, origin, after - before, ticks); // stageP: heals in the death recap
         if (target.World.MobAi && target.Map is { } map) AI.MobAI.Healed(map, caster, target, after - before);
     }
 
