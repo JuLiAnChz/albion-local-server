@@ -392,6 +392,8 @@ public static class SpellAreas
 
         public Curve? AnimatedHeight { get; init; }
 
+        public Curve? AnimatedOpening { get; init; }
+
         private float OffsetReach => (float)Distance.Keys.Max(k => Math.Abs(k.V)) + (Parent?.OffsetReach ?? 0);
 
         public float Reach => OffsetReach + (Kind switch
@@ -437,6 +439,7 @@ public static class SpellAreas
                         AnimatedWidth = Curve.Of((string?)child.Attribute("width"), seconds),
                         AnimatedHeight = Curve.Of((string?)child.Attribute("height"), seconds),
                         Opening = SpellTemplate.Float(child, "angle", 360),
+                        AnimatedOpening = Curve.Of((string?)child.Attribute("angle") ?? "360", seconds),
                         Inner = Curve.Of((string?)child.Attribute("innerradius"), seconds),
                         Outer = Curve.Of((string?)child.Attribute("outerradius"), seconds),
                     };
@@ -482,11 +485,13 @@ public static class SpellAreas
                     if (Math.Abs(Vector2.Dot(d, along)) <= height / 2 + radius && Math.Abs(Vector2.Dot(d, across)) <= width / 2 + radius) return true;
                     break;
                 case "arc":
+                    var opening = n.AnimatedOpening?.At(t) ?? n.Opening;
+                    if (opening <= 0 || (zeroOff && n.Outer.At(t) <= 0)) break;
                     var length = d.Length();
                     if (length > n.Outer.At(t) + radius || length < n.Inner.At(t) - radius) break;
                     if (length < 0.01f) return true;
                     var off = Math.Acos(Math.Clamp(Vector2.Dot(d / length, along), -1, 1)) * 180 / Math.PI;
-                    if (off <= n.Opening / 2) return true;
+                    if (off <= opening / 2) return true;
                     break;
             }
         }
@@ -533,7 +538,7 @@ public static class SpellAreas
                 {
                     var (t0, v0) = Keys[i - 1];
                     var (t1, v1) = Keys[i];
-                    return t1 <= t0 ? v1 : v0 + (v1 - v0) * (t - t0) / (t1 - t0);
+                    return t == t1 || t1 <= t0 ? v1 : v0 + (v1 - v0) * (t - t0) / (t1 - t0);
                 }
             return Keys[^1].V;
         }

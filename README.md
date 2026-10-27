@@ -4,6 +4,10 @@ An educational server emulator, written in C# (.NET 10), for studying how an MMO
 (Photon UDP transport, Protocol18 serialization, encrypted handshakes, world simulation). It is designed to run on your
 own machine or LAN, for one player or a few friends.
 
+## Community
+
+Join our [Discord community](https://discord.gg/W2B3McSggp) to follow development and discuss the project.
+
 ## Disclaimer — please read
 
 - **Educational project.** This is a personal learning and research project about network protocols and game-server
@@ -140,6 +144,9 @@ This selection policy has automated coverage; its exact match to the official ga
 ## Status
 
 Work in progress and built for learning: expect gaps, guesses (marked in the docs as inferences) and breaking changes.
+Client build 345319 can show an unknown availability status for its built-in Local entries:
+their status-probe address is unset. The server menu's availability label is separate from ping;
+the performance HUD measures latency through the active game connection. This does not prevent local login or gameplay.
 Issues about protocol details or server architecture are welcome; requests involving the official game, its servers,
 its client or anti-cheat are not.
 

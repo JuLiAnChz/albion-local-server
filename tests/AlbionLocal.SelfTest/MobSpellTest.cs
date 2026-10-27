@@ -22,6 +22,7 @@ public static class MobSpellTest
 {
     public static IEnumerable<(string, Action)> All =>
     [
+        ("mob spells: heretic champion crush hits its animated cone, misses sidesteps and rear, and stops hitting when the cone closes", HereticCrush),
         ("mob spells: tutorial ballista nested projectile hits inside its path, misses outside and expires; mage ground damage", TutorialProjectiles),
         ("mob spells: tutorial ballista AI casts and damages a stationary player using its inherited behaviour", TutorialBallistaAi),
         ("mob spells: tutorial mortar detects within 5 m, stays idle outside, and retaliates with its 30 m ground spell", TutorialMortarRanges),
@@ -39,6 +40,53 @@ public static class MobSpellTest
     ];
 
     private static void Check(bool cond, string what) => AlbionTests.Check(cond, what);
+
+    private static void HereticCrush()
+    {
+        using var arena0 = new Arena(spells: true);
+        var (_, peer, side) = arena0.Join("CrushSidestep", new InventoryItem("T2_MAIN_SWORD"));
+        var (_, _, front) = arena0.Join("CrushFront", new InventoryItem("T2_MAIN_SWORD"));
+        var (_, _, rear) = arena0.Join("CrushRear", new InventoryItem("T2_MAIN_SWORD"));
+        var (_, _, late) = arena0.Join("CrushLate", new InventoryItem("T2_MAIN_SWORD"));
+        var (arena, map) = Quiet(arena0);
+        var mob = arena.Spawn("T3_MOB_ROAMING_HERETIC_TANK_CHAMPION", new Vector2(0, -3));
+        var spell = T("HERETIC_TANK_CRUSH");
+        var start = arena.World.GameNow;
+        var aim = mob.Position + new Vector2(0, 3);
+        MobCasts.Start(arena.World, map, new MobCast
+        {
+            Caster = mob, Spell = spell, Counter = 1, Point = aim,
+            Start = start, End = start + SpellCasts.Seconds(spell.CastingTime), Ap = 10,
+        });
+        // Dodge after the cast has selected its ground aim, while remaining inside its radius.
+        side.Teleport(mob.Position + new Vector2(3, 0), 0, DateTime.UtcNow);
+        front.Teleport(aim, 0, DateTime.UtcNow);
+        rear.Teleport(mob.Position - new Vector2(0, 3), 0, DateTime.UtcNow);
+        late.Teleport(mob.Position + new Vector2(10, 10), 0, DateTime.UtcNow);
+        var sideHealth = side.Health.At(start);
+        var rearHealth = rear.Health.At(start);
+        var frontHealth = front.Health.At(start);
+        arena.Run(spell.CastingTime + 0.05);
+        var now = arena.World.GameNow;
+        Check(front.Health.At(now) < frontHealth && SpellEffects.Stunned(front, now),
+            "the charged crush damages and stuns a player still in front");
+        Check(side.Health.At(now) >= sideHealth && !SpellEffects.Stunned(side, now)
+            && rear.Health.At(now) >= rearHealth && !SpellEffects.Stunned(rear, now),
+            "sidestepping and standing behind avoid both the damage and stun within five metres");
+        var area = map.Objects.Values.OfType<MobArea>().Single(a => a.Holder == spell);
+        var arc = area.Shapes.Single(n => n.Kind == "arc");
+        Check(arc.AnimatedOpening!.At(0) == 60 && arc.AnimatedOpening.At(0.11) == 0,
+            $"the installed crush cone closes at 110 ms rather than defaulting to 360 degrees (start {arc.AnimatedOpening.At(0)}, end {arc.AnimatedOpening.At(0.11)})");
+        Check(!SpellAreas.Inside(area.Shapes, area.Reach, area.Origin, area.Yaw, area.Start,
+            aim, 0.3f, area.Start + SpellCasts.Seconds(0.11), zeroOff: true),
+            "a closed cone no longer hits even on its forward axis");
+        arena.Run(0.2);
+        var lateHealth = late.Health.At(arena.World.GameNow);
+        late.Teleport(aim, 0, DateTime.UtcNow);
+        arena.Run(0.1);
+        Check(late.Health.At(arena.World.GameNow) >= lateHealth && !SpellEffects.Stunned(late, arena.World.GameNow),
+            "entering the lingering VFX after the cone closes does not apply a late stun");
+    }
 
     private static void NestedGeometry()
     {
