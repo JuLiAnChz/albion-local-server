@@ -1,5 +1,4 @@
-# albion-local-server
-
+# AvalonEmu
 An educational server emulator, written in C# (.NET 10), for studying how an MMO client and server talk to each other
 (Photon UDP transport, Protocol18 serialization, encrypted handshakes, world simulation). It is designed to run on your
 own machine or LAN, for one player or a few friends.
