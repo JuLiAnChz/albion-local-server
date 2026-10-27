@@ -26,6 +26,12 @@ public sealed class PartyMember(Guid id, string name, byte frame)
 
     /// <summary>A party event went out while it had no joined player (a cluster change under way): its next Join gets PartyJoined again.</summary>
     public bool Missed { get; set; }
+
+    /// <summary>StageN companions: the character Guid of the player who hired this member (a companion bot); null for a player.</summary>
+    public Guid? Owner { get; init; }
+
+    /// <summary>Whether this member is a hired companion (<see cref="Owner"/> set): no client, never offline, no fame share.</summary>
+    public bool Companion => Owner is not null;
 }
 
 /// <summary>
@@ -133,7 +139,7 @@ public sealed class Parties(World world)
     private void SendTo(Party party, AlbionEvent e, Guid? except = null)
     {
         foreach (var m in party.Members)
-            if (m.Id == except) continue;
+            if (m.Id == except || m.Companion) continue; // stageN: a companion has no client
             else if (Online(m.Id) is { } p) p.Session.Send(e);
             else m.Missed = true;
     }
@@ -195,12 +201,14 @@ public sealed class Parties(World world)
     /// Flow 1, PartyInvitePlayer (225): the target by Guid, else by name; checked in the SPEC's order (missing or self 9000, in a
     /// party 9002, inviter in a party but not its leader 9007, the target's open invitation from this inviter 9009 or from
     /// another one 9004 [choice], party + its open invitations ≥ <see cref="MaxSize"/> 9012). On 0 the target gets
-    /// PartyInvitation and the invitation runs for <see cref="InviteTime"/>. <paramref name="targetName"/> = response key 0.
+    /// PartyInvitation and the invitation runs for <see cref="InviteTime"/>. <paramref name="targetName"/> = response key 0. With
+    /// Bots:Social:Enabled a world bot is a target too (<see cref="Bots.BotSocial"/>): the same checks, then its answer after a delay.
     /// </summary>
     public short Invite(Player inviter, Guid target, string? name, out string? targetName)
     {
         targetName = null;
-        var to = target != Guid.Empty ? Online(target) : OnlineByName(name);
+        // Bot-social (Bots:Social:Enabled): a world bot of that Guid or name is invited as a player; it answers later (BotSocial.PartyInvited).
+        var to = (target != Guid.Empty ? Online(target) : OnlineByName(name)) ?? world.Bots.Social.Find(target, name);
         if (to is null || to.Character.Id == inviter.Character.Id) return PlayerNotFound;
         targetName = to.Character.Name;
         var me = inviter.Character.Id;
@@ -211,7 +219,8 @@ public sealed class Parties(World world)
         var size = (party?.Members.Count ?? 1) + _invites.Values.Count(i => party is null ? i.Inviter == me : party.Find(i.Inviter) is not null);
         if (size >= MaxSize) return PartyFull;
         _invites[to.Character.Id] = new PendingInvite(me, inviter.Character.Name ?? "", to.Character.Id, to.Character.Name ?? "", world.Clock.Now + InviteTime);
-        to.Session.Send(Invitation(inviter, party));
+        to.Session.Send(Invitation(inviter, party)); // a bot's session sends nothing
+        if (to.Bot is not null) world.Bots.Social.PartyInvited(to, inviter);
         Log.Info("party", $"'{inviter.Character.Name}' invites '{to.Character.Name}'{(party is null ? "" : $" into party {party.Id}")}");
         return 0;
     }
@@ -248,7 +257,8 @@ public sealed class Parties(World world)
             return InvitationGone;
         }
         _droppedAway.Remove(me);
-        var joiner = MemberOf(invitee);
+        // Bot-party: a world bot joins as its inviter's companion member (no client, never offline, never the leader: Companions.Recruit).
+        var joiner = invitee.Bot is null ? MemberOf(invitee) : new PartyMember(me, invitee.Character.Name ?? "", (byte)invitee.Character.Template) { Owner = invite.Inviter };
         if (party is null)
         {
             var host = inviter!; // a new party without an inviter player was refused above
@@ -322,20 +332,70 @@ public sealed class Parties(World world)
         if (m.Missed) _droppedAway[m.Id] = party.Id;
         world.Expeditions.PartyLeft(m.Id); // stageH: a registration of the party's expedition group ends with it
         Log.Info("party", $"'{m.Name}' {why}: party {party.Id} has {party.Members.Count} member(s)");
-        if (party.Members.Count <= 1)
+        // StageN companions: a companion out of the party (kicked from the party frame, dismissed) goes; a player's companions leave with it.
+        if (m.Companion) world.Companions.LeftParty(m.Id);
+        else
+            foreach (var own in party.Members.Where(c => c.Owner == m.Id).ToList())
+            {
+                SendTo(party, new PartyPlayerLeftEvent { dkj = party.Id, dkk = own.Id, dkm = false });
+                party.Members.Remove(own);
+                _byMember.Remove(own.Id);
+                world.Companions.LeftParty(own.Id);
+            }
+        if (party.Members.Count <= 1 || party.Members.All(x => x.Companion))
         {
             SendTo(party, new PartyDisbandedEvent { dfp = party.Id });
-            foreach (var rest in party.Members)
+            foreach (var rest in party.Members.ToList())
             {
                 _byMember.Remove(rest.Id);
                 if (rest.Missed) _droppedAway[rest.Id] = party.Id;
+                if (rest.Companion) world.Companions.LeftParty(rest.Id); // stageN: the companions of a party with no player left go
             }
             party.Members.Clear();
             _parties.Remove(party);
             Log.Info("party", $"party {party.Id} disbanded");
             return;
         }
-        if (party.Leader == m.Id) SetLeader(party, party.Members[0]);
+        if (party.Leader == m.Id) SetLeader(party, party.Members.FirstOrDefault(x => !x.Companion) ?? party.Members[0]);
+    }
+
+    // ---- companions (stageN companions SPEC §2) ----
+
+    /// <summary>
+    /// StageN companions: <paramref name="companion"/> (a bot) joins the party of <paramref name="owner"/>, which is made when it has none (the
+    /// owner leads it: PartyJoined to the owner); else PartyPlayerJoined to the members that play, as for an accepted invitation. Null when it
+    /// joined, else why not (the party is full by <paramref name="maxSize"/>).
+    /// </summary>
+    public string? AddCompanion(Player owner, Player companion, int maxSize)
+    {
+        var me = owner.Character.Id;
+        var member = new PartyMember(companion.Character.Id, companion.Character.Name ?? "", (byte)companion.Character.Template) { Owner = me };
+        if (Of(me) is not { } party)
+        {
+            _droppedAway.Remove(me);
+            party = new Party(++_lastId, me);
+            _parties.Add(party);
+            party.Members.Add(MemberOf(owner));
+            _byMember[me] = party;
+            party.Members.Add(member);
+            _byMember[member.Id] = party;
+            owner.Session.Send(Joined(party));
+        }
+        else
+        {
+            if (party.Members.Count >= Math.Min(maxSize, MaxSize)) return $"the party is full ({party.Members.Count} of {Math.Min(maxSize, MaxSize)})";
+            SendTo(party, PlayerJoined(party, member));
+            party.Members.Add(member);
+            _byMember[member.Id] = party;
+        }
+        Log.Info("party", $"companion '{member.Name}' of '{owner.Character.Name}' joins party {party.Id} ({party.Members.Count} members)");
+        return null;
+    }
+
+    /// <summary>StageN companions: the companion of character <paramref name="id"/> is out of its party (dismissed, gone): as a leave.</summary>
+    public void RemoveCompanion(Guid id)
+    {
+        if (Of(id) is { } party && party.Find(id) is { Companion: true } m) Remove(party, m, kicked: false, "is dismissed");
     }
 
     private void SetLeader(Party party, PartyMember m)
@@ -352,7 +412,7 @@ public sealed class Parties(World world)
         var me = leader.Character.Id;
         if (Of(me) is not { } party) return LeaderNoParty;
         if (party.Leader != me) return LeaderNotLeader;
-        if ((target != Guid.Empty ? party.Find(target) : party.Find(name)) is not { } m || m.Id == me) return LeaderNotFound;
+        if ((target != Guid.Empty ? party.Find(target) : party.Find(name)) is not { } m || m.Id == me || m.Companion) return LeaderNotFound; // a companion never leads
         newLeader = m.Name;
         SetLeader(party, m);
         return 0;
@@ -464,11 +524,11 @@ public sealed class Parties(World world)
         if (mob.Map is not { } map) return group;
         var radius = world.GameData?.PveFameSharingRadius ?? 50;
         var now = DateTime.UtcNow;
-        bool Near(Player p) => p.Combat.Down is null && p.Map == map && Vector2.Distance(p.PositionAt(now), mob.Position) <= radius;
+        bool Near(Player p) => p.Combat.Down is null && p.Map == map && Vector2.Distance(p.PositionAt(p.IsBot ? world.Bots.Time : now), mob.Position) <= radius;
         if (Of(killer.Character.Id) is { } party)
             foreach (var m in party.Members)
-                if (m.Id != killer.Character.Id && Online(m.Id) is { } p && Near(p))
-                    group.Add(p);
+                if (m.Id != killer.Character.Id && (Online(m.Id) ?? world.Companions.RecruitOf(m.Id)) is { } p && Near(p))
+                    group.Add(p); // bot-party: a recruited world bot near the kill counts in the split as a member (its share is not kept)
         // Guilds:ShareWithoutParty (guilds SPEC §10.4): the killer's guild mates near the kill share as party members do.
         if (world.Guilds.SharingGuild(killer) is { } guild)
             foreach (var m in guild.Members)
@@ -497,6 +557,7 @@ public sealed class Parties(World world)
         foreach (var party in _parties.ToList())
             foreach (var m in party.Members.ToList())
             {
+                if (m.Companion) continue; // stageN: Companions keeps its own owners' grace
                 if (Online(m.Id) is not null) m.OfflineSince = null;
                 else if (m.OfflineSince is not { } since) m.OfflineSince = now;
                 else if (now - since >= OfflineGrace && party.Members.Contains(m)) Remove(party, m, kicked: false, "has not come back");

@@ -126,7 +126,7 @@ public static class SpellTargets
         var fc = Pvp.IsFaction(caster.Flag);
         switch (unit)
         {
-            case Mob m when caster.IsBot:
+            case Mob m when caster.IsBot && !caster.IsCompanion: // stageN companions fight mobs as players do
                 return new Facts(false, false, false, false, false, m.Dead, false, false, false, fc, false);
             case Mob m:
                 return new Facts(false, m.Attackable, false, false, m.Attackable && !SpellEffects.NotTargetable(m, now), m.Dead, false, false,
@@ -147,19 +147,21 @@ public static class SpellTargets
     /// knocked down, both humans or both bots (D10), neither in a duel under Pvp:DuelIsolation (a duelist takes and gives friendly effects
     /// only itself), not Hostile by <see cref="Pvp.Of(Player, Player)"/> (the server's Pvp:Mode) and not by <see cref="OfficialOf"/> (the
     /// client's table: under the consensual mode a Blue healer never helps a Red player in a fight the client calls hostile), then
-    /// Pvp:FriendlySpells (All; Group: the party or the guild; Self: nobody).
+    /// Pvp:FriendlySpells (All; Group: the party or the guild, for two world bots their patrol group; Self: nobody).
     /// </summary>
     public static bool Friend(Player a, Player b, long now)
     {
         if (a == b) return true;
         var world = a.World;
-        if (b.Map is null || b.Map != a.Map || b.Combat.Down is not null || a.IsBot != b.IsBot) return false;
+        // StageN companions count as players here: a companion heals its party and the party's spells reach it.
+        if (b.Map is null || b.Map != a.Map || b.Combat.Down is not null || (a.IsBot && !a.IsCompanion) != (b.IsBot && !b.IsCompanion)) return false;
         if (world.Config.PvpDuelIsolation && (world.Duels.Of(a) is not null || world.Duels.Of(b) is not null)) return false;
         if (Pvp.Of(a, b) == Relation.Hostile || OfficialOf(a, b) == Relation.Hostile) return false;
         return world.Config.PvpFriendlySpells switch
         {
             FriendlySpells.All => true,
-            FriendlySpells.Group => Pvp.SameParty(a, b) || world.Guilds.Same(a.Character.Id, b.Character.Id),
+            // Bot support roles: two world bots of one patrol group are a group too (bots have no party or guild).
+            FriendlySpells.Group => Pvp.SameParty(a, b) || world.Guilds.Same(a.Character.Id, b.Character.Id) || a.Bot?.Group is { } g && b.Bot?.Group == g,
             _ => false,
         };
     }
@@ -175,7 +177,7 @@ public static class SpellTargets
         if (a.IsBot || b.IsBot) return Pvp.Of(a, b);
         var world = a.World;
         if (world.Duels.OpponentOf(a) == b) return Relation.Hostile;
-        return Pvp.Of(a.Flag, b.Flag, Pvp.SameParty(a, b), world.Guilds.Same(a.Character.Id, b.Character.Id), Pvp.RulesOf(world, a.Map));
+        return Pvp.Of(a.Flag, b.Flag, Pvp.SameParty(a, b), world.Guilds.Friends(a.Character.Id, b.Character.Id), Pvp.RulesOf(world, a.Map));
     }
 
     /// <summary>

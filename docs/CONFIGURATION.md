@@ -7,7 +7,7 @@ settings to their owning files manually before starting. Keep all five files whe
 
 | File | Options |
 |---|---|
-| `common.jsonc` | `Preset`, network bind/public addresses, GameData/content paths and logging |
+| `common.jsonc` | `Preset`, network bind/public addresses, GameData/content paths, logging, web panel and backups |
 | `login.jsonc` | Login port, accounts, registration and maintenance |
 | `world.jsonc` | Game port, tutorial, character progression, rates and other gameplay rules |
 | `chat.jsonc` | Chat port and communication settings |
@@ -54,8 +54,9 @@ temporary changes. The `save` argument is rejected without changing values. Old 
 are preserved but ignored, with a warning.
 
 Files are read at startup in this version. Rates are classified for future reload support; other options
-require restart. There is no reload command, file watcher or administrative panel yet. The configuration
-model and in-memory validation are shared extension points for those features. Already awarded rewards
+require restart. There is no reload command or file watcher. The existing web panel remains available through
+`Web:*`; its configuration and `Backup:*` belong in common.jsonc. Editing or reloading these five
+files through that panel is not implemented. The model and validator are extension points for that work. Already awarded rewards
 and scheduled timers are not recalculated by a rate change.
 
 ## Private configuration and first login
@@ -71,6 +72,13 @@ dotnet run --project src/AlbionLocal.Server --no-launch-profile -- --config-dir=
 
 For F5, select `--config-dir=config.private` in the ignored `launchSettings.json`.
 There is no additional main configuration file. Never commit the private directory or actual launch settings.
+
+Before running an upgraded server, keep a backup of the existing save database while the server is stopped.
+This fork recognizes its historical schemas 30–32 by their column signature and upgrades them transactionally
+to the current upstream-compatible schema (43). The bridge preserves playtime, tutorial progress and the
+tracked Destiny Board node, adding the missing upstream tables and columns. Upstream schemas follow the
+normal ordered migrations. An upgraded database cannot be opened by an older executable; restoring the
+previous executable requires restoring its matching backup. Configuration validation does not run migrations.
 
 New save databases start without characters, with or without the tutorial. Unknown logins are
 refused when `Accounts:AutoRegister` is false. Register through the client when Registration is

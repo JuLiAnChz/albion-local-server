@@ -18,6 +18,54 @@ public enum BotRole : byte
 
     /// <summary>StageL mists phase B (SPEC §6.9): a lone Red wanderer of a mists zone (a patrol of one; zone class Mists).</summary>
     Drifter,
+
+    /// <summary>StageN companions: a bot a player hired (.companion), in its party, following it and fighting its mobs (<see cref="Bots.Companions"/>).</summary>
+    Companion,
+
+    /// <summary>Stage N arena (SPEC §4.3): a player-bot filling an arena team's empty slot; it hunts the other team's players.</summary>
+    Arena,
+}
+
+/// <summary>StageN companions: what a hired companion does in its owner's party.</summary>
+public enum CompanionKind : byte
+{
+    Tank,
+    Healer,
+    Melee,
+    Ranged,
+}
+
+/// <summary>StageN companions: a hired companion's owner (the character it follows), its kind and its follow and taunt timers.</summary>
+public sealed class CompanionInfo
+{
+    public required Guid Owner { get; init; }
+
+    public required string OwnerName { get; init; }
+
+    public required CompanionKind Kind { get; init; }
+
+    /// <summary>Its place around the owner (0-3): the follow spot's angle.</summary>
+    public int Index { get; set; }
+
+    /// <summary>The distance to the owner when it last came nearer, and when (<see cref="World.Clock"/>): the stuck check.</summary>
+    public float BestDistance { get; set; } = float.MaxValue;
+
+    public TimeSpan BestAt { get; set; }
+
+    /// <summary>When its owner was last seen in game (<see cref="World.Clock"/>).</summary>
+    public TimeSpan OwnerSeen { get; set; }
+
+    /// <summary>When a tank may next pull a mob off another member by threat (<see cref="World.GameNow"/> ticks).</summary>
+    public long NextTaunt { get; set; }
+
+    /// <summary>
+    /// Bot-party: a world bot that accepted its owner's party invite (<see cref="Bots.BotSocial.WantsParty"/>), not a hired one: a party member
+    /// that counts in the fame split, says a Chat.Join / Chat.Leave line, and goes at <see cref="Until"/> (Bots:Party:MaxMinutes).
+    /// </summary>
+    public bool Recruited { get; init; }
+
+    /// <summary>Bot-party: when a recruited bot leaves its party (<see cref="World.Clock"/>); never for a hired companion.</summary>
+    public TimeSpan Until { get; init; } = TimeSpan.MaxValue;
 }
 
 /// <summary>A bot's emote under way: emotes.bin <see cref="Emote"/> since GameTimeStamp <see cref="Start"/>; a looping one is shown to every new observer.</summary>
@@ -30,28 +78,41 @@ public sealed record BotEmote(int Emote, long Start, bool Loops);
 /// </summary>
 public sealed class BotInfo
 {
-    public required BotRole Role { get; init; }
+    public required BotRole Role { get; set; }
 
     /// <summary>The tier of its gear (1-8).</summary>
     public required int Tier { get; init; }
 
-    public required string PersonaId { get; init; }
+    public required string PersonaId { get; set; }
 
-    public required IBotBrain Brain { get; init; }
+    public required IBotBrain Brain { get; set; }
 
     /// <summary>NewCharacter key 2: the avatars.xml index of its portrait (0 = AVATAR_01, left out).</summary>
     public byte Avatar { get; init; }
 
     /// <summary>Where it spawned.</summary>
-    public Vector2 Home { get; init; }
+    public Vector2 Home { get; set; }
 
     /// <summary>The population slot it fills; null for a GM's bot (.bot spawn), which never respawns.</summary>
-    public BotSlot? Slot { get; init; }
+    public BotSlot? Slot { get; set; }
+
+    /// <summary>Bot-roster: the roster identity (<see cref="BotIdentity.Index"/>) it plays; null for a fresh name or a GM's bot.</summary>
+    public int? Identity { get; set; }
+
+    /// <summary>
+    /// Bot-travel: a gatherer's home city (cluster id; the nearest royal city or rest within Bots:Travel:MaxHops of where it came online),
+    /// when its trip ends (<see cref="World.Clock"/> time, Bots:Gatherer:TripMinutes) and whether it walks home to bank now. Kept over its travels.
+    /// </summary>
+    public string? HomeCity { get; set; }
+
+    public TimeSpan TripUntil { get; set; } = TimeSpan.MaxValue;
+
+    public bool Homing { get; set; }
 
     /// <summary><see cref="World.Clock"/> time of its spawn, and when it leaves (turnover: Bots:StayMinutes; never for a GM's bot).</summary>
     public TimeSpan SpawnedAt { get; init; }
 
-    public TimeSpan StayUntil { get; init; } = TimeSpan.MaxValue;
+    public TimeSpan StayUntil { get; set; } = TimeSpan.MaxValue;
 
     /// <summary><see cref="World.Clock"/> time of its next decision (Bots:ThinkSeconds).</summary>
     public TimeSpan NextThink { get; set; }
@@ -75,12 +136,36 @@ public sealed class BotInfo
     public BotCombatState Fight { get; } = new();
 
     /// <summary>The patrol group it walks and fights with (phase 3); null for the other roles.</summary>
-    public BotGroup? Group { get; init; }
+    public BotGroup? Group { get; set; }
 
     /// <summary>StageL corrupted: × its maximum health and its hits over Bots:Combat's (Corrupted:Invader:HealthFactor / DamageFactor); 1 for the other roles.</summary>
     public double HealthFactor { get; init; } = 1;
 
     public double DamageFactor { get; init; } = 1;
+
+    /// <summary>StageN botpower: an elite (Bots:Gear:EliteChance): enchanted gear of a better quality, a richer bag (Bots:Rewards:Elite*).</summary>
+    public bool Elite { get; init; }
+
+    /// <summary>
+    /// StageN companions: the owner and kind of a <see cref="BotRole.Companion"/>; null for the other roles. Role, brain, slot, stay, group and
+    /// this change only when a world bot accepts a party invite (bot-party, <see cref="BotManager.Recruit"/>): it becomes a companion.
+    /// </summary>
+    public CompanionInfo? Companion { get; set; }
+
+    /// <summary>
+    /// Bot support roles (Bots:Support:Enabled, Bots:Patrol:Makeups): a patrol's part in its group: a damage dealer (every other bot), a
+    /// healer (a holy or nature staff; it heals, shields and buffs its group) or a tank (a mace, hammer or shield; it engages first and holds
+    /// the attacker of its healer).
+    /// </summary>
+    public PatrolPart Part { get; init; }
+}
+
+/// <summary>Bot support roles: a patrol's part in its group (<see cref="BotInfo.Part"/>; Bots:Patrol:Makeups "dps", "healer", "tank").</summary>
+public enum PatrolPart : byte
+{
+    Dps,
+    Healer,
+    Tank,
 }
 
 /// <summary>
@@ -126,6 +211,14 @@ public sealed class BotCombatState
 
     /// <summary>Whether this fight's flight was rolled (once per fight).</summary>
     public bool FleeRolled { get; set; }
+
+    /// <summary>StageN botpower: GameTimeStamp until which a ranged bot steps back from its target (a kite, no swing meanwhile), and of its last one.</summary>
+    public long KiteUntil { get; set; }
+
+    public long KitedAt { get; set; }
+
+    /// <summary>StageN botpower: GameTimeStamp of its last look for a weaker target (Bots:Combat:FocusWeakest).</summary>
+    public long FocusAt { get; set; }
 
     /// <summary>The target's position at the last chase path and its GameTimeStamp (a new path every 1 s or 4 m).</summary>
     public Vector2 ChasedTo { get; set; }

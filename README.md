@@ -1,5 +1,4 @@
-# albion-local-server
-
+# AvalonEmu
 An educational server emulator, written in C# (.NET 10), for studying how an MMO client and server talk to each other
 (Photon UDP transport, Protocol18 serialization, encrypted handshakes, world simulation). It is designed to run on your
 own machine or LAN, for one player or a few friends.
@@ -28,7 +27,9 @@ Join our [Discord community](https://discord.gg/W2B3McSggp) to follow developmen
 
 ## What works
 
-The server implements a large part of what a PvE player meets in the game, as a local, self-contained emulation:
+The server implements a large part of the game as a local, self-contained emulation. Like TrinityCore or AzerothCore,
+it behaves like the official game by default (`Preset: official`); everything it adds on top is behind a config key, and
+the `pve` preset turns the PvE-friendly additions on. What changed lately: [docs/CHANGELOG.md](docs/CHANGELOG.md).
 
 - **Core:** login and game servers over Photon UDP (reliable channels, fragmentation, DH/AES encryption), accounts
   with PBKDF2 passwords, several characters per account, GM levels and a chat command system, SQLite persistence with
@@ -38,13 +39,28 @@ The server implements a large part of what a PvE player meets in the game, as a 
   with city bonuses, enchanting, quality rolls.
 - **Combat:** auto-attacks, spells with conditions and effects, buffs and crowd control, mob AI with path finding and
   line of sight, boss mechanics (spawn/death casts, dashes, knockbacks), knock-down and party revive, PvP flags and
-  duels (the optional PvE preset limits PvP to consent).
-- **PvE content:** open-world camps and chests, elite mobs, world bosses, journals, on-demand invasions, expeditions,
+  duels; zone-based PvP with full loot under `official`, PvP only by consent under `pve`.
+- **PvE content:** open-world camps and chests, elite mobs, world bosses, journals, expeditions,
   random dungeons with the client's own layout generator and shrines, static dungeons, corrupted dungeons, hellgates,
-  Roads of Avalon, the Mists, season goals and bounties.
+  Roads of Avalon, the Mists, the Adventurer's Challenge; under `pve` also on-demand invasions, bounties and PvP goals.
 - **Social:** chat server (whispers, guild, party, world), friends, mail, trading, guilds with ranks, contracts and goals,
   emotes, loadouts, map pings.
-- **Bots:** simple player bots (city walkers, gatherers, patrols).
+- **Bots (optional, off under `official`):** player bots (city walkers, gatherers, patrols, hostile bots in red and
+  black zones) with a switch per kind, a stable roster of names, population by hour of day, whispers and local chat,
+  and bots that accept your party invite and play along; companions you hire into the party (tank, healer, melee,
+  ranged).
+- **More systems:** arena queues (1v1/2v2/5v5; bots and Elo ladders under `pve`), hunts (tracking toolkits, wild tracks, hunt
+  quest chains), island construction, labourers and furniture, awakened weapons and item traits, the PvE side of
+  faction warfare, gathering tomes and fishing bait, expedition bonus chests, market price history, cosmetics from
+  content, a richer starter kit.
+- **Opening tutorial (`Tutorial:Opening`, on by default):** new characters start on the tutorial island at The Lighthouse
+  and follow its quests through departure to a starter town, in a private instance per character (contributed in
+  PR #1; not every branch is visually verified yet).
+- **Web panel** (`http://127.0.0.1:8080/`): status, registration, admin pages (players, accounts, bans, log, backups).
+
+Modding (C# plugins, no-code rules, the Studio editor, ModKit content packs, extra action bars) and optional client
+mods are kept apart from this classic server, in the
+[`modifications`](https://github.com/MrGreenCheezz/albion-local-server/tree/modifications) branch.
 
 The detailed, per-feature reference (English) is in [docs/REFERENCE.md](docs/REFERENCE.md); the architecture notes
 (Russian) are in [docs/ARCHITECTURE.ru.md](docs/ARCHITECTURE.ru.md). Both mention a private analysis workspace
@@ -59,16 +75,9 @@ The detailed, per-feature reference (English) is in [docs/REFERENCE.md](docs/REF
 | `src/AlbionLocal.Server` | Login (5055), game (5056) and chat (5057) servers, world simulation, systems, persistence |
 | `tests/AlbionLocal.SelfTest` | Offline self-test with an in-process client (no network, no real client needed to run it, but it reads the GameData files) |
 | `tools/AlbionLocal.CapDecode` | Decoder for packet captures of your own sessions |
-| `config/*.jsonc` | Five required configuration files by area (JSONC: JSON with comments; not standard JSON) |
+| `tools/start-server.ps1` | Builds the server and starts it against your client's GameData (`-GameDir`) |
+| `config/*.jsonc` | Five required area files; individual keys use preset defaults when omitted |
 | `content/` | Server-side content: spawns, kits, events, dungeons, goals, bots and other tunables |
-
-## Offline protocol exercises
-
-The self-test accepts `--client-gamedata=<folder>`, `--only=<text>`, `--report=<file.json>`
-and `--lab=all|serialization|transport|session|messages` for repeatable offline checks.
-Missing private golden references are reported as SKIP, separately from PASS and FAIL.
-`--protocol-trace` enables parameter-key/type traces without parameter values.
-SQLite is the only implemented persistence backend; repository contracts allow future extensions.
 
 ## Requirements
 
@@ -104,29 +113,27 @@ On start it prints the database schema version and the three listening ports. By
 only; see the "second PC" part of [docs/REFERENCE.md](docs/REFERENCE.md) for LAN settings (`Network:BindAddress`,
 `Network:PublicAddress`) and the firewall ports.
 
-Run the self-test. By default it reads `../game-local/Albion-Online_Data/StreamingAssets/GameData` next to the repository.
-Alternatively, pass your installation's GameData folder directly (no directory link is needed):
+Run the self-test. By default it reads the GameData folder from `../game-local/Albion-Online_Data/StreamingAssets/GameData`
+next to the repository (for example a directory junction named `game-local` to your client installation), or pass the
+folder yourself:
 
 ```bash
-dotnet run --project tests/AlbionLocal.SelfTest
+dotnet run --project tests/AlbionLocal.SelfTest -- --client-gamedata="C:/Games/AlbionOnline/game/Albion-Online_Data/StreamingAssets/GameData"
 ```
 
-```powershell
-dotnet run --project tests/AlbionLocal.SelfTest -- '--client-gamedata=C:/Games/AlbionOnline/game/Albion-Online_Data/StreamingAssets/GameData' --report=data/lab/selftest.json
-```
+`--only=<text>` runs the tests whose names contain the text, `--report=<file>` writes a JSON report, `--help` lists the
+options.
 
-Comparisons against generated "golden" data files are reported as SKIP, because those files are not published.
-They do not count as passed tests. Exit code 0 means no selected test failed; inspect the skip count for coverage.
+Comparisons against generated "golden" data files are skipped, because those files are not published.
 
 ## Configuration
 
-- `config/common.jsonc`, `login.jsonc`, `world.jsonc`, `chat.jsonc`, `persistence.jsonc` — five required files.
-  Distributed settings use `official`, rates ×1 and the opening tutorial for new characters.
-  See [configuration](docs/CONFIGURATION.md) for file ownership, validation, paths and temporary GM rates.
-  Any key can be overridden on the command line, e.g. `--Log:Level=Debug`.
+- `config/*.jsonc` — five area files (common, login, world, chat, persistence). `Preset` is `official` by default
+  (the official rules, rates ×1); `pve` turns on PvP by consent, no full loot, rate multipliers and the server's PvE
+  additions. Any key can be overridden on the command line, e.g. `--Log:Level=Debug`.
 - `content/*.json` — gameplay content the server adds or tunes (events, bosses, dungeons, goals, bots, kits…).
-- Accounts: unknown logins are rejected when `Accounts:AutoRegister` is false. Register through the client
-  or use `.account create <name> <password>` on the server console; see [configuration](docs/CONFIGURATION.md).
+- Accounts: unknown logins are refused when AutoRegister is disabled; register through the client or console (see "Accounts" in [docs/REFERENCE.md](docs/REFERENCE.md)); console
+  commands such as `.account create <name> <password>` manage them.
 
 With the opening tutorial enabled, the Lighthouse (`1008`) is private to each character.
 The Cove (`1011`), forest (`1009`) and fort (`1010`) are shared: nearby players can see one another,
@@ -155,3 +162,9 @@ its client or anti-cheat are not.
 MIT (see [LICENSE](LICENSE)): you may use, change and share the code freely, as long as you keep the copyright
 notice, i.e. credit the original source (https://github.com/MrGreenCheezz/albion-local-server). The license covers this
 repository's own code only; it grants nothing about the game, its client, its data or its trademarks.
+
+## Configuration files
+
+The server requires five JSONC area files: common, login, world, chat and persistence.
+See [configuration](docs/CONFIGURATION.md) for migration, private paths, validation and temporary rates.
+The old single configuration file and persisted rates are no longer read.

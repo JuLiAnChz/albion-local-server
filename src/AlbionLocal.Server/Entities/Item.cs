@@ -37,6 +37,12 @@ public sealed class Item(long id, ItemTemplate template, int count, int quality,
     /// </summary>
     public long JournalFame { get; set; }
 
+    /// <summary>
+    /// An awakened weapon's legendary soul (stageN awakening SPEC): NewEquipmentItem key 11 = 1 and event 37 after it; null = a plain item.
+    /// Replaced as a whole on every change (immutable).
+    /// </summary>
+    public ItemSoul? Soul { get; set; }
+
     /// <summary>A journal between empty and full (0 &lt; fame &lt; maxfame): the client does not stack it (bdm.lk 0x22), neither does the server.</summary>
     public bool PartlyFilled => Template.Journal is { } j && JournalFame > 0 && JournalFame < j.MaxFame;
 
@@ -73,6 +79,7 @@ public sealed class Item(long id, ItemTemplate template, int count, int quality,
             Active = Names(Active, Source?.Active, spellName),
             Passive = Names(Passive, Source?.Passive, spellName),
             Fame = Template.IsJournal && JournalFame != DefaultFame(Template) ? JournalFame : null,
+            Soul = Soul,
         };
     }
 

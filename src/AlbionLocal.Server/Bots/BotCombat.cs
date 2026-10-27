@@ -33,13 +33,13 @@ namespace AlbionLocal.Server.Bots;
 /// </summary>
 public static class BotCombat
 {
-    /// <summary>How long a gatherer runs off (s, SPEC §1.9).</summary>
+    /// <summary>How long a gatherer runs off (s, SPEC §1.9): the default of Bots:Gatherer:FleeSeconds.</summary>
     public const double FleeSeconds = 20;
 
-    /// <summary>How far it runs (m).</summary>
+    /// <summary>How far it runs (m): the default of Bots:Gatherer:FleeDistance.</summary>
     public const float FleeDistance = 25;
 
-    /// <summary>The window of the retarget's damage (s), and the share an attacker must deal of the target's damage in it (SPEC §1.9).</summary>
+    /// <summary>The window of the retarget's damage (s), and the share an attacker must deal of the target's damage in it (SPEC §1.9): the defaults of Bots:Combat:RetargetSeconds / RetargetShare.</summary>
     public const double RetargetSeconds = 5;
 
     public const double RetargetShare = 1.5;
@@ -110,13 +110,13 @@ public static class BotCombat
 
     /// <summary>
     /// <paramref name="attacker"/>'s hit took <paramref name="damage"/> of <paramref name="bot"/>'s health at <paramref name="ticks"/>
-    /// (<see cref="Pvp.Damage"/>, next to <see cref="Death.Hit"/>): kept for the retarget for <see cref="RetargetSeconds"/>.
+    /// (<see cref="Pvp.Damage"/>, next to <see cref="Death.Hit"/>): kept for the retarget for Bots:Combat:RetargetSeconds.
     /// </summary>
     public static void Hurt(Player bot, Player attacker, double damage, long ticks)
     {
         if (bot.Bot is not { } info || damage <= 0 || info.Fight.Defeated) return;
         var hits = info.Fight.Hits;
-        hits.RemoveAll(h => h.At < ticks - (long)(RetargetSeconds * TimeSpan.TicksPerSecond));
+        hits.RemoveAll(h => h.At < ticks - (long)(bot.World.Config.Bots.RetargetSeconds * TimeSpan.TicksPerSecond));
         hits.Add((attacker.Id, ticks, damage));
     }
 
@@ -159,6 +159,12 @@ public static class BotCombat
             Log.Debug("bots", $"'{bot.Character.Name}' ({info.PersonaId}) turns to its harder hitter {other}");
             fight.TargetId = other;
         }
+        // Bot support roles: a tank holds the attacker of its group's healer.
+        if (info.Part == PatrolPart.Tank && bots.Options.SupportEnabled && HealerAttacker(bots, bot, ticks) is { } guard && guard != fight.TargetId)
+        {
+            Log.Debug("bots", $"'{bot.Character.Name}' ({info.PersonaId}) turns to {guard}, who hits its healer");
+            fight.TargetId = guard;
+        }
         if (fight.TargetId == 0)
         {
             if (fight.Engaged.Count > 0) return true; // its attackers are out of reach for now: it waits while they are engaged
@@ -173,9 +179,9 @@ public static class BotCombat
         if (info.Role == BotRole.Gatherer && !fight.FleeRolled && bot.Health.At(ticks) < bot.Health.Max * bots.Options.FleeHealth)
         {
             fight.FleeRolled = true;
-            if (bots.Random.NextDouble() < bots.Options.FleeChance && BotNav.FleeFrom(bots, nav, bot, target.PositionAt(DateTime.UtcNow), FleeDistance))
+            if (bots.Random.NextDouble() < bots.Options.FleeChance && BotNav.FleeFrom(bots, nav, bot, target.PositionAt(DateTime.UtcNow), (float)bots.Options.FleeDistance))
             {
-                fight.FleeUntil = ticks + (long)(FleeSeconds * TimeSpan.TicksPerSecond);
+                fight.FleeUntil = ticks + (long)(bots.Options.FleeSeconds * TimeSpan.TicksPerSecond);
                 Log.Debug("bots", $"'{bot.Character.Name}' ({info.PersonaId}) runs off from '{target.Character.Name}'");
                 return true;
             }
@@ -186,8 +192,21 @@ public static class BotCombat
             fight.SpellRollAt = ticks; // its own cast's time gives no chance of the next one
             return true;
         }
-        if (ticks >= fight.ReadyAt && CastSpell(bots, bot, target, here, ticks)) return true;
+        if (ticks >= fight.ReadyAt && Support(bots, bot, nav, here, ticks, fighting: true)) return true; // bot support roles: a healer's group first
         var weapon = Combat.WeaponOf(bot);
+        if (bots.Options.Tactics && ticks >= fight.ReadyAt)
+        {
+            if (LowHealth(bots, bot, nav, target, ticks)) return true;
+            if (ticks < fight.KiteUntil) return true; // stepping back: no swing meanwhile
+            if (Focus(bots, bot, weapon.Range, ticks) is { } weaker)
+            {
+                Log.Debug("bots", $"'{bot.Character.Name}' ({info.PersonaId}) turns to the weaker '{weaker.Character.Name}'");
+                fight.TargetId = weaker.Id;
+                target = weaker;
+            }
+            if (Kite(bots, bot, nav, target, here, weapon.Range, ticks)) return true;
+        }
+        if (ticks >= fight.ReadyAt && CastSpell(bots, bot, target, here, ticks)) return true;
         if (Pvp.EdgeDistance(bot, here, target) <= weapon.Range + SpellCasts.RangeTolerance)
         {
             var facing = MotionMaster.Facing(here, target.PositionAt(DateTime.UtcNow));
@@ -235,11 +254,20 @@ public static class BotCombat
         var fight = info.Fight;
         var elapsed = fight.SpellRollAt == 0 ? options.CombatTickMs / 1000.0 : Math.Min(1, (ticks - fight.SpellRollAt) / (double)TimeSpan.TicksPerSecond);
         fight.SpellRollAt = ticks;
-        if (elapsed <= 0 || bots.Random.NextDouble() >= 1 - Math.Pow(1 - Math.Min(1, options.SpellChance), elapsed)) return false;
+        var rolled = elapsed > 0 && bots.Random.NextDouble() < 1 - Math.Pow(1 - Math.Min(1, options.SpellChance), elapsed);
+        // StageN botpower (Bots:Combat:Tactics): the situation's spells go out as soon as they are ready, without the roll.
+        var tactics = options.Tactics;
+        var tank = info.Part == PatrolPart.Tank && options.SupportEnabled; // bot support roles: its taunts go out as soon as they are ready
+        if (!rolled && !tactics && !tank) return false;
         var slots = bot.Session.SpellSlots(bot.Inventory);
         var at = SpellMovement.PositionOf(target, ticks);
         var distance = Pvp.EdgeDistance(bot, here, target);
         var hurt = bot.Health.At(ticks) < bot.Health.Max * HealHealth;
+        var weaponRange = Combat.WeaponOf(bot).Range;
+        var low = tactics && bot.Health.At(ticks) < bot.Health.Max * LowHealthShare;
+        var far = tactics && weaponRange < RangedWeapon && distance > weaponRange + 3; // a melee bot that must close in
+        var casting = tactics && (target.Combat.Cast is not null || target.Combat.Channel is not null);
+        var finish = tactics && target.Health.At(ticks) < target.Health.Max * FinishHealth;
         // StageM bots: by intent, a heal first when it is hurt, then its attacks (enemy, ground, a damage or cc spell around itself), a buff
         // last and only when it is not on it already; a spell with usableincombat="false" never (OUTOFCOMBATHEAL).
         var choices = new List<(int Slot, int Id, SpellTemplate Spell, long TargetId, Vector2 Aim, int Rank, int Roll)>();
@@ -256,25 +284,30 @@ public static class BotCombat
                 if (distance > spell.CastRange) continue; // out of its reach: the chase goes on
                 var line = at - here; // the centre may lie a little beyond castrange: aimed at castrange towards it
                 aim = line.Length() > spell.CastRange && line.Length() > 0.01f ? here + line / line.Length() * spell.CastRange : at;
-                rank = 1;
+                rank = far && Mobility(spell) || finish && Damage(spell) || casting && Control(spell) ? Urgent : 1;
             }
             else if (SpellCasts.Enemy(cls) || cls is SpellTargets.Cls.Other or SpellTargets.Cls.OtherPlayers or SpellTargets.Cls.All
                      or SpellTargets.Cls.AllPlayers or SpellTargets.Cls.AllUnmounted or SpellTargets.Cls.AllUnmountedPlayers or SpellTargets.Cls.AllNotPassive)
             {
                 targetId = target.Id; // FIRESTAFFIGNITE2_SPREAD (all) is an enemy spell: at the target, Check judges it Hostile
-                rank = 1;
+                rank = casting && Control(spell) || far && Mobility(spell) || finish && Damage(spell) ? Urgent : 1;
             }
             else if (cls is >= SpellTargets.Cls.FriendAll and <= SpellTargets.Cls.FriendAllNotPassive)
             {
                 if (!hurt) continue; // a heal or shield on itself only when it needs one
-                rank = 0;
+                rank = low ? Urgent - 1 : 0;
             }
             else
             {
-                if (distance > SelfSpellReach) continue; // a buff or a spin around itself only with the target near
-                rank = Offensive(spell) ? 1 : 2;
-                if (rank == 2 && OnItself(bot, spell, ticks)) continue; // the buff is on it still: no second one
+                // StageN botpower: low, a shield or heal around itself whatever the distance; far, a sprint of its own to close in.
+                var defend = low && (Defensive(spell) || !Offensive(spell) && spell.UiType == "buff");
+                var sprint = far && Mobility(spell);
+                if (!defend && !sprint && distance > SelfSpellReach) continue; // a buff or a spin around itself only with the target near
+                rank = defend ? Urgent - 1 : sprint ? Urgent : Offensive(spell) ? 1 : 2;
+                if (rank != 1 && OnItself(bot, spell, ticks)) continue; // the buff is on it still: no second one
             }
+            if (tank && Companions.Taunts(spell) && cls != SpellTargets.Cls.Ground) rank = Urgent - 1;
+            if (!rolled && rank >= 0) continue; // without the roll only the situation's spells
             choices.Add((slot, id, spell, targetId, aim, rank, bots.Random.Next()));
         }
         foreach (var (slot, id, spell, targetId, aim, _, _) in choices.OrderBy(c => c.Rank).ThenBy(c => c.Roll))
@@ -296,23 +329,142 @@ public static class BotCombat
     private static bool Offensive(SpellTemplate spell) =>
         spell.Category is "damage" or "crowdcontrol" or "debuff" || spell.UiType is "damage" or "crowdcontrol";
 
+    // ---- stageN botpower: tactics (Bots:Combat:Tactics, analysis/work/stageN/botpower/SPEC.md) ----
+
+    /// <summary>The rank of a spell the situation calls for (before the attacks, 1, and the buffs, 2); a defence when low comes before it.</summary>
+    private const int Urgent = -1;
+
+    /// <summary>Below this share of its health a bot's shields and heals go out at once (its potion and fall-back at Bots:Combat:RetreatHealth).</summary>
+    public const double LowHealthShare = 0.45;
+
+    /// <summary>Below this share of the target's health a bot bursts it (its damage spells at once) and a patrol turns to such a player.</summary>
+    public const double FinishHealth = 0.35;
+
+    /// <summary>A weapon of at least this attack range (m) is a ranged one: its bot kites and never dashes in.</summary>
+    public const float RangedWeapon = 6;
+
+    /// <summary>How long a kite's step back lasts (s) and how often at most (s); how long a fall-back lasts (s).</summary>
+    public const double KiteSeconds = 1.2, KiteEverySeconds = 2.5, RetreatSeconds = 3;
+
+    /// <summary>A gap closer: a dash, leap or sprint (uitype movement, category movementbuff).</summary>
+    private static bool Mobility(SpellTemplate spell) => spell.UiType == "movement" || spell.Category == "movementbuff";
+
+    /// <summary>A defence: a heal or a damage shield (category heal or buff_damageshield, uitype heal).</summary>
+    private static bool Defensive(SpellTemplate spell) => spell.Category is "heal" or "buff_damageshield" || spell.UiType == "heal";
+
+    /// <summary>Crowd control (a stun, root, silence, knockback: category or uitype crowdcontrol).</summary>
+    private static bool Control(SpellTemplate spell) => spell.Category == "crowdcontrol" || spell.UiType == "crowdcontrol";
+
+    /// <summary>A damage spell (uitype or category damage).</summary>
+    private static bool Damage(SpellTemplate spell) => spell.UiType == "damage" || spell.Category == "damage";
+
+    /// <summary>
+    /// Below Bots:Combat:RetreatHealth of its health: its healing potion (the potion slot, through the players' cast path; its slot cooldown
+    /// willing), else once per fight a fall-back of <see cref="RetreatSeconds"/> away from <paramref name="target"/> (a gatherer keeps its own
+    /// flight, Bots:Gatherer:FleeHealth). True when it acted.
+    /// </summary>
+    private static bool LowHealth(BotManager bots, Player bot, ClusterNav nav, Player target, long ticks)
+    {
+        var info = bot.Bot!;
+        if (bot.Health.At(ticks) >= bot.Health.Max * bots.Options.RetreatHealth) return false;
+        if (Drink(bots, bot, Consumables.PotionSlot, ticks)) return true;
+        if (info.Role == BotRole.Gatherer || info.Fight.FleeRolled) return false;
+        info.Fight.FleeRolled = true;
+        if (!BotNav.FleeFrom(bots, nav, bot, target.PositionAt(DateTime.UtcNow), (float)bots.Options.FleeDistance / 2)) return false;
+        info.Fight.FleeUntil = ticks + (long)(RetreatSeconds * TimeSpan.TicksPerSecond);
+        Log.Debug("bots", $"'{bot.Character.Name}' ({info.PersonaId}) falls back from '{target.Character.Name}' at low health");
+        return true;
+    }
+
+    /// <summary>
+    /// <paramref name="bot"/> uses the potion or food of its equipment's <paramref name="slot"/> (CharacterSpellSlot 12 or 13) as a player does
+    /// (<see cref="SpellCasts.Check"/>, <see cref="SpellCasts.Start"/>: the stack's item taken at the cast's end, the slot's cooldown). True when it started.
+    /// </summary>
+    private static bool Drink(BotManager bots, Player bot, byte slot, long ticks)
+    {
+        if (bot.Bot is not { } info || bot.Combat.Down is not null) return false;
+        var slots = bot.Session.SpellSlots(bot.Inventory);
+        if (slots[slot] < 0) return false;
+        info.Fight.CastCounter = (byte)(info.Fight.CastCounter % 255 + 1);
+        var (cast, _) = SpellCasts.Check(bot, slots, slot, slots[slot], 0, bot.PositionAt(bots.Time), info.Fight.CastCounter, ticks);
+        if (cast is null) return false;
+        if (info.Motion.Busy) info.Motion.Stop(bot, null, bots);
+        Mounts.BeforeAction(bot, "casts");
+        SpellCasts.Start(bot, cast);
+        Log.Debug("bots", $"'{bot.Character.Name}' ({info.PersonaId}) uses {cast.Spell.Name} (slot {slot})");
+        return true;
+    }
+
+    /// <summary>StageN botpower (Bots:Combat:Food): a new patrol or Drifter eats the meal of its food slot (its buff for its stay).</summary>
+    public static void Eat(BotManager bots, Player bot)
+    {
+        if (bot.Bot is { Role: BotRole.Patrol or BotRole.Drifter } && bot.Inventory.Equipment[9] is not null) Drink(bots, bot, Consumables.FoodSlot, bot.World.GameNow);
+    }
+
+    /// <summary>
+    /// Bots:Combat:FocusWeakest: a patrol fighting a player above half health turns, at most once a second, to another player it may fight
+    /// that is below <see cref="FinishHealth"/> within its weapon's reach + 6 m (the weakest of them). Null when it keeps its target.
+    /// </summary>
+    private static Player? Focus(BotManager bots, Player bot, double range, long ticks)
+    {
+        var fight = bot.Bot!.Fight;
+        if (!bots.Options.FocusWeakest || !BotManager.Patrols(bot.Bot.Role) || ticks - fight.FocusAt < TimeSpan.TicksPerSecond) return null;
+        fight.FocusAt = ticks;
+        if (bot.Map?.FindPlayer(fight.TargetId) is not { } current || current.Health.At(ticks) < current.Health.Max * 0.5) return null;
+        var here = bot.PositionAt(bots.Time);
+        return bot.Observers.Where(p => !p.IsBot && p.Id != current.Id && p.Health.At(ticks) < p.Health.Max * FinishHealth
+                && Pvp.EdgeDistance(bot, here, p) <= range + 6 && !fight.Spared.ContainsKey(p.Character.Id) && Valid(bots, bot, p.Id, ticks) is not null)
+            .OrderBy(p => p.Health.At(ticks) / Math.Max(1, p.Health.Max)).FirstOrDefault();
+    }
+
+    /// <summary>
+    /// A ranged bot (a weapon of at least <see cref="RangedWeapon"/> m) with <paramref name="target"/> nearer than Bots:Combat:KiteDistance edge to
+    /// edge steps back, at most every Bots:Combat:KiteEverySeconds: towards the walkable spot about its weapon's range away from the target with
+    /// a way to it (<see cref="BotNav.PathFrom"/>, never through a wall), for Bots:Combat:KiteSeconds. True when it kites.
+    /// </summary>
+    private static bool Kite(BotManager bots, Player bot, ClusterNav nav, Player target, Vector2 here, double range, long ticks)
+    {
+        var fight = bot.Bot!.Fight;
+        var options = bots.Options;
+        if (options.KiteDistance <= 0 || range < RangedWeapon || bot.IsMounted || ticks - fight.KitedAt < (long)(options.KiteEverySeconds * TimeSpan.TicksPerSecond)
+            || Pvp.EdgeDistance(bot, here, target) >= options.KiteDistance || SpellEffects.Rooted(bot, ticks)) return false;
+        var from = target.PositionAt(DateTime.UtcNow);
+        var away = here - from;
+        var direction = away.LengthSquared() > 0.01f ? Vector2.Normalize(away) : new Vector2(0, 1);
+        var step = (float)Math.Max(options.KiteDistance + 2, range * 0.75);
+        IReadOnlyList<Vector2>? best = null;
+        foreach (var turn in new[] { 0f, 0.6f, -0.6f, 1.2f, -1.2f })
+        {
+            var (sin, cos) = MathF.SinCos(turn);
+            var d = new Vector2(direction.X * cos - direction.Y * sin, direction.X * sin + direction.Y * cos);
+            if (nav.Grid.Nearest(here + d * step, 3) is not { } spot || Vector2.Distance(spot, from) <= Vector2.Distance(here, from) + 1) continue;
+            if ((nav.Grid.Clear(here, spot) ? [here, spot] : BotNav.PathFrom(bots, nav, here, spot)) is { } path) { best = path; break; }
+        }
+        fight.KitedAt = ticks;
+        if (best is null) return false;
+        bots.Walk(bot, best, null);
+        fight.KiteUntil = ticks + (long)(options.KiteSeconds * TimeSpan.TicksPerSecond);
+        Log.Debug("bots", $"'{bot.Character.Name}' ({bot.Bot.PersonaId}) steps back from '{target.Character.Name}'");
+        return true;
+    }
+
     /// <summary>Whether a spell of <paramref name="spell"/>'s family (its name or a sub-spell of it) by <paramref name="bot"/> is still on it.</summary>
     private static bool OnItself(Player bot, SpellTemplate spell, long ticks) =>
         bot.Effects.Spells.Any(s => s.Caster == bot.Id && s.Live(ticks) && s.Spell.Name.StartsWith(spell.Name, StringComparison.Ordinal));
 
     /// <summary>
-    /// The valid attacker (object id) that dealt at least <see cref="RetargetShare"/> × the current target's health damage within
-    /// <see cref="RetargetSeconds"/> (the most of them), else null (SPEC §1.9).
+    /// The valid attacker (object id) that dealt at least Bots:Combat:RetargetShare × the current target's health damage within
+    /// Bots:Combat:RetargetSeconds (the most of them), else null (SPEC §1.9).
     /// </summary>
     private static long? Retarget(BotManager bots, Player bot, long ticks)
     {
         var fight = bot.Bot!.Fight;
-        var since = ticks - (long)(RetargetSeconds * TimeSpan.TicksPerSecond);
+        var since = ticks - (long)(bots.Options.RetargetSeconds * TimeSpan.TicksPerSecond);
         var dealt = fight.Hits.Where(h => h.At >= since).GroupBy(h => h.Id).ToDictionary(g => g.Key, g => g.Sum(h => h.Damage));
         var current = dealt.GetValueOrDefault(fight.TargetId);
         foreach (var (id, damage) in dealt.Where(d => d.Key != fight.TargetId).OrderByDescending(d => d.Value))
         {
-            if (damage <= 0 || damage < RetargetShare * current) break;
+            if (damage <= 0 || damage < bots.Options.RetargetShare * current) break;
             if (Valid(bots, bot, id, ticks) is not null) return id;
         }
         return null;
@@ -354,6 +506,113 @@ public static class BotCombat
         Log.Info("bots", $"'{bot.Character.Name}' ({info.PersonaId}) knocked '{victim.Character.Name}' down");
     }
 
+    // ---- bot support roles (Bots:Support, Bots:Patrol:Makeups) ----
+
+    /// <summary>
+    /// A healer patrol out of a fight (<see cref="PatrolBrain"/>, before its scan): <see cref="Support"/> without the shields and buffs, so a
+    /// member left hurt after a fight is healed. True when it acted.
+    /// </summary>
+    public static bool Support(BotManager bots, Player bot)
+    {
+        if (bot.Bot is not { Part: PatrolPart.Healer, Fight.Defeated: false } || bot.Map is not { } map || bots.NavOf(map) is not { } nav) return false;
+        return Support(bots, bot, nav, bot.PositionAt(bots.Time), bot.World.GameNow, fighting: false);
+    }
+
+    /// <summary>
+    /// Bot support roles: a healer patrol (Bots:Support:Enabled, <see cref="BotInfo.Part"/> Healer; not while it casts, channels, is stunned or
+    /// knocked down) helps its group: the members on its map and itself (<see cref="MembersOf"/>; never a human, a bot of another group or a
+    /// Hostile unit), by the players' cast checks (<see cref="SpellCasts.Check"/>: Pvp:FriendlySpells, the target class, range, cooldown and
+    /// energy). First the member with the lowest health share below Bots:Support:HealBelow: a heal of its kit (<see cref="Companions.Heals"/>:
+    /// at him, or a ground heal at his feet), else a shield; in a fight then the lowest below Bots:Support:ShieldBelow a shield (category
+    /// buff_damageshield), then a fighting member without its buff (a friendly buff of its kit, HOLYHOT) one. A hurt member out of every heal's
+    /// range: it walks to him. True when it cast or walks.
+    /// </summary>
+    private static bool Support(BotManager bots, Player bot, ClusterNav nav, Vector2 here, long ticks, bool fighting)
+    {
+        var options = bots.Options;
+        if (!options.SupportEnabled || bot.Bot is not { Part: PatrolPart.Healer } info || options.Spells == BotSpells.Off || bot.World.Spells is not { } spells) return false;
+        if (bot.Combat.Cast is not null || bot.Combat.Channel is not null || bot.Combat.Down is not null || SpellEffects.Stunned(bot, ticks)) return false;
+        var allies = MembersOf(bot).Append(bot).Distinct().Where(m => m.Combat.Down is null && m.Health.Max > 0).ToList();
+        var slots = bot.Session.SpellSlots(bot.Inventory);
+        var kit = new List<(int Slot, SpellTemplate Spell, SpellTargets.Cls Cls)>();
+        foreach (var slot in Enumerable.Range(0, 6))
+            if (slots[slot] >= 0 && spells.Template(slots[slot]) is { Kind: "activespell", UsableInCombat: true } spell)
+                kit.Add((slot, spell, SpellTargets.Parse(spell.Target)));
+        static bool Friendly(SpellTargets.Cls cls) => cls is >= SpellTargets.Cls.FriendOther and <= SpellTargets.Cls.FriendAllNotPassive;
+        var heals = kit.Where(k => Companions.Heals(k.Spell) && k.Cls != SpellTargets.Cls.KnockedDownFriendPlayer).ToList();
+        var shields = kit.Where(k => k.Spell.Category == "buff_damageshield" && (Friendly(k.Cls) || k.Cls == SpellTargets.Cls.Self)).ToList();
+        var buffs = kit.Where(k => Friendly(k.Cls) && !Companions.Heals(k.Spell) && k.Spell.Category != "buff_damageshield"
+            && (k.Spell.UiType == "buff" || k.Spell.Category == "buff")).ToList();
+        double Share(Player p) => p.Health.At(ticks) / p.Health.Max;
+        Player? walkTo = null;
+        float walkReach = 0;
+        bool Try(Player ally, List<(int Slot, SpellTemplate Spell, SpellTargets.Cls Cls)> choices, bool walk)
+        {
+            var at = SpellMovement.PositionOf(ally, ticks);
+            var distance = Math.Max(0, Vector2.Distance(here, at) - 2 * bot.World.CollisionRadius);
+            var self = ally == bot;
+            foreach (var (slot, spell, cls) in choices.OrderBy(_ => bots.Random.Next()))
+            {
+                if (self ? cls is >= SpellTargets.Cls.FriendOther and <= SpellTargets.Cls.FriendOtherNotPassive : cls == SpellTargets.Cls.Self) continue;
+                if (distance > spell.CastRange)
+                {
+                    if (walk && walkTo is null) (walkTo, walkReach) = (ally, Math.Max(1, spell.CastRange - 1));
+                    continue;
+                }
+                var ground = cls == SpellTargets.Cls.Ground;
+                info.Fight.CastCounter = (byte)(info.Fight.CastCounter % 255 + 1);
+                var (cast, _) = SpellCasts.Check(bot, slots, (byte)slot, spell.Id, ground || self ? 0 : ally.Id, ground ? at : here, info.Fight.CastCounter, ticks);
+                if (cast is null) continue;
+                info.Motion.Stop(bot, self ? null : MotionMaster.Facing(here, at), bots);
+                Knockdown.Acted(bot, "casts");
+                Mounts.BeforeAction(bot, "casts");
+                SpellCasts.Start(bot, cast);
+                Log.Debug("bots", $"'{bot.Character.Name}' ({info.PersonaId}) casts {spell.Name} on '{ally.Character.Name}'");
+                return true;
+            }
+            return false;
+        }
+        foreach (var ally in allies.Where(a => Share(a) < options.SupportHealBelow).OrderBy(Share))
+            if (Try(ally, heals, walk: true) || Try(ally, shields, walk: false)) return true;
+        if (fighting)
+        {
+            foreach (var ally in allies.Where(a => Share(a) < options.SupportShieldBelow).OrderBy(Share))
+                if (Try(ally, shields, walk: false)) return true;
+            foreach (var ally in allies.Where(a => a == bot || a.Bot!.Fight.TargetId != 0))
+                if (Try(ally, [.. buffs.Where(k => !Carries(ally, bot, k.Spell, ticks))], walk: false)) return true;
+        }
+        if (walkTo is null) return false;
+        // Out of every heal's range: towards him (a new path at most every second or when he moved 2 m).
+        var goalAt = SpellMovement.PositionOf(walkTo, ticks);
+        var fight = info.Fight;
+        if (info.Motion.Busy && ticks - fight.ChasedAt < TimeSpan.TicksPerSecond && Vector2.Distance(goalAt, fight.ChasedTo) < 2) return true;
+        var away = here - goalAt;
+        var goal = away.LengthSquared() > 0.0001f ? goalAt + Vector2.Normalize(away) * Math.Min(walkReach, away.Length()) : goalAt;
+        IReadOnlyList<Vector2>? path = nav.Grid.Clear(here, goal) ? [here, goal] : BotNav.PathFrom(bots, nav, here, goal);
+        if (path is null) return false;
+        (fight.ChasedTo, fight.ChasedAt) = (goalAt, ticks);
+        bots.Walk(bot, path, MotionMaster.Facing(goal, goalAt));
+        Log.Debug("bots", $"'{bot.Character.Name}' ({info.PersonaId}) runs to heal '{walkTo.Character.Name}'");
+        return true;
+    }
+
+    /// <summary>Whether a spell of <paramref name="spell"/>'s family by <paramref name="caster"/> is still on <paramref name="unit"/>.</summary>
+    private static bool Carries(Player unit, Player caster, SpellTemplate spell, long ticks) =>
+        unit.Effects.Spells.Any(s => s.Caster == caster.Id && s.Live(ticks) && s.Spell.Name.StartsWith(spell.Name, StringComparison.Ordinal));
+
+    /// <summary>
+    /// The attacker (object id) that dealt the most damage to a healer of <paramref name="bot"/>'s group within Bots:Combat:RetargetSeconds and
+    /// that <paramref name="bot"/> may fight now (<see cref="Valid"/>); null when none.
+    /// </summary>
+    private static long? HealerAttacker(BotManager bots, Player bot, long ticks)
+    {
+        var since = ticks - (long)(bots.Options.RetargetSeconds * TimeSpan.TicksPerSecond);
+        var id = MembersOf(bot).Where(m => m != bot && m.Bot!.Part == PatrolPart.Healer)
+            .SelectMany(m => m.Bot!.Fight.Hits).Where(h => h.At >= since).GroupBy(h => h.Id)
+            .OrderByDescending(g => g.Sum(h => h.Damage)).Select(g => g.Key).FirstOrDefault(x => Valid(bots, bot, x, ticks) is not null);
+        return id == 0 ? null : id;
+    }
+
     // ---- patrols (phase 3) ----
 
     /// <summary>The members of <paramref name="bot"/>'s patrol group on its map and not defeated, or the bot alone.</summary>
@@ -387,8 +646,22 @@ public static class BotCombat
             if (!Reachable(bots, nav, here, at)) continue;
             (best, bestDistance) = (p, d);
         }
-        return best;
+        if (best is null || !options.FocusWeakest) return best;
+        // StageN botpower (Bots:Combat:FocusWeakest): of the players it may attack now, the one with the lowest health share (the nearest on a tie).
+        var weakest = best;
+        var weakestShare = Share(best, ticks);
+        foreach (var p in bot.Observers)
+        {
+            if (p.IsBot || p == best || Share(p, ticks) >= weakestShare - 0.05) continue;
+            var at = p.PositionAt(utc);
+            if (Vector2.Distance(here, at) > options.AggroRadius || Valid(bots, bot, p.Id, ticks) is null) continue;
+            if (spared.ContainsKey(p.Character.Id) || (p.IsMounted && !options.AttackMounted) || !bots.Settled(map, p) || !Reachable(bots, nav, here, at)) continue;
+            (weakest, weakestShare) = (p, Share(p, ticks));
+        }
+        return weakest;
     }
+
+    private static double Share(Player p, long ticks) => p.Health.At(ticks) / Math.Max(1, p.Health.Max);
 
     /// <summary>
     /// Whether a bot at <paramref name="from"/> can walk to <paramref name="to"/> (bots-world SPEC §2.6): a clear line of the walk grid, or a
@@ -414,7 +687,9 @@ public static class BotCombat
             var info = m.Bot!;
             var fight = info.Fight;
             if (fight.Defeated || fight.TargetId != 0 || Valid(bots, m, target.Id, ticks) is null) continue;
-            if (!fight.Active) fight.ReadyAt = ticks + bots.Options.ReactionMs * TimeSpan.TicksPerMillisecond;
+            // Bot support roles: a tank engages first (no reaction time).
+            var first = info.Part == PatrolPart.Tank && bots.Options.SupportEnabled;
+            if (!fight.Active) fight.ReadyAt = first ? ticks : ticks + bots.Options.ReactionMs * TimeSpan.TicksPerMillisecond;
             fight.TargetId = target.Id;
             fight.EngagePoint ??= m.PositionAt(bots.Time);
             bots.StopEmote(m);

@@ -55,10 +55,15 @@ internal static class ConfigurationTest
             foreach (var name in ConfigurationOptions.FileNames) File.WriteAllText(Path.Combine(directory, name), "{}");
             File.WriteAllText(Path.Combine(directory, "common.jsonc"), """
                 // defaults
-                {"Preset":"official", "Paths":{"Content":"assets"},}
+                {"Preset":"official", "Paths":{"Content":"assets"},
+                 "Web":{"Enabled":true,"Port":8080},"Backup":{"EveryHours":6,"Keep":3},}
                 """);
             File.WriteAllText(Path.Combine(directory, "world.jsonc"), """{"Tutorial":{"Opening":true},"Rates":{"Fame":2,"CombatFame":3}}""");
             var loaded = ServerConfiguration.Load(directory, ["--Rates:Fame=4"]);
+            Check(loaded.Config.Web is { Enabled: true, Port: 8080 } && loaded.Config.Backup is { EveryHours: 6, Keep: 3 }
+                && loaded.Sources["Web:Enabled"].EndsWith("common.jsonc") && loaded.Sources["Backup:Keep"].EndsWith("common.jsonc"),
+                "existing web panel and backup settings load from the common area without starting services");
+            Reject(() => ServerConfiguration.Load(directory, ["--Web:Port=5055"]), "web port conflicts with login");
             Check(loaded.Config.ContentPath == Path.Combine(root, "assets") && loaded.Config.SavesPath == Path.Combine(root, "data")
                 && loaded.Config.LogFile == Path.Combine(root, "data", "server.log"), "all relative and default paths use parent of config directory");
             Check(loaded.Config.Preset == ServerPreset.Official && loaded.Config.TutorialOpening && loaded.Config.Rates.Fame == 4

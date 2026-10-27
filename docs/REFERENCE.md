@@ -25,7 +25,7 @@ How the wire format and each response field were derived: `../analysis/NOTES-pro
 ```
 dotnet build
 dotnet run --project tests/AlbionLocal.SelfTest
-dotnet run --project src/AlbionLocal.Server --no-launch-profile -- -v
+dotnet run --project src/AlbionLocal.Server -- -v
 ```
 
 No game client, client file or client patch is part of this repository. Characters are stored in the SQLite database
@@ -56,7 +56,7 @@ dotnet build src/AlbionLocal.Server -o bin/check
 dotnet bin/check/AlbionLocal.Server.dll --check-content      # summary, exit code 0 = all pass; -v lists every failure
 ```
 
-With no server running, `dotnet run --project src/AlbionLocal.Server --no-launch-profile -- --check-content` does the same. It checks the
+With no server running, `dotnet run --project src/AlbionLocal.Server -- --check-content` does the same. It checks the
 default templates (what world.xml counts), without the day's dynamic templates and resource nodes.
 
 ## World objects
@@ -134,7 +134,9 @@ version starts; a server build from before step 13 then refuses the file ("schem
 
 ### Random dungeons
 
-The open-world clusters get random dungeon entrances (stageG, `../analysis/work/stageG/dungeons/SPEC.md`): on the
+The open-world clusters get random dungeon entrances (stageG, `../analysis/work/stageG/dungeons/SPEC.md`; the dungeon of the day
+and the group scaling of `content/dungeons.json` only with `Dungeons:DailyBonus "content"` and `Dungeons:GroupScaling true`, the
+pve preset's): on the
 day's RandomExitPositionMarker spots of the cluster (0204 has 67 solo spots), as many as randomdungeons.xml allows for
 the continent, subtype and tier (half of them for Royal T4 solo), the portal prefab of the cluster's biome. Walking into
 one (or clicking a solo portal, which the client uses with a 2 s channel bar: `ExitChannelSeconds` 2, cancelled by moving
@@ -159,7 +161,8 @@ its portal on a free spot of its kind in a random cluster of the same zone colou
 cluster hops away (the player's own cluster included at distance 0; maps with distance 0 keep it in the own cluster), at
 the map's level, for the map's time, and marks it for the player (a portal in another cluster opens the world map on that
 cluster; that cluster stays loaded while the portal stands); with no free spot anywhere in range the map is not used
-(@RANDOMDUNGEONMAP_NO_DUNGEON_FOUND). Dying inside a lethal
+(@RANDOMDUNGEONMAP_NO_DUNGEON_FOUND). The Avalonian elite maps (T6-T8_RANDOM_DUNGEON_ELITE_TOKEN_D1-D4) work the same way: in the
+black zone their T6-T8_AVALON_ELITE_CONSUMABLE portal (an Avalonian elite dungeon, levels 1-4) stands on an ELITE spot. Dying inside a lethal
 dungeon respawns in front of its portal. `.rd T4_PORTAL_ROYAL_SOLO` puts a portal in front of a GM, `.rd chest` a chest.
 The numbers the data leaves open are in `content/dungeons.json` (read at start). Not yet: shrines, the boss encounter
 rules (the boss chest lock below is the stageH radius rule, an [assume]),
@@ -192,11 +195,12 @@ PvE changes (PVE-DESIGN step 10, `content/dungeons.json`, each with its own key)
 The one NuGet package, `Microsoft.Data.Sqlite`, is restored offline: `nuget.config` lists only the local
 package cache (`%USERPROFILE%\.nuget\packages`) as a source, so the package must already be there.
 
-Settings come from five required files: `config/common.jsonc`, `login.jsonc`, `world.jsonc`, `chat.jsonc`,
-`persistence.jsonc`. Individual keys are optional; the JSONC files support comments and trailing commas rather than standard JSON. See [configuration](CONFIGURATION.md).
-`--config-dir=<folder>` selects a directory; `--check-config` validates without opening services or a database.
-Arguments such as `--Log:Level=Debug --Network:GamePort=6000` override file settings. Unknown, duplicate or misplaced
-keys and conflicting listener ports stop startup (default login 5055, game 5056, chat 5057).
+Settings: `config/*.jsonc` (ports, logout time, the client's GameData folder, save and content folders, log level and log file,
+the account levels; seasonal cluster layers `World:EventLayers`, `World:AnnounceAll`,
+`World:MapIdleUnloadMinutes`, `World:RareResources` (enchanted resource nodes, on), the `Visibility` window, the `Transfer` checks, `Crafting:Returns` and `ClientNumbering:BuildingIdOffset`, only
+as comments there; comments allowed, every key optional). Any key can be overridden on the command line, e.g.
+`dotnet run --project src/AlbionLocal.Server -- --Log:Level=Debug --Network:GamePort=6000`; an unknown
+key stops the start, and so do two listeners on one port (`Network:LoginPort` 5055, `GamePort` 5056, `ChatPort` 5057).
 
 The server also appends its log to `data/server.log` (`Log:File`, `""` turns it off), so a server started in
 another terminal can be followed with `tail -F data/server.log`. Over 16 MB the file is renamed to `server.log.1`
@@ -236,7 +240,7 @@ forced move ... m from the path's end`) or that no answer came (`sent no echo`),
 
 The static trees and rocks of a cluster (the T1 bushes and trees around Thetford and in the open world, and whatever
 other static harvestable a template holds) can be harvested as on the official server (stage 4a, from the capture
-`captures/albion_20261016_002835`): click one, the character walks up to it and the progress bar runs, 2 s for a T1 tree
+`capture 002835`): click one, the character walks up to it and the progress bar runs, 2 s for a T1 tree
 by hand, 1 s with a T1 axe, 0.7 s with a T2 one (harvestables.xml's harvest time x the tool's tier factor). At its end
 the wood goes into the inventory, onto a stack of it or into the lowest free slot (2 T1_WOOD: one harvest takes both
 charges of a T1 tree), the tool loses durability (none for T1 wood) and the tree switches to its depleted look. The
@@ -252,7 +256,9 @@ Tiers from 2 up need a tool of their resource (axes WOOD, stone hammers ROCK, si
 of at most one tier below the node; `.item add T2_2H_TOOL_AXE` makes one, and `.harvest info` shows the server's view of
 the nearest node (charges, next regrowth, what a harvest gives). A T2+ harvest gives fame and destiny board progress
 (see Fame and the destiny board). With premium (see Premium, focus and learning points) the harvest adds half its
-amount on top (HarvestFinished's premium bonus, the fraction at random). Not there yet: bonus loot.
+amount on top (HarvestFinished's premium bonus, the fraction at random). Bonus loot: each harvest of a T4+ node rolls its
+tier's `<Loot>` of harvestables.xml once (× `Rates:Loot`): a gathering tome (`T4_SKILLBOOK_GATHER_WOOD`, …) now and then, put
+into the inventory when it fits and shown with the harvest (HarvestFinished keys 9/10; `../analysis/work/stageN/econ/SPEC.md` §2).
 
 ### Static dungeons
 
@@ -299,8 +305,10 @@ items.xml fishing fame (× Rates:Fame × Rates:GatheringFame, into the GATHER_FI
 Each strike takes a charge of the zone it lands in (an empty spot leaves it to the base zone around it); charges come
 back one by one. Other players see the casting, the float and the reel poses. The numbers the client data does not hold
 (bite times, charge regrowth, the strike window, the minigame settings, …) are in `content/fishing.json`, read at start.
-Walking off, mounting, a cast or attack, a knockdown and logging out end a session. Not there yet: bait, the black
-market catches, the fishing speed of gear other than the rod.
+Walking off, mounting, a cast or attack, a knockdown and logging out end a session. **Bait** (`T1/T3/T5_FISHINGBAIT`, used
+from the bag): a 10-minute buff with 10 charges; its fishingspeed (0.5 / 1.25 / 2.5) shortens the bite delay as the rod's
+does (÷ (1 + rod + bait)), each strike takes a charge, the last one ends the buff. Not there yet: the black market catches,
+the fishing speed of other gear.
 
 ## Mobs
 
@@ -332,7 +340,13 @@ and its energy reward, drops its loot.xml items in a bag only the killer can ope
 `LootBagSeconds`, 120 s), stays a corpse for 5 s and its spawn point respawns it. The equipment of the loot lists
 (useblackmarket items) comes from the Black Market on the official server, which a local server has none of: such an
 item drops only with `Loot:BlackMarketChance` (0.1, fitted to the 18 captured kills: a T4 ghoul drops a bag about one
-kill in 16, a soldier or mage one in 5; 1 = every rolled item; an estimate, tune it after playing). Every entry of a
+kill in 16, a soldier or mage one in 5; 1 = every rolled item; an estimate, tune it after playing). Loot rates: `Rates:Loot`
+scales the loot factor once (not the Black Market chance as well); `Loot:BlackMarketSoftCap` (4) thins out a roll past 4
+such items (each further one with 4 / its number), so a chest whose lists name hundreds of Black Market rolls (Avalonian,
+static, hellgate, world bosses) gives tens of items; an item more than one tier above the mob or chest comes one tier above it
+unless an explicitly rare entry (chance at most 0.5, such as the T7 list of a T5 chest) rolled it. Chests other than dungeon
+floors' get no cluster moblootfactor (a mob's factor). Typical rolls under the PvE preset (analysis/work/stageN/loot-balance):
+a T5 corrupted rare chest 8-9 items (was 38), a T5 solo dungeon rare chest about 8 (was 29), a T5 veteran mob 0.3 (was 0.9). Every entry of a
 mob's `<Loot>` is rolled, as in the client's copy of the roll, so its own `<Item>` entries (lore unlocks, silver bags,
 quest tokens; 435 in mobs.xml) can drop too, not only its loot list references. "Take all" in the bag moves the items
 into the inventory's stacks first, then into free slots; what finds no room stays in the bag. Single items come out by
@@ -404,8 +418,15 @@ repositions (walked on the walk grid, never into a wall), IdleBehaviour, the mob
 and fears on players (ForcedMovement, stopped by walls), `<SpawnSpells>`, `<DeathSpells>` (death blasts, the elites' fame
 buff) and `<KillRewardBuff>`; the bosses' enrage buffs already ran through their `<AI>`. A mob's telegraph now points at
 its target (CastStart key 2 only for ground spells, the mob turns before it casts). The spell engine reads every If*
-condition of spells.xml but one (IfTargetHasPowerCrystal), `<valueoverride><IfCharge>` (the stacking damage of the axe
+condition of spells.xml, `<valueoverride><IfCharge>` (the stacking damage of the axe
 bleed and the flame orb), and the gathering tomes, the fish food's fishing fame, repair kits and the fame buffs work.
+StageN spells2 (analysis/work/stageN/spells-bosses/SPEC2.md): the `<AI>` conditions IfTargetTookDamage (the dummies' and
+chests' flinch, the heretic healers' heal) and the fire dragon's threat areas (IfHighestArea, IfTargetIsInHighestArea,
+IfPlayersInArea: it turns to the side with the most threat), RandomGroundTarget (the meteors and flame artillery land
+around), the bosses' `<AI>` onDeath effects, the mobs' changeaggro (alarm traps and hound alerts call their camp, the
+mammoths drop their target) and the tracking mobs' EscapeSpellSequence (`.mob escape`; the hunts that trigger it are not
+there yet). The two-step weapon spells that recast at a stored target work: AFTER_IMAGE's return, the knuckles' punch and
+counter dash, the ice sculpture's explosion, the spider thread's pull, the holy shield's second cast.
 
 Stage 5e (SPEC §5e): mobs do not kill a player, they knock it down (the PvE knockdown of gamedata DeathSettings). At 0
 health the player falls with the "knocked down by @mob" screen (KnockedDown), out of combat; every mob drops it and
@@ -420,7 +441,7 @@ There is no real death in PvE: no respawn point, no silver or durability loss (t
 `Pve:KnockdownWear` adds a share of each item's maximum durability, 0 by default),
 and nothing of the knockdown is saved, so a player who leaves while down comes back standing
 at that spot with full bars. `.damage <n>`, `.kill` and `.heal` try it on oneself. The knockdown screen's death recap
-is empty (the damage sources are not recorded yet).
+lists what hit the player (see "Death recap and PvP details" below).
 
 Reviving (stageN, `analysis/work/stageN/revive/SPEC.md`; `Pve:PartyRevive`, on in the pve preset): a player knocked down (by a mob,
 or a non-lethal PvP knockdown outside a duel) while a party or guild mate is on its map **bleeds out** instead (BleedOut 693: the
@@ -454,7 +475,7 @@ flag 395 and the local quest events 540-543):
   (an open chest window closes), so the camp can be done again; the quest restarts as soon as you are in the circle (the
   official 11 s re-arm is left out). A camp chest that no per-player quest unlocks is not spawned.
 
-Chests roll their loot for the cluster's tier, × the zone's loot factor × `Rates:Loot`. `Rates:ChampionWeight` (1; the PvE
+Chests roll their loot for the cluster's tier, × `Rates:Loot` (no zone loot factor: that is the mobs'). `Rates:ChampionWeight` (1; the PvE
 preset 2) multiplies the weight of the champion, miniboss and boss mobs whenever a RANDOM spawn point picks its mob, so
 more elites (with their own fame and loot) stand in the open world and the dungeons. The chest state lives with the map: a
 cluster unloaded after `World:MapIdleUnloadMinutes` starts afresh. `.chest` lists the cluster's spots, `.chest unlock`
@@ -464,7 +485,8 @@ of LocalQuestInfos at Join.
 
 ### World bosses
 
-StageH (`../analysis/work/stageH/bosses/SPEC.md` §4.1, §6.1; `content/bosses.json`): the WORLDBOSS spawn points of the client data
+StageH (`../analysis/work/stageH/bosses/SPEC.md` §4.1, §6.1; `content/bosses.json`; under `Preset official` without the file's
+`ExtraSpawns` and with the killer's loot: `WorldBosses:ExtraSpawns` false, `WorldBosses:Loot Killer`, pve `true` / `"content"`): the WORLDBOSS spawn points of the client data
 get their worldbosses.xml boss (1007 Inis Mon: the two T5 keepers; 2009, 0005 and the black zones of the SPEC's table), and
 `ExtraSpawns` adds bosses of the server's own: the shipped file puts the T5 keeper seer into 0204 and the T5 earthmother into
 1207, each on a critter spawn point far from the exits and the other mobs (walkable by the data, off the roads as far as the data
@@ -495,6 +517,35 @@ of their health and half their damage, back 20-40 min after their death (÷ `Rat
 slot's boss now or puts a one-off boss 5 m in front of you, `.boss kill` despawns the nearest boss (it comes back at its next time).
 Not yet: the bosses' enrage, summon, pull and knockback spells (they fight with their other spells and auto-attacks), the fame buff
 of their death spell, and slots of clusters nobody entered since the start (a cluster's bosses exist from its first map on).
+
+### Hunts (tracking)
+
+StageN hunts (`../analysis/work/stageN/hunts/SPEC.md`; client data `dynamichunt.xml`): the official tracking. Equip a **tracking
+toolkit** (`T3`-`T8_2H_TOOL_TRACKING`, main hand; it can now exist in the bag and be crafted like other tools) and use its find
+ability: after the `Tn_FIND_TRACK` cast (6-7 s, standing still) up to two wild **tracks** lie near you (within the spell's
+175-300 m by tier), shown on the minimap for 17-30 s and listed in the chat with distance and direction. A track's creature is of the
+toolkit's tier or one below: silver targets (earthdaughter, harvester, shadowmask, …), panther, ent, direbear, werewolf, imp,
+elemental, eagle; group (veteran) targets when you are in a party. Walk to a track and read it (about 16 s; moving cancels).
+
+Reading a wild track starts a **hunt** for you and your party members on the map (they share it). The hunt is a chain of quests,
+each at a spot 100-400 m on, with a trail of footprints toward it, a minimap ping 20-60 m off the spot and a chat line with the
+way ("~250 m north-east"):
+- **track**: find and read the next track (some are guarded by a few mobs);
+- **escape**: the creature rests at the spot; once hurt to its threshold (80/60/40/30 % by the quest), attacked by too many players,
+  crowded, or after its combat timers it **flees** with its escape spells (dash, immunity) and leaves; its health stays low for the
+  next encounter and the trail goes on from where it fled;
+- **final**: the creature is cornered and fights to the death; if it escapes (timers, too many attackers) the trail goes on and the
+  next quest is the final again.
+The final's chance grows with every quest (dynamichunt.xml's chances). The kill gives the creature's normal loot and kill fame,
+plus the final quest's fame (450 for a solo silver hunt) × the toolkit's tracking fame bonus (+5 % a tier above T3) to every member.
+A quest that is not done within its timeout (20 min) aborts the hunt, as does leaving (no member online) or starting another hunt.
+Hunts live in memory: a server restart loses a running one.
+
+GM: `.hunt list`, `.hunt start <target>` (e.g. `EARTHDAUGHTER_SOLO_T5`, `WEREWOLF_SOLO`; starts from where you stand),
+`.hunt escape` (the target flees now), `.hunt abort`.
+Not yet: the client's hunt quest panel (HuntMissionStepStateUpdate is not sent: the way is told by pings and chat lines), the
+party's start-hunt confirmation (members join automatically), tracking achievements, toolkit durability loss, hunts across
+clusters (every spot is on the hunt's map) and the joker/undefined hunts.
 
 ### World events
 
@@ -536,6 +587,8 @@ roaming the cluster.
 
 Stage I (`../analysis/work/stageI/invasions/SPEC.md`; `content/events.json` `Player`, `Tiers`, `Merchant`, `Drops`): invasions no
 longer start by themselves (`Scheduled` false); a player calls one, at a difficulty from T1 to T10 it picks, and the rewards follow it.
+Only with `Events:PlayerInvasions` true (the pve preset): under `Preset official` there are no player invasions, no ticket sell
+orders and no ticket drops, whatever the file says, and the corrupted maps open their portal (`Corrupted:MapsOpenDungeons` true).
 
 - **Command** (every account level): `.invasion <1-10> [invasion|champion]` starts one at a mob spawn point `Distance` (15-45 m)
   from you on your map. The cluster (and your party anywhere) reads "Name called Undead invasion T7" and the usual start line.
@@ -568,7 +621,9 @@ longer start by themselves (`Scheduled` false); a player calls one, at a difficu
 
 ### Expeditions
 
-PVE-DESIGN steps 8 and 9 (`../analysis/work/stageH/expeditions/SPEC.md`; `content/expeditions.json`): the royal expeditions of the city
+PVE-DESIGN steps 8 and 9 (`../analysis/work/stageH/expeditions/SPEC.md`; `content/expeditions.json`, whose SoloGroupCategories,
+PartyAutoAccept, HardcorePartyCarry, GroupScaling, EveryRunItems and LeavePenalty apply only with `Expeditions:Rules Content`, the
+pve preset; `Official` keeps the client's rules): the royal expeditions of the city
 agents (Thetford's offers T3-T6), Standard solo, Veteran and Hardcore for 1-5 players, with the client's own windows and messages only.
 
 - **Register** at the agent (`RegisterRange` 8 m): the category (T3_STANDARD, …; the agent's list) and, with no expedition chosen, one of
@@ -598,7 +653,10 @@ agents (Thetford's offers T3-T6), Standard solo, Veteran and Hardcore for 1-5 pl
   (`HardcoreTokens`; that expedition, the token is taken when its holder goes in). Inside, the mobs carry the level's
   `MOB_HARDCORE_EXPEDITION_BUFF_nn` (more health, more damage) and the kills its silver/loot/fame factors (1.9 at level 1 … 60.5 at 18);
   the completion pays the category's silver x the level's silverfactor, fame x mobfamefactor, and a token of the next level (its
-  `tokenlootlist`); the lootfactor applies to the kills' loot only, the reward items keep their counts. The level-18 bonus chest is not spawned yet.
+  `tokenlootlist`); the lootfactor applies to the kills' loot only, the reward items keep their counts. Completing level 18 (`spawnbonuslootchest`) also
+  puts the bonus chest HARCORE_EXPEDITION_LVL_18 on the map's HCE_FINAL_REWARD point (open it as any dungeon chest; tier-6 loot).
+  The agent's drop-token window works as official: dropping a `QUESTITEM_EXP_TOKEN_D<n>_<expedition>` on the hardcore tab opens that
+  expedition's details at level n, and its Register is accepted by the token in the bag (`../analysis/work/stageN/econ/SPEC.md` §3).
 - **Join**: a `EnteringSeconds` (10) channel in front of the agent, not in combat (moving more than `CancelDistance`, taking damage, a
   knockdown or the client's cancel stops it; the exit channel the same), then the lock effect and the change into a new instance, a copy of the expedition's map (`@EXPEDITION@<guid>`), at its
   start point; the place in front of the agent is saved as the way back (also over a restart).
@@ -622,7 +680,7 @@ agents (Thetford's offers T3-T6), Standard solo, Veteran and Hardcore for 1-5 pl
 `.exp list` shows the registrations, groups and instances, `.exp start <index|uniquename> [level] [players]` sends you into a new
 instance (the way back is where you stand; a hardcore level, the players its mobs are scaled for), `.exp finish` completes yours, `.exp
 leave` takes you out, `.exp level <n>` opens the hardcore levels up to n. The escape spell inside leaves as an exit does. Not yet: the
-official role matchmaking (TANK/HEAL/DPS), the level-18 bonus chest, the official token flow at the agent (the drop-token window).
+official role matchmaking (TANK/HEAL/DPS).
 
 ### Corrupted dungeons
 
@@ -651,7 +709,8 @@ and texts. PvE by default: an invasion only comes to a player who used the Demon
   and loot, its chests and the completion silver. The completion pays 15 000 / 40 000 / 120 000 silver and 20 000 / 60 000 / 200 000
   fame (`Completion`), x Rates and x `RewardFactor` (pve 1.5).
 - **Leaving**: the exit portal on the start room's exit (`ExitPortal`: `Always` in pve, `AfterDemon` official, `Off`), the escape spell
-  (the client's cast; inside a corrupted dungeon its cast gets no server answer), or `.cd leave` (not knocked down or in combat). A
+  (the client's cast; inside a corrupted dungeon its cast gets no server answer), or `.cd leave` (not knocked down or in combat; only
+  with `Corrupted:LeaveCommand`, pve true, official false). A
   death respawns in the city and counts as leaving (the early-leave infamy, a new run at once). A logout inside keeps the run
   `RelogMinutes` (10); the relog comes back into it. A run the owner left closes `EmptyCloseSeconds` (30) later, every run after
   `MaxMinutes` (120); a character in a run that is gone joins at its way back.
@@ -777,9 +836,9 @@ lost), so a Blue player is safe there.
   front of the paired portal (4 m in the open world, 5.5 m in a road), facing away from it. Each pass costs a charge and opens the
   "recently used" window, in which the portal lets players in even at 0 charges, so a party can follow its leader. A portal without a
   link or charges refuses with a chat line ("This portal leads nowhere now.", "This portal has no charges left; next in m:ss.").
-- **Rescue** (`Rescue`, `RescueMinutes` 60): a road with a player inside and no link at all (a deep raid road has incoming exits only,
+- **Rescue** (`Rescue`: pve true, official false, a server addition; `RescueMinutes` 60): a road with a player inside and no link at all (a deep raid road has incoming exits only,
   and every road has a short gap between a link's end and the next) gets one at once, from an exit that could lead there or from a
-  royal blue or yellow zone. Nobody is stuck in a road.
+  royal blue or yellow zone. Nobody is stuck in a road (officially one waits for a new link or uses the escape).
 - **Content**: the roads' Avalonian camps, critters and resources come from the client data at the map's tier (T4/T6/T8, black-zone fame
   x4.2, then `Rates`). The road chests (`Chests`): each chest spot of a camp rolls its chance (0.648) and a chest by weight, BASE (level 4,
   weight 6), CHAMPION (6, 3) or BOSS (8, 1); the camp's points within 60-100 m spawn the guards of that level (minions, champions, the knight
@@ -886,8 +945,8 @@ there, with knockdowns (`Pvp:Mode` `Consensual`, `Pvp:LethalDeath` false); a Blu
   `StandingPerFame` 1), up to the client's 10 000 000 in 10 ranks (a chat line at each new rank, the client told at every login and cluster change; `.mists standing`), and gives favour
   (`FavorPerStanding` 0.01 of it, also once the standing is full). The **City Trader** in 5001 sells its goods for that favour (the tokens
   675, the Brecilien capes, the owl mounts, the avatar) behind the client's standing gates (the token from 150 000) [design: where official
-  favour comes from is not in the client data]. The client is not told your favour (its currency event is not traced): the trader's window
-  may show 0 and `.mists standing` is where you see it; whether the client sends a purchase it thinks you cannot pay is a client check.
+  favour comes from is not in the client data]. The client is told your favour at each login and cluster change (Join key 104, as
+  captured), not as it changes (its currency event is not sent for it): `.mists standing` shows it live.
   The standing and the favour are kept in the character database (schema v27: `mist_standing`, `mist_favor`; an older server build
   then refuses the converted file).
 - **Drifters** (phase B, bots; `content/bots.json` zone class `Mists`: 1): a lone Red-flagged wanderer of the zone's tier that attacks only a
@@ -906,12 +965,27 @@ there, with knockdowns (`Pvp:Mode` `Consensual`, `Pvp:LethalDeath` false); a Blu
 0-4), `.mists list`, `.mists close [id]` (your zone, or that one, closes now: everyone out), `.mists dungeon` (a Knightfall Abbey portal next
 to you), `.mists wisp [rarity]` (a portal wisp next to you), `.mists standing add <points>`.
 
+## Faction warfare (PvE side)
+
+StageN (`../analysis/work/stageN/faction/SPEC.md`; schema v30). The faction trader in each royal city and Caerleon enlists you
+(its Enlist button: one faction at a time; switching to another faction is allowed 24 h after the last change, the game data's
+cooldown; your standing and points with the old one stay). Enlisted and flagged to your faction (the trader's Flag button; under the
+pve preset a faction flag makes nobody hostile, as before), the fame of mob kills (× 0.007), gathering and fishing (× 0.1) in the
+faction warfare clusters (the yellow and red duchies of `factionwarfare.xml`, not the cities) earns your faction's points (× your
+rank's point multiplier) and standing (21 ranks, the game data's thresholds), shown by the client as they come and at every login.
+The trader sells for those points what the game data lists: faction hearts, cape blueprints (capes are then crafted at the toolmaker
+from a cape, the blueprint and a heart), the faction mount babies and the campaign chests, each behind its standing gate (T5 cape
+blueprint 15 000, mounts 120 000 / 1 400 000, …). `.faction` shows your enlistment, standing, rank and points; GMs: `.faction add
+<points>`, `.pvp faction <faction>` (no cooldown). Not done: outposts and fortresses, the PvP capture part, cluster control and
+payouts, the weekly upkeep and reports, campaign rewards, the faction's PvE fame bonus and group bonus, the nameplate rank (483).
+
 ## PvE preset
 
-The optional PvE preset (`../analysis/work/stageH/PVE-DESIGN.md` §1) is selected with
-`"Preset": "pve"` in `config/common.jsonc`. The distributed configuration uses `official`, rates ×1 and the opening
-tutorial for new characters. The preset name does not establish complete fidelity to the original server.
-Explicit file options and command-line arguments override preset defaults.
+The root key `"Preset"` of `config/common.jsonc` picks the defaults of every key left out. `"official"` (the shipped value, and the
+default when the key is missing) gives the official game's rules and rates; every server addition is off there and has a key of
+its own. `"Preset": "pve"` (or `--Preset=pve`) gives the PvE server of `../analysis/work/stageH/PVE-DESIGN.md` §1: the keys below take
+these values. Any key written in the file or on the command line wins over its preset's value. The commented examples in
+`config/world.jsonc` show the official values, with the pve value in the note.
 
 | Key | pve | official |
 |---|---|---|
@@ -921,16 +995,16 @@ Explicit file options and command-line arguments override preset defaults.
 | `Pvp:KnockdownWear` | `0`: a PvP knockdown wears nothing (a share 0..1 of the maximum durability) | `"gamedata"` (5 %) |
 | `Pvp:RedLockMinutes` | `0`: the Red flag is the consent to PvP and can be taken off again at once (FLAG_BLUE's 15 s cast stays) | `"spell"` (15 min of CANNOTDISABLEPVP) |
 | `Pve:KnockdownWear` | `0` (0.01-0.03 adds a little risk to a mob's knockdown) | `0` |
-| `Loot:BlackMarketChance` | `0.35` (about one bag with an item per fifth T4 ghoul) | `0.1` |
+| `Loot:BlackMarketChance` | `0.15` (a few pieces of gear per dungeon chest; was 0.35 × Rates:Loot 1.5, far too much) | `0.1` |
 | `Chests:PoiLimit` | `0`: a POI chest on every spot (see Open-world chests and camps) | `-1`: the data's (one per cluster) |
 | `Bm:BuyFactor` | `5`: the Black Market in Caerleon buys equipment at 5 × its item value (see Economy) | `0`: no NPC buyer |
 | `Bots:Enabled` | `true`: player bots in the towns and the open world (see Player bots) | `false`: no bots |
 | `Bots:Pvp:CrimesAgainstBots` | `false`: hitting a bot is never a crime | `true`: a Red player's hit on a non-Red bot is a crime |
-| `Bots:Gear:Mastery` | `0.5`: a bot's gear carries half the full destiny board's item power (see Player bots, Bot strength) | `1.0` (full spec) |
-| `Bots:Gear:DamageBonus` | `false`: a bot's spells keep only its buffs and passives | `true`: they add its worn spell damage bonus, like a player's |
-| `Bots:Combat:HealthFactor` | `0.7`: bots (and corrupted-dungeon invaders) have 70 % of their health | `1.0` |
+| `Bots:Gear:Mastery`, `Bots:Gear:DamageBonus`, `Bots:Combat:HealthFactor` | since the botpower change the same as official: `1.0`, `true`, `1.0` (bots are as strong as an equal-tier full-spec player; `Bots:Difficulty` scales them; see Player bots, Bot strength) | `1.0`, `true`, `1.0` |
+| `Companions:GearMastery`, `Companions:GearDamageBonus` | `0.5`, `false`: hired companions keep the old soft bot strength | `1.0`, `true` |
 | `Bots:Rewards:DeathGearDropChance` | `0.5`: a bot that dies (red and black zones) drops each worn combat item with this chance | `1.0` (full loot) |
 | `Bots:Rewards:MinItems` | `1`: a beaten bot's bag holds at least one of its worn items | `0` |
+| `Companions:Enabled` | `true`: players hire companion bots into their party (see Companions) | `false` |
 | `Guilds:CreateCost` | `100000` silver (see Guilds) | `1000000` |
 | `Guilds:JoinRole` | `Member`: an accepted invitation makes a member | `Recruit` |
 | `Guilds:RejoinCooldownMinutes` | `0`: no wait between two guilds | `4320` (3 days) |
@@ -962,7 +1036,23 @@ Explicit file options and command-line arguments override preset defaults.
 | `Mists:Matchmaking`, `LifetimeFactor`, `BlockFactor` | `Private`, `2`, `0.5`: a mists zone of your own (your party in a duo mode) that lasts 40 min, its treasures twice as soon (see The Mists) | `Shared`, `1`, `1`: zones shared up to the map's player limit, 20 min |
 | `Mists:StandingFactor` | `2`: twice the Brecilien standing per mists fame (see The Mists) | `1` |
 | `Mists:DuoSoloScaling`, `OpenWorldExit`, `BossChest`, `RarityWeights` | `0.6`, `Entrance`, `true`, 6000/1600/1200/800/400: a duo zone alone has weaker mobs, the open-world exit leads back to the portal, a mist boss leaves its damagers a reward chest, enchanted portals are common | `1`, `Random`, `false`, the data's (95.9 % mundane) |
-| `Rates` | Fame 2, Silver 1.5, Loot 1.5, Respawn 2, Harvest 1.5, Regrowth 2, ChampionWeight 2 (the others 1) | all 1 |
+| `Rates` | Fame 2, Silver 1.5, Loot 1, Respawn 2, Harvest 1.5, Regrowth 2, ChampionWeight 2 (the others 1) | all 1 |
+| `Progression:NewCharacters` | `UnlockAll`: every destiny board node unlocked (see Fame and the destiny board) | `FairStart`: an empty board that fame fills |
+| `Loot:BlackMarketSoftCap`, `Loot:TierCap` | `4`, `true`: big chests give tens of Black Market items, not hundreds; a common loot entry at most the content's tier + 1 | `0`, `false`: the loot lists as rolled |
+| `Events:PlayerInvasions` | `true`: `.invasion`, the invasion tickets, their sell orders in Thetford and their drops (see Invasions on demand) | `false`: none, whatever content/events.json says |
+| `Bounties:Enabled`, `PvpGoals:Enabled` | `true`, `true`: content/goals.json's bounties and PvP challenge points (see Goals) | `false`, `false`: no bounties; the official PvP rules (no points) |
+| `Season:Rules` | `Content`: content/goals.json Season as written (PvE kills x3, dungeons x3.5, boss bonus, premium rewards granted, daily extra) | `Official`: the client data's Adventurer's Challenge |
+| `Dungeons:DailyBonus`, `Dungeons:GroupScaling` | `"content"`, `true`: content/dungeons.json's dungeon of the day (x1.5) and group scaling | `1`, `false`: neither |
+| `Expeditions:Rules` | `Content`: content/expeditions.json's solo group runs, auto-accept, hardcore carry, scaling, Royal Sigil bag every run, no leave penalty | `Official`: the client's rules |
+| `WorldBosses:ExtraSpawns`, `WorldBosses:Loot` | `true`, `"content"`: content/bosses.json's own bosses in 0204 and 1207, its shared loot | `false`, `Killer`: the data's bosses only, the loot to the killer and its party |
+| `Guilds:BossSeasonPoints`, `Guilds:SeasonRewards` | `true`, `Content`: guild season points for boss kills, content/goals.json's bracket silver and items, `.guild payout` | `false`, `Official`: none (`.guild payout` only with `Guilds:SilverTax` or `Guilds:Contracts`) |
+| `Corrupted:MapsOpenDungeons`, `Corrupted:LeaveCommand` | `false`, `true`: the corrupted maps are invasion tickets; `.cd leave` | `true`, `false`: the maps open a corrupted portal, as the client data says; out only by the exit portal or the escape spell |
+| `Roads:Rescue` | `true`: a road with a player inside and no link gets one at once | `false` |
+| `Arena:*` | bots fill in, 10 s countdown, 6 / 15 tickets of 1 per death, 15 min, 5000 / 1500 silver and 30000 / 10000 fame, a duel ladder (see Arena) | no bots (a match only with both teams of players), 15 s, 150 tickets of 2 per death, 25 min, no silver or fame, no duel rating |
+| `Islands:BuyWithoutPremium` | `true` | `true` for now: everyone may buy and upgrade islands until premium can be had (the strict official rule is `false`) |
+| `Tutorial:Opening` | `true` (without the key) | `true` (without the key) |
+
+`.who` and `.save` are GameMaster commands in both presets (the official game has neither; `.who` shows every player's position).
 
 Under `Consensual` nobody can attack a Blue or faction-flagged player, so there are no crimes, reputation losses or outlaws.
 The client still judges hostility by its own table: in a black zone it shows other players as enemies and lets you press
@@ -993,7 +1083,7 @@ Flags (SPEC §3, `../analysis/work/stageJ/flag-toggle/NOTES.md`): the PvP toggle
 cluster (the client checks no zone, and Red players are seen in royal cities; under `official` not in a blue cluster, which
 would take it away again), FLAG_BLUE takes 15 s back (not within the
 15 minutes of CANNOTDISABLEPVP after flagging Red), a faction flag is instant for a player enlisted to that faction
-(`.pvp faction` enlists; no faction NPCs here), also mounted. There is no combat check; damage taken or a knockdown cancels
+(enlist at a faction trader, see Faction warfare below, or a GM's `.pvp faction`), also mounted. There is no combat check; damage taken or a knockdown cancels
 the cast. A refused change ends the client's own cast (CastCancel) and says why in the chat. The flag is saved; a Red player
 keeps it in a city but is Blue again on joining a blue (green) cluster, and a faction-flagged one cannot enter a cluster that
 forbids it. The log shows each change at Info (`pvp`: refused with the reason, the cast start, the flag set) and the
@@ -1027,6 +1117,92 @@ stands up 6 s later with full health and the duel get-up buff), stays more than 
 during the 10 s preparation: at once), leaves or logs out, or the time runs out (a draw: each gets its wager back). Nothing
 else is lost in a duel. `.duel end` stops one as a draw, and so does stopping the server; a crash during a duel loses
 both wagers (they are held only in memory).
+
+### Arena, ladders and tournaments
+
+`../analysis/work/stageN/arena/SPEC.md`. The arena agency in a city takes registrations: its Register button queues for the
+**1v1** (the client's 1v1 arena, map ARENA-1v1-01), the **5v5** (unranked, map ARENA-STANDARD) or the **Crystal Arena** (ranked,
+below; the 5v5 with `Arena:CrystalArena` false); tick "as a group" to queue with your party. `.arena join 1v1|2v2|5v5 [group]` does the same from chat, and is the only way to the **2v2** (the
+client offers none). The queue HUD shows the wait; when a match is found the client's ready popup asks you to join within 60 s
+(or `.arena accept`); `.arena leave` leaves the queue or forfeits a match, `.arena status` lists queues and matches. Teams are
+filled by count, then by rating. With too few players a match starts after `Arena:BotWaitSeconds` (20) with player-bots: by
+default each team gets bots up to the other team's player count (one player against one bot; `Arena:BotFill Full` fills every
+slot). In the arena both teams start at their camps; nobody can be hurt during the 10 s countdown. A player at zero health is
+only knocked down — no item loss, no durability loss, no execute — and costs the team a ticket: the 1v1 is best of three rounds
+(both reset at their camps after each), the team modes respawn the fallen at their camp after 10 s until a team has no tickets
+left (2v2: 6, 5v5: 15) or the time runs out (1v1 10 min, else 15). Score and result come as chat lines (the client's match HUD
+is not driven). The result pays 5000 silver and 30000 fame for a win, 1500 and 10000 for a loss (× the rates), plus the
+official unranked items (a win lootbag, the first 3 wins a day a royal sigil bag; tomes for a loss). 15 s later everyone goes
+back where they registered.
+
+Ratings: an Elo ladder (start 1200, K 20) per mode (`1v1`, `2v2`, `5v5`, `crystal`) and for duels, saved (schema v32). Arena matches
+with bots are not rated (`Arena:RateWithBots`); a duel counts when won by knockdown, the area rule or the opponent leaving.
+`.ladder [duel|1v1|2v2|5v5|crystal] [count]` lists the best, `.rating [name]` shows a player's ratings and places.
+
+Tournament: a GM opens a sign-up with `.tournament open`, players `.tournament join` (`.tournament` shows the state), the GM
+`.tournament start`s it: single elimination seeded by duel rating (an odd count gives the best a bye). Each pair fights a normal
+duel; the first duel won between them decides it (a GM can `.tournament win <name>`); the rounds follow until one is left.
+`.tournament cancel` ends it; nothing of it is saved. GMs also have `.arena end blue|red|draw`.
+
+Config (`Arena:*`): `Enabled`, `Bots`, `BotWaitSeconds`, `BotFill` (Balanced/Full), `BotTier` (0 = from the players' item
+power), `BotDamageFactor`, `BotHealthFactor`, `ReadyCheck`, `AcceptSeconds`, `ArrivalSeconds`, `CountdownSeconds`,
+`RespawnSeconds`, `Tickets2v2`, `Tickets5v5`, `TicketsPerDeath`, `MatchMinutes`, `EndSeconds`, `Rated`, `RateWithBots`, `StartRating`, `K`,
+`DuelsRated`, `WinSilver`, `LossSilver`, `WinFame`, `LossFame`, `RewardItems`, `DailyWins`, `RewardsWithBots`, `FallbackCluster`,
+`ItemPowerCap`, `DoubleHealerPenalty`, `EnterBuffs`, `WarcampDefense`, `Psp`, `Orbs`, `OrbRoundLookup`, `MatchHud`, `CrystalArena`,
+`RankPoints`, `RankPointMinGain`, `RankPointBoosters`.
+The figures above are the pve preset's. Under `Preset official` the arena follows matchtypes MATCH_ARENA: a 15 s countdown, 150
+tickets with 2 lost per death and 10 per runestone the other team claims (below), 25 minutes, no silver
+or fame (season points instead, below; the unranked items stay), no duel ladder, and no bots (`Arena:Bots` false). A
+match never starts with empty slots when bots are off or unavailable (`Bots:Enabled` false): a lone registration waits for players,
+and a match whose other team could not join goes back to the queue.
+
+**Official arena rules** (`../analysis/work/stageP/league-pvp/SPEC.md` §2.5, §3.3; on under `Preset official`, all off under pve,
+which keeps the arena described above). `Arena:ItemPowerCap`: in a match every worn item counts at most 600 item power in the
+unranked modes (2v2, 5v5), and in the 1v1 900 plus a fifth of the power above (1000 → 920); the bars, armour, damage and spell
+power follow, and lift again on leaving. `Arena:DoubleHealerPenalty`: a team with two or more healers (a holy or nature staff in the
+main hand) all carry DOUBLEHEALER_PENALTY (healing received −35 %, renewed while it lasts). `Arena:EnterBuffs`: on arrival the
+map's ARENA_* buffs are cast: ARENA_ENTER (full health and energy, cooldowns reset), ARENA_OVERLOAD_PROTECTION, and in the 1v1
+ARENA_1V1_ENTER (healing −60 %). `Arena:WarcampDefense`: each camp shoots the other team within 18 m for 10 % of its maximum
+health every 0.4 s during the fight (a knockdown there costs a ticket), and its own team standing within 8.7 m of it is
+invulnerable (ARENA_WARCAMP_INVULNERABILITY: attacking breaks it until you step out and back in). The turret has no visual of
+its own (NewWarCampObject is not decoded): the hits show as plain health loss. `Arena:Psp`: the result pays the client's
+personal season points while an Adventurer's Challenge season runs: unranked win 1200, loss or draw 400 (premium 1500 / 600),
+1v1 400 / 175 (premium 500 / 250), the Crystal Arena 1200 / 500 (1500 / 750): the first rank's figures, with `Arena:RankPoints`
+those of the player's rank (below).
+
+**Runestones** (`Arena:Orbs`, official on, pve off; §3.2). The 2v2/5v5 map has three runestones (ORB_ARENA). They wake 60 s
+into the fight; a team that stands alone with at least one player within 9 m of one for 10 s claims it, and the other team loses
+10 tickets (chat line). Taking the other team's runestone needs 4 s more first (it turns neutral, then 10 s to claim); with both
+teams in the circle the capture pauses; a capture left alone for 20 s is lost. The 1v1 map has none. The client is sent the
+runestones (NewOrbObject) and their claims and resets (OrbClaimed, OrbReset); the crystal maps' channel runestones (a 7.5 s
+channel, broken by a hit or by moving, −1 ticket per claim, and every 120 s the side holding more takes 20/30/40) are in place
+for the Crystal Arena (below). `Arena:OrbRoundLookup` (false) adds MATCH_ARENA's 60 s orb-difference
+score, which the tutorial does not mention. `Arena:MatchHud` (false in both presets until captures confirm the fields) sends the
+match HUD's OrbUpdate, MatchUpdate, StartArenaMatchInfos and MatchNewCombatRound / MatchEndCombatRound; off, nothing partly
+decoded goes out and the score stays in chat.
+
+**Crystal Arena** (`Arena:CrystalArena`, official on, pve off; §3.4). The agency's ranked category (Crystal Arena) is its own 5v5
+queue (`.arena join crystal`, ladder `crystal`) on the Crystal Realm (CrystalRealm03) with the client's MATCH_CRYSTAL_GVG_NONLETHAL:
+150 tickets, 6 lost per death, respawn after 18 s, 24 minutes. Its three runestones are claimed by a 7.5 s channel within 8 m
+(broken by a hit or by moving; −1 ticket for the other team); every 120 s the side holding more runestones takes 20, 30 or 40
+tickets (a difference of 1, 2, 3) and its runestones turn neutral. Item power is soft-capped at 900 (× 0.2 above), the camps
+shield their team (WARCAMP_INVULNERABILITY) and shoot the other one (non-lethal), and the result pays arena.bin's ranked rewards
+(win bag and season points of the player's rank, tomes for a loss, the daily royal sigil shared with the other queues). Bots fill
+empty slots only under the usual arena bot rules (`Arena:Bots`). Not yet: the realm's exits and winner/loser chests. Off, the
+ranked category queues for the 5v5 as before.
+
+**Arena ranks** (`Arena:RankPoints`, official on, pve off; §3.3). The two ranked queues, the Crystal Arena and the 1v1, each keep
+rank points (RP) and one of the season's 17 ranks (arena.bin RANKED_BRACKETS_ARENA_S26: Iron 1-4, Bronze 1-4, Silver 1-4, Gold 1-4,
+Crystal). A rank is reached at 150, 300, … 2400 RP and lost below 0, 100, … 2350 RP. Each new rank gives its rank-up chest once
+a season (the Crystal Arena's T4_LOOTBAG_ARENA_RANK_UP_*, the 1v1's T4_LOOTBAG_1V1_ARENA_RANK_UP_*; a player offline at the
+result gets it with the next one), and the win and loss rewards and season points follow the player's rank (the 1v1 then pays
+its own 1v1 bags instead of the unranked ones). The arena window shows the rank and RP (GetArenaRankings). Only rated results
+count (`Arena:Rated`, not with bots unless `Arena:RateWithBots`). The client data has no rank point formula, so this is a
+placeholder [H] until a capture shows real RP changes: a win gives winrankpointmodifier (4 at Iron 1 … 1 at Gold 4) × the Elo
+gain, plus elowinbooster (10, Crystal 5) while the Elo is above the rank's expectedelo; a loss takes loserankpointmodifier (1) ×
+the Elo lost, plus elolosebooster (1) while the Elo is below expectedelo; the 1v1 counts half (rankpointfactor 0.5); a draw
+nothing; RP never go below 0. `Arena:RankPointMinGain` (1) is the least Elo change counted, `Arena:RankPointBoosters` (true)
+the boosters. Ranks are saved (schema v42); the season's rank-down at a new season is not applied yet.
 
 ### Spells on other players
 
@@ -1117,7 +1293,53 @@ before). Phase 3 has no keys of its own.
   `AttackMounted`); a gatherer's only the players it answers (those that hit it or its party in the last 20 s), never another Red
   player nearby. Gatherers carry tools without spells, so in practice the patrols cast. `Off`: bots only auto-attack, as before.
 
-Not yet (SPEC phase 5): focus fire, healing sickness, resurrection.
+Not yet (SPEC phase 5): resurrection. Focus fire (resilience) and healing sickness: see "Death recap and PvP details" below.
+
+### Death recap and PvP details
+
+`../analysis/work/stageP/league-pvp/SPEC.md` §2 (phases P1-P3). All on in both presets (the official rules; the pve preset keeps
+them as they are).
+
+**Death recap** (`DeathRecap:*`, §2.1). The server records what happens to a player: every hit by a mob or a player (bots count as
+players), its heals, and every spell another unit puts on it that is crowd control or a debuff (and any spell of a mob), plus its
+own spells on itself. At a knockdown or death the last `DeathRecap:Seconds` (gamedata `<DeathRecap timeframe="180"/>`) are frozen as
+its recap; the knockdown screen's request (op 492) and the character menu's later one get it, in the layout of the two official
+responses: entry 0 the victim, then one entry per causer (most damage first) with its buckets: damage or heals of one spell (or
+auto-attack, -1) merged with their count and the first hit's time, each crowd control or debuff its own bucket with its end time,
+the kind 0 spell, 1 melee and 2 ranged auto-attack. Mob rows are as captured (mobs.xml avatar and ring, flag 0x80); player rows
+carry the name, HUMAN_MALE/FEMALE, AVATAR_nn, RING1, the flag, the main hand's item and quality, the guild and the average item
+power. The recap is kept per character for the server's run (a relog still shows it, a restart forgets it). Not recorded: the
+mount bar's hits and damage the server deals in the player's own name (the hellgate ring). `DeathRecap:Enabled` false: the empty
+recap of before.
+
+**Healing sickness** (`Pvp:HealingSickness`, §2.2). A player or bot healed by two or more distinct other players or bots within 10 s
+(gamedata `<PlayerHealingSickness lookbackseconds="10">`) gets `HEALINGSICKNESS_n` for n healers (8 s; 2 and 3: -35.3 % healing
+received, up to -78.2 % at 20), before the heal that made it n is worked out; a higher one is not replaced by a lower one. Heal spells,
+heal-over-time ticks and heal areas of others count; one's own heals, potions, food and regeneration do not [infer: the tooltip only
+says "healed by too many sources"]. It cuts every heal received, × (1 − value) on top of the other healing modifiers. The client
+shows it as a normal debuff (ActiveSpellEffectsUpdate). Mobs never.
+
+**Resilience** (`Pvp:Resilience`, §2.3, focus fire protection). Every damage hit of a player or bot on another notes the attacker;
+with two or more distinct attackers within 10 s (gamedata `<PlayerFocusFire lookbackseconds="10" effectdurationinsec="5">`) the
+target's resilience is raised to that count for 5 s, renewed by each such hit. While it lasts every player hit on it does
+× (1 − m × (1 − penetration)): m the row's meleemodifier or rangedmodifier by the attacker's weapon (2 attackers 14.3 %, 3 25.9 %, …
+26 and more 75 %), the mountedmodifier (up to 80 %) on a mounted target, penetration the attacker's
+`focusfireprotectionpenetration` (the Resilience Penetration trait, its items) [infer: how penetration combines]. Mob hits neither
+count nor are reduced. The client has no spell for it and no reference to its status text was found, so it shows no icon here
+[infer; capture R1 will show how the official server displays it].
+
+**Zone-entry protection** (`Pvp:SpawnBuffs`, `Pvp:EnterSpellCooldowns`, §2.4). On the Join that ends a cluster change (and a
+respawn's arrival) the cluster type's worldsettings `<spawnbuff>` list is applied as officially: its `SPAWN_*` buffs in document
+order whose conditions hold (isclusterchange, isrevive, ispvppossible = the zone allows any PvP, fromshortspawnbuffcluster = the
+cluster one came from has `hasshortspawnbuffonleave`, i.e. a dungeon, expedition or tunnel; hideouts, GvG and territories do not
+exist here). In blue, yellow, red and black zones that is SPAWN_INVULNERABILITY (30 s invincible, invisible to mobs, immune to
+damage, debuffs and crowd control; ends on attacking, casting, interacting or after 150 m; SPAWN_INVULNERABILITY_SHORT, 50 m,
+coming out of a dungeon), SPAWN_SPEED (+20 % for 15 s) and SPAWN_BUFFIMMUNITY (no second shield within 60 s and 150 m); dungeon
+and expedition entrances give SPAWN_INVULNERABILITY_EXPEDITION; a respawn's SPAWN_BUFFIMMUNITY_ONDEATH blocks the shield for 10 s. A
+spot-bound effect of the last cluster ends first, so each zone change gives a new shield [infer: capture R6]. Hellgates keep giving
+their own lists (`Hellgates:SpawnBuffs`); the lists' other names (ARENA_*, MISTS_*, CORRUPTED_DUNGEON_ENTER, hideout and shrine
+buffs) are their systems'. `spellcooldownsonenteringseconds` (15 s in the yellow, red and black zones, their dungeons and tunnels)
+puts every gear spell slot (not potion and food) on that cooldown on arrival [infer: which slots; capture R6]. Not on a login.
 
 ## Fame and the destiny board
 
@@ -1134,7 +1356,7 @@ premium the nodes get 1.5 × the fame of kills and harvests (the total stays × 
 for auto-learn spend learning points (see Premium, focus and learning points). Fishing gives fame too (see Fishing; tomes feed
 the board only).
 
-`Progression:NewCharacters` in `config/world.jsonc` decides the board of a **new** character: `UnlockAll` (the
+`Progression:NewCharacters` in `config/*.jsonc` decides the board of a **new** character: `UnlockAll` (the
 default, as before) = no board of its own, everything unlocked, fame only raises the total; `FairStart` = an empty board
 (START in progress) and the kit of `content/starter-fair.json` (T1 sword, shield and leather set, T1 tools): 45 fame
 finish START (T2 bag and cape), 250 kill fame then COMBAT_TRAINEE (T2 weapons and armour), and so on. Existing
@@ -1169,7 +1391,22 @@ server build refuses the converted file).
   highest quality is rerolled for item value × 4.4 / 5.5 / 6.6 / 27.5 silver (quality 1-4), by gamedata RerollQualityChances
   (never lower; normal always improves). **Crafted quality** now rises with the destiny board's quality bonuses for the item
   (itemcraftquality) and with focus (+50): every chance above normal × (1 + bonus / 100), an assumption (the official formula
-  is server-side; analysis/work/stageN/enchant/SPEC.md). Awakening and traits are not made.
+  is server-side; analysis/work/stageN/enchant/SPEC.md).
+- **Awakened weapons** at the meld building (its awakening tabs; analysis/work/stageN/awakening/SPEC.md): a weapon of the
+  legendaryitems.bin groups (the swords, axes, staffs, bows, ... of every line) at tier 4+ and enchantment .4 is awakened for
+  6 000 000 silver and 100 UNIQUE_GVGTOKEN_GENERIC + 100 QUESTITEM_TOKEN_AVALON, each × the tier scaling (T4 0.021: 124 534
+  silver and 2 + 2 tokens; T8 the full amounts), 1.5 s later. It gets a soul attuned to you with 3 random traits of the trait
+  pool (rolled 1-3 %) and shows as awakened (gold frame, traits in its tooltip); soul and traits are saved with the item
+  (database v34, also in the bank, mail, market and trades). Kills give the weapon in hand attunement (fame × 0.037, up to
+  100 000 × the tier scaling). Spending it: **reroll a trait's value** (6667 attunement × tier scaling, and × 33 as silver;
+  a fresh roll that replaces the value when higher, else +2-6 %, 33.75 % of the time a critical +10-30 %; never lower, up to
+  100 %), **replace a trait** (10 000 × tier scaling attunement and × 33 silver for 3 options, then pick one or keep the old),
+  **reattune** a weapon attuned to someone else (1 000 000 × tier scaling silver) and **disenchant** (the soul goes, free).
+  Missing attunement can be paid with focus (× 0.0975). The traits work only for the attuned wielder: max health, max energy,
+  defense, ability and auto-attack damage, healing dealt and received, attack speed, cast speed, cooldown reduction, CC
+  resistance and duration, mob fame, lifesteal and item power on the weapon apply; energy cost reduction, threat, attack
+  range and resilience penetration are not used by the server yet. Strain stays 1 and the soul's legendary rating, event
+  history and the Black Market's awakened items are not made.
 - **Shops:** buying at an NPC shop is a craft at it (the client's "buy"): FARMING_MERCHANT sells seeds, baby animals and
   the like for silver (furniture cannot be created yet). Shops that take tokens or other currencies refuse for now, unless
   the price is items in the inventory. Thetford has no farming merchant; `content/spawns/0000.json` can add one.
@@ -1179,13 +1416,11 @@ server build refuses the converted file).
   (`1000.json`), Bridgewatch (`2000.json`), Martlock (`3004.json`), Fort Sterling (`4000.json`), Caerleon (`3003.json`)
   and Brecilien (`5000.json`), on real-estate plots near the bank; each city refines and crafts with its own bonus
   (Martlock hide, Lymhurst fiber, Bridgewatch rock, Fort Sterling wood +40 %, plus its weapon and armour lines). The recipe's silver and
-  resources are taken at the start, duration follows the client's recipe time and CraftTime factor, and moving or casting cancels the rest (its silver and resources
+  resources are taken at the start, one craft takes 0.4 s, moving or casting cancels the rest (its silver and resources
   come back). Part of the resources come back by the city's bonus (Thetford ore 36.7 %; `Crafting:Returns` false turns it
-  off). Crafted equipment gets a random quality (normal 68.9 % … masterpiece 0.1 %). Each batch gives crafting fame once
-  (item value × count × 1.5^(tier + enchantment − 2): a T3 plank 12, a T4 sword 864) to the total and the destiny board
-  on completion; cancellation or logout settles only the units already produced, and shop purchases give none.
-  Output whose deadline has elapsed is settled before cancellation, including movement after the batch end but before the next world tick.
-  With the craft window's "use focus" on, a craft spends crafting focus for more resources back
+  off). Crafted equipment gets a random quality (normal 68.9 % … masterpiece 0.1 %). Each craft gives crafting fame
+  (item value × count × 1.5^(tier + enchantment − 2): a T3 plank 12, a T4 sword 864) to the total and the destiny board;
+  shop purchases give none. With the craft window's "use focus" on, a craft spends crafting focus for more resources back
   (see Premium, focus and learning points).
 - **Stables:** every city above (Thetford and Brecilien too) also has a public stable (`T8_STABLE`) on a free plot near
   the bank. It makes the mounts of its list: a T3-T8 riding horse or ox from one grown animal of the same tier (raised on
@@ -1205,6 +1440,9 @@ server build refuses the converted file).
   filter by category, tier, enchantment, quality and the search text, sort by price, time or item, and page by 50.
   The inventory's quick sell lists, per selected item, the best buy order it can fill (highest price, quality reached).
   A filled, expired or cancelled order mails its owner the client's market notice (see Mail).
+  **Price history:** every sale is recorded per city (item, quality, amount, price, time; kept 29 days, table `market_sales`)
+  and the item window's chart (24 hours / 7 days / 4 weeks) shows that city's sales by hour, quarter day or day, with the
+  average price (`../analysis/work/stageN/econ/SPEC.md` §1).
 - **Black Market** (Caerleon, the BLACKMARKET building at (-65, -92); `../analysis/work/stageH/blackmarket/SPEC.md`): the
   client opens its marketplace window in Black Market mode, where a player can only sell. The server gives it standing NPC
   buy orders (PVE-DESIGN step 12): every tradable T4-T8 weapon and armour piece at its item value × `Bm:BuyFactor` (whole
@@ -1276,7 +1514,7 @@ build refuses the converted file).
   (zone bonus, `Rates` included). One journal per kind takes each gain: a partly filled one first, else a single empty one, else one is taken off a
   stack of empty ones (that needs a free slot: "no inventory slot" otherwise); fame over the top is lost. Only the
   inventory counts, not the bank or the equipment. `"Fill": false` in `content/journals.json` turns it off.
-- **Journal merchant:** there are no labourers or islands, so the marketplace of each city in `MerchantMarkets` (default
+- **Journal merchant:** besides the labourers on the islands (see Personal islands), the marketplace of each city in `MerchantMarkets` (default
   Thetford, `0000`) has standing NPC orders: a sell order of every empty journal (T2-T8) at its labourer price × `SellFactor`
   (1: T2 500, T3 1000, T4 2000 ... T8 32000 silver) and a buy order of every full journal at that price × `BuyBackFactor`
   (1.5; 0 = none). They never run out, the bought journals wait in the market's "Finished" tab as any purchase, selling into a
@@ -1292,7 +1530,9 @@ orders in the market window.
 
 Daily and long-term PvE goals (`../analysis/work/stageH/journals/SPEC.md` §B, §C, §E, PVE-DESIGN step 11), in
 `content/goals.json`. Running a server of this version converts `albionlocal.db` to schema v15 (one column with the
-character's goals; an older server build refuses the converted file).
+character's goals; an older server build refuses the converted file). Under `Preset official` the file's server additions are
+off: `Bounties:Enabled` false (no bounties), `PvpGoals:Enabled` false (the built-in official PvP rules, no points), `Season:Rules
+Official` (the client data's Adventurer's Challenge; only `Season.Enabled` is read). The pve preset lets the file decide.
 
 - **Adventurer's Challenge** (the client's season window and the points popup): every fame gain gives season points =
   factor × √fame (whole fame as the popup shows it). The shipped file uses PvE factors: kills `Pve` 3 (official 1.5),
@@ -1375,7 +1615,7 @@ login, still warn).
 ## Rates
 
 The section `Rates` of `config/world.jsonc` multiplies the rewards and timers; under `"Preset": "official"` every rate
-is 1 (the official numbers) unless set, the PvE preset starts from Fame 2, Silver 1.5, Loot 1.5, Respawn 2, Harvest 1.5 and
+is 1 (the official numbers) unless set, the PvE preset starts from Fame 2, Silver 1.5, Loot 1, Respawn 2, Harvest 1.5 and
 Regrowth 2 (see PvE preset); fractions are allowed (`"Rates": { "Harvest": 2, "CombatFame": 3 }`, or `--Rates:Harvest=2` on the
 command line). Each applies where its quantity is worked out, so what the client shows (fame popups, harvest amounts,
 silver piles and the purse) already carries it.
@@ -1388,7 +1628,7 @@ silver piles and the purse) already carries it.
 | `CraftingFame` | the fame of a craft (the destiny board's share with it) |
 | `Harvest` | the resources a harvest yields, resource nodes and corpses (the base amount; 1.5 × 3 gives 4 or 5, the fraction at random as the gathering bonus); the tool wear and the fame keep the unscaled amount |
 | `Silver` | a killed mob's silver pile and silver-giving items (awardsilver) |
-| `Loot` | a mob's item drop chances: its total loot factor and the Black Market chance (`Loot:BlackMarketChance`, at most 1); mob drops and loot chests (dungeon and open-world), not the loot of opened items (bags) |
+| `Loot` | the item drop chances of mob drops and loot chests (all kinds): their total loot factor, once (not `Loot:BlackMarketChance`); not the loot of opened items (bags) |
 | `Respawn` | the mob respawn **speed**: 2 = back in half the time, 100 = within seconds (0.01-1000) |
 | `Regrowth` | the resource regrowth **speed**: 2 = a node's charge back in half the time (0.01-1000) |
 | `CraftingReturn` | the share of the resources a craft gives back (`Crafting:Returns`; at most all of them) |
@@ -1401,13 +1641,15 @@ stack (the item's stack limit) or rounds to nothing.
 
 `World:MobRespawnScale` of earlier versions is gone: it was a factor on the respawn time, `Rates:Respawn` is its inverse
 (MobRespawnScale 0.01 = Respawn 100). An old config with it still starts and reads it that way; giving both is refused.
-While the server runs, `.rates` shows them and an Admin's `.rates <name> <value>` changes one from the next kill, harvest
-or respawn on (already scheduled timers keep their time). Changes affect the whole running world. Logging out does
-not reset them; restarting does. `.rates reset` restores effective startup rates. The `save` argument is rejected
-without changes. Old `rates.json` files are preserved but ignored with a warning. Permanent changes belong in
-`config/world.jsonc`; there is no reload command yet.
+While the server runs, `.rates` shows the active values. An Admin can change the whole running world
+with `.rates <name> <value>`; `.rates reset` restores effective startup values. These changes do not
+write files and are discarded on restart. The `save` argument is rejected. Old `rates.json` files
+are preserved but ignored with a warning. Edit `Rates` in world.jsonc for permanent changes.
+Already scheduled timers and awarded rewards are not recalculated. See [configuration](CONFIGURATION.md).
 
 ## Accounts
+
+New databases start without characters. With AutoRegister disabled, create an account through client registration or the server console. Legacy claiming requires existing characters.
 
 Logging in needs a login name and a password (the two fields of the login screen; analysis/work/accounts). The server
 keeps only a PBKDF2-SHA256 hash of each password (100 000 iterations, random salt) in `albionlocal.db`; names count
@@ -1434,9 +1676,6 @@ ignoring case and spaces at either end. Steam and console logins are refused.
   password itself). So log in with your usual name once and pick the password then.
 - **Unknown names** are refused like a wrong password ("incorrect credentials"), unless `Accounts:AutoRegister` is true:
   then a login with a new name and a password makes the account (handy on a LAN of friends).
-  An unnamed local account can only be claimed if it holds existing characters. An empty database does not grant the
-  first login access to the local account, even with an explicit `Accounts:LegacyName`. Normal registration creates a
-  separate account at `Accounts:DefaultLevel`, rather than inheriting the local account's privileges.
 - **Wrong passwords:** `Accounts:MaxFailedLogins` (5) in a row lock the account for `Accounts:LockMinutes` (15); the
   client shows how long. `.account unban <name>` or `.account password <name> <new>` ends a lock early.
 - **Bans:** `.account ban <name> <minutes> [reason]` (0 minutes = for good) closes the account's connections; its next
@@ -1453,6 +1692,47 @@ ignoring case and spaces at either end. Steam and console logins are refused.
 
 Running a server of this version converts `albionlocal.db` to schema v5; an older server build refuses the converted file.
 
+## Web panel
+
+A small built-in web panel (`../analysis/work/stageN/webpanel/SPEC.md`): plain HTML pages with no scripts, dark and
+light, usable on a phone. On by default under `Preset: pve`, off under `Preset: official`; it listens on
+**http://127.0.0.1:8080/** (this PC only) and the log says so at the start (`[web] web panel on http://127.0.0.1:8080/`).
+
+- **Public pages:** `/` the status (players online, uptime, server and client build, rules, whether registration is open);
+  `/register` makes an account with a login name and a password, by the same rules and at the same level
+  (`Accounts:DefaultLevel`) as `.account create` (name: 3 to 254 printable characters without spaces, an email works;
+  password: 8 to 72 printable ASCII characters, no space at either end, not the name). At most 5 registrations per 10
+  minutes per address; closed when `Web:Registration` or `Accounts:Registration` is false.
+- **Admin pages** (`/login`, then the links at the top): online players with **Kick**; accounts with **Ban** (minutes,
+  0 = for good, and a reason), **Unban / unlock**, **Set level**, **Set password** and **Delete** (on a page of its own,
+  typing the name to confirm); the characters of an account (name, silver, fame, cluster, read-only); the **Log** (the
+  tail of `Log:File` with a level filter and a 5 s auto-refresh); **Backups** with **Back up now**.
+- **The first admin account:** only accounts of level `Admin` may log in to the panel. On the server console type
+  `.account create <name> <password>` and then `.account level <name> Admin` (or raise an account that exists:
+  `.account level <name> Admin`). Then open http://127.0.0.1:8080/login. Your own account cannot be banned, deleted or
+  lowered from the panel (the console can).
+- **Safety:** a login gives an HttpOnly, SameSite=Strict cookie that ends after `Web:SessionMinutes` (30) without a
+  request, or at once when the account loses Admin or is banned; every form that changes something carries the session's
+  CSRF token; at most 10 admin logins per 5 minutes per address. Every change runs through the console's own account
+  commands on the world thread and writes an audit line (`[web] audit: admin 'Name' from 127.0.0.1: ban account …`);
+  passwords and hashes are never logged or shown. It is plain HTTP: keep `Web:BindAddress` at 127.0.0.1, or on a LAN
+  use passwords you use nowhere else.
+- **Backups:** `Back up now` saves the unsaved characters, then copies `albionlocal.db` with SQLite's `VACUUM INTO` (a
+  consistent snapshot while the server runs) to `data/backups/albionlocal-yyyyMMdd-HHmmss.db`. `Backup:EveryHours` (0 =
+  off) makes one every N hours while the server runs, with or without the panel; only the newest `Backup:Keep` (10) stay.
+  To restore, stop the server and copy a backup over `data/albionlocal.db`.
+
+```jsonc
+"Web": {
+  "Enabled": true,           // the panel (Preset pve: true, official: false)
+  "BindAddress": "127.0.0.1", // "0.0.0.0" = every interface (other PCs; plain HTTP)
+  "Port": 8080,
+  "Registration": true,      // the public registration page (Accounts:Registration false closes it too)
+  "SessionMinutes": 30       // an admin session ends after this long without a request
+},
+"Backup": { "EveryHours": 0, "Keep": 10 } // automatic backups into data/backups (0 = only the panel's button)
+```
+
 ## Several players
 
 Several clients can play on one server at the same time (stage 7, `../analysis/work/stage7/SPEC.md`). Each account
@@ -1465,7 +1745,7 @@ Players on the same cluster see each other within the same window as buildings (
 from 6): the character with its look, gear and bars, its walking (every Move is passed on to the others, never back to
 the mover), equipment and spell changes, and its Say lines (shown over the speaker and in the chat of everyone who sees
 it; the speaker gets its own line back the same way; GM command lines stay private). Leaving view, the cluster, the game
-or the connection removes the character from the others' screens. `.who` lists everyone in game with cluster and
+or the connection removes the character from the others' screens. `.who` (GameMaster) lists everyone in game with cluster and
 position. Parties and guilds have sections of their own (Guilds below); the chat channels (Local, world, languages, help,
 guild), whispers, the friends list and muting are in Chat below.
 
@@ -1479,7 +1759,7 @@ create and delete at the character selection act only on the logged-in account's
 A **second PC** on the LAN:
 
 1. On the host, let the server listen on the network and tell the clients the host's address, in
-   `config/common.jsonc` (or on the command line):
+   `config/*.jsonc` (or on the command line):
    `"Network": { "BindAddress": "0.0.0.0", "PublicAddress": "192.168.1.10" }` with the host's LAN address
    (`PublicAddress` is required with `0.0.0.0`). Use `0.0.0.0` when the host plays too: a client on the host that
    connects to `127.0.0.1:5055` is not answered by a listener bound to the LAN address alone. The game server address handed out
@@ -1510,6 +1790,34 @@ StageN qol (`../analysis/work/stageN/qol/SPEC.md`).
   `StuckCommand`), counted over relogs until the server restarts.
 - **Minimap pings** (Default, Attack, Defend): shown to the pinger and to its party members on the same map, with the
   pinger's name; at most two a second.
+
+### Cosmetics (vanity): from content only
+
+StageN vanity (`../analysis/work/stageN/vanity/SPEC.md`). Nothing is sold: the **vanity store** in the cities shows the
+client's catalogue (wardrobe skins, mount skins, ...), what you own marked as owned; its buy button only answers with a chat
+line that cosmetics come from content. Wardrobe and mount skins drop **very rarely** instead (`Vanity:*`, same under both
+presets, `Vanity:ChanceFactor` scales them all, 0 turns a source off):
+
+| Source | Key | Default |
+|---|---|---|
+| world boss (each looter) | `Vanity:WorldBossChance` | 2 % |
+| other boss / miniboss / champion (the killer) | `Vanity:BossChance` / `MinibossChance` / `EliteChance` | 0.3 % / 0.1 % / 0.03 % |
+| boss chest of a dungeon, static, corrupted, hellgate or avalonian dungeon (first opener), × (1 + rarity) | `Vanity:BossChestChance` | 0.4 % |
+| other chests | `Vanity:ChestChance` | 0 |
+| a hunt's final kill (each member) | `Vanity:HuntChance` | 2 % |
+| arena win (each winner) / duel tournament winner | `Vanity:ArenaWinChance` / `TournamentChance` | 0.5 % / 25 % |
+| each Adventurer's Challenge reward / weekly guild goal (each member online) | `Vanity:SeasonRewardChance` / `GuildGoalChance` | 1 % / 1 % |
+| total fame passing 1M, 5M, 10M, 25M, 50M, 100M | `Vanity:FameMilestones` / `FameMilestoneChance` | 25 % |
+
+A drop is a skin your account does not have yet, themed by its source with `Vanity:ThemeChance` (75 %): undead bosses give
+undead/skeleton skins, keepers keeper skins, and Morgana, heretic, demon (hellgates), mists and corrupted sources theirs; the
+rest come from the whole pool (about 500 skins). Owning them all pays `Vanity:DuplicateSilver` (25000) silver instead. The
+unlock shows the client's popup and a chat line; unlocks belong to the account (all its characters).
+Apply them with the client's own windows: the **vanity tab of the character window** (wardrobe: weapon, off-hand, head, armor,
+shoes, bag, cape skins over your gear, seen by everyone) and the **mount skins** (per mount kind, shown on the mount).
+Saved with the character (`albionlocal.db` schema v35). Avatars, avatar rings and emotes do not drop (every emote is free).
+GM: `.vanity list [text]` (yours, or the catalogue entries with the text and their ids), `.vanity grant <id|name>`,
+`.vanity revoke <id|name>`, `.vanity drop [theme]` (a drop now, e.g. `.vanity drop UNDEAD`).
 
 ## Player bots
 
@@ -1587,13 +1895,16 @@ bot's own (moved, never copied) and nothing of a bot is ever saved, so no duplic
 - **Turnover:** a bot stays 10-30 minutes, then walks into an exit (gone at the exit, as a player leaving) or logs out where
   it stands (10 s); the next one of its place arrives through an exit 20-90 s later, another "player" with another name.
 - 30 s after the last player left a cluster its bots are gone; nothing of them is ever saved.
-- `config/world.jsonc` `"Bots"` has the switches and timings (Enabled, caps, the population pass, stay and arrival times,
+- `config/*.jsonc` `"Bots"` has the switches and timings (Enabled, caps, the population pass, stay and arrival times,
   think interval, look, the walk grid's lattice, emote chance, `PvpRules`, `PvpRulesByZone`; for gatherers `Gatherer` { Flag, RedShare, Radius,
   Nodes, AvoidPlayerRadius, AvoidMobRadius, FleeHealth, FleeChance }, `ConsumeNodes`, `MountDistance`, `Pvp` { EngageSeconds,
-  EngageParty, CrimesAgainstBots, LethalToPlayers }, `Combat` { TickMs, ReactionMs, DamageFactor, HealthFactor, Spells, SpellChance }, `Gear` { Mastery, DamageBonus }, `Patrol` {
-  LeashRadius, AggroRadius, SpareMinutes, JoinGraceSeconds, AttackMounted, GroupSize, RouteDwellSeconds, RouteEndDwellSeconds },
+  EngageParty, CrimesAgainstBots, LethalToPlayers }, `Combat` { TickMs, ReactionMs, DamageFactor, HealthFactor, Spells, SpellChance,
+  Tactics, KiteDistance, RetreatHealth, Potions, Food, FocusWeakest }, `Difficulty`, `Gear` { Mastery, DamageBonus, RedZoneTierBonus,
+  Quality, EliteChance, EliteEnchant, EliteQuality }, `Patrol` {
+  LeashRadius, AggroRadius, SpareMinutes, JoinGraceSeconds, AttackMounted, GroupSize, RedGroupSize, RouteDwellSeconds, RouteEndDwellSeconds,
+  Makeups }, `Support` { Enabled, HealBelow, ShieldBelow },
   `Defeat:DieInLethalZones`, `DownDespawnSeconds`, `Rewards` { FameFactor, GearDropChance, DeathGearDropChance, MinItems,
-  ResourceDropShare, LootProtectionSeconds, BagsPerHour, SameBotMinutes }, `City:Gatherers`), `content/bots.json` the tables
+  ResourceDropShare, LootProtectionSeconds, BagsPerHour, SameBotMinutes, EliteSilverFactor, EliteExtraItems }, `City:Gatherers`), `content/bots.json` the tables
   (counts per zone, clusters excluded or overridden, city tiers, avatars, emotes, name syllables, gear patterns with
   `GathererWeaponShare` and `GathererStartCarry`, `Rewards` { Silver by tier, PatrolExtra }). Preset official: no bots.
 - **Inspecting** a bot or another player (the inspect button of the target frame) shows its gear, the mastery of each weapon and
@@ -1602,13 +1913,25 @@ bot's own (moved, never copied) and nothing of a bot is ever saved, so no duplic
   requester's map or else on any map, and only an unknown one fails (the client then shows "failed retrieving" and closes the
   invite).
 - **Bot strength:** a bot's gear is that of a player with the destiny board spent on it: `Bots:Gear:Mastery` is the share of the
-  full board's item power it carries (1.0 = all of it, a T7 gatherer's gear at IP 1288; 0 = the items' own, T7 1000). The pve
-  preset uses 0.5 (about 8-10 % less health, 6 % less armour and 14 % less ability power, so a weaker ROOTSHIELD and the rest) and
-  also `Bots:Combat:HealthFactor` 0.7 (corrupted-dungeon invaders too). Measured on map 0221: a T4 quarterstaff's VAULT_ATTACK
-  (AP 313.4) takes 6.6 % of a T7 gatherer's 2859 health at Mastery 1 and 10.8 % of its 1840 under pve, a fight about 40 % shorter.
-  `Bots:Gear:DamageBonus` (true; pve false): a bot's spells add its worn spell damage bonus like a player's (official-like: a cloth
-  patrol's spells × 1.4-1.5, leather × 1.2-1.3, plate × 1-1.1); false keeps them at buffs and passives, so under pve no bot hits
-  harder than before the worn bonus came.
+  full board's item power it carries (1.0 = all of it, a T7 gatherer's gear at IP 1288; 0 = the items' own, T7 1000).
+  `Bots:Gear:DamageBonus` (true): a bot's spells add its worn spell damage bonus like a player's (a cloth patrol's spells × 1.4-1.5,
+  leather × 1.2-1.3, plate × 1-1.1). **Since the botpower change (2026-10-18) the pve preset no longer softens the bots**: Mastery 1,
+  DamageBonus true, HealthFactor 1 (before 0.5 / false / 0.7, about 40 % shorter fights): fighting a patrol is a real risk.
+  `Bots:Difficulty` (1.0, 0.1-10) multiplies the health and the hits on players of every bot but the companions (0.7 is roughly
+  the old pve strength, 1.5 a hard server). Hired companions keep their own `Companions:GearMastery` 0.5 / `GearDamageBonus` false.
+- **Gear by zone:** world bots wear quality `Bots:Gear:Quality` ("1-2"); patrols in red and black zones and on the roads one tier
+  above the map's roll (`Bots:Gear:RedZoneTierBonus` 1) and walk in groups of `Bots:Patrol:RedGroupSize` ("2-3"). A patrol or
+  Drifter is an **elite** with `Bots:Gear:EliteChance` (6 %): weapon, offhand and armour enchanted .1-.3 (`EliteEnchant`), quality
+  3-4 (`EliteQuality`); beaten it gives `Bots:Rewards:EliteSilverFactor` (2) × the silver and `EliteExtraItems` (1) more of its gear
+  in the bag (dropped as worn, enchantment and quality kept; still under BagsPerHour and SameBotMinutes).
+- **Tactics** (`Bots:Combat:Tactics` true): besides the SpellChance roll a fighting bot casts at once, by cooldown, what the
+  situation asks for: a dash or sprint when a melee bot is far from its target, a heal or shield (its own) below 45 % health, crowd
+  control on a target that is casting or channelling, its damage spells on a target below 35 %. Below `RetreatHealth` (0.3) it drinks
+  one of its `Potions` ("1-2" healing potions in the potion slot), without one it falls back once for 3 s. A ranged bot (weapon range
+  of 6 m or more) steps back along the walk grid from a target nearer than `KiteDistance` (5 m). Patrols and Drifters eat a stew at
+  spawn (`Food`). `FocusWeakest`: a patrol attacks the weakest player in reach and turns to one below 35 % health. The consent rules
+  are untouched: bots still start fights only where `PvpRules` / `PvpRulesByZone` and the zone's flags allow (pve: Blue players only
+  in red and black zones, Red players where the zone lets them be fought), never in safe zones.
 - GM commands: `.bot` (the population of every loaded cluster and its walk grid), `.bot list`, `.bot spawn city|gatherer|patrol [count] [tier]`,
   `.bot clear [here|all]`, `.bot on|off`, `.bot info`, `.bot grid`, `.bot path <x> <z>` (a bot walks the path, to see that bots
   go around walls).
@@ -1623,7 +1946,236 @@ in a yellow zone a patrol shows as an enemy (red name) to a Blue character and w
 attacked on sight (the swing animation and the damage numbers), knocked down gets up after 90 s and is left alone for 5 minutes;
 patrols keep to the roads, chase around obstacles, give up at the leash, ride between far stops; a beaten patrol: knockdown, the
 fame popup without a kill line, 10 s later its bag (its gear on the corpse, opens) and silver; in a red zone its death, the kill
-line and the bag at once.
+line and the bag at once. Botpower: a patrol fight takes clearly longer than before (full health), patrols in red/black zones
+come in 2-3 with one tier higher gear; a low patrol drinks a potion (the drink animation, its health rising), a bow or staff
+patrol steps back when you close in, a melee one dashes in; now and then an elite with enchanted (.1-.3) gear whose bag holds two
+pieces of it.
+
+### Switches
+
+Bots are not an official feature (like AzerothCore's playerbots module): `Bots:Enabled` is the master switch over every kind
+(official `false`, pve `true`; companions have their own `Companions:Enabled`). Under it each kind has its own switch, `true` in
+both presets, so the official preset is all off through the master alone and the pve preset runs everything as before:
+
+| Key | Default | Controls |
+|---|---|---|
+| `Bots:World:Enabled` | `true` | the open-world population (City, Gatherer, Patrol, Drifter); `false` = none, the content bots stay |
+| `Bots:City:Enabled`, `Bots:Gatherer:Enabled`, `Bots:Patrol:Enabled`, `Bots:Drifter:Enabled` | `true` | one world role each, without editing the counts of content/bots.json |
+| `Bots:Zones` | `[]` | zone classes (City, Start, Roads, Mists, Safe, Yellow, Orange, Red, Black) or cluster ids where world bots may spawn; empty = everywhere content/bots.json gives bots |
+| `Bots:Arena:Enabled` | `true` | bots fill arena teams (with `Arena:Bots`), also with `Bots:World:Enabled` false |
+| `Bots:Hellgate:Enabled` | `true` | a hellgate versus run's bot enemy team (else the guardian), also with `Bots:World:Enabled` false |
+| `Bots:Invader:Enabled` | `true` | corrupted dungeon bot invaders (with `Corrupted:BotInvaders`), also with `Bots:World:Enabled` false |
+| `Bots:Pvp:Enabled` | `true` | `false` = world bots never start a fight with a player; they still answer an attack (on them or their group) for `Bots:Pvp:EngageSeconds`. Arena, hellgate and invader bots are not affected |
+| `Bots:Rewards:Enabled` | `true` | `false` = a beaten bot gives no fame, PvP goal credit, silver or bag (the kill message and a crime's reputation stay) |
+| `Bots:Travel:Enabled` | `true` | a bot walking into an exit reappears next door (see Travel and gathering trips); `false` = gone there as before |
+
+Behaviour figures that were fixed before (both presets, today's values): `Bots:City:PoiShare` 0.6 (next goal a point of interest,
+else a spot `Bots:City:WanderMeters` 15-40 m away), `Bots:City:ExitShare` 0.5 (walk out through an exit, else log out),
+`Bots:Gatherer:FleeSeconds` 20 / `FleeDistance` 25 m (a fighter's fall-back runs half), `Bots:Patrol:FollowSpacing` 2.5 m,
+`Bots:Combat:RetargetSeconds` 5 / `RetargetShare` 1.5, `Bots:Combat:KiteSeconds` 1.2 / `KiteEverySeconds` 2.5.
+
+`.bot on|off` switches the master for the running server only: it is not saved, and the next start reads `config/world.jsonc`
+again. The other switches change only with the file and a restart (there is no `.bot reload`: the config is read once at the
+start). `.bot` shows the switch matrix in its first lines.
+
+### Social presence and chat
+
+With `Bots:Social:Enabled` (default `true`, so on under pve and off under official through the master) a world bot (city,
+gatherer, patrol, Drifter) is an online player to the social features, so a player no longer gets "player not found" for a
+name he sees walking by:
+
+- a **party invite** (by name or from the bot's menu) goes out as to a player and is answered after `Bots:Social:ReplyDelaySeconds`
+  (`"2-6"` s): declined, or accepted under `Bots:Party` (below);
+- a **friend request** is answered RC 0 with the bot's entry and **declined** after the same delay;
+- a **whisper** is taken (the "to <name>" line) and, with `Bots:Social:WhisperReplyChance` (0.8), once per sender in 30 s, answered
+  after the delay with a line of content/bots.json `Chat.Whisper` ("busy farming, sorry", "afk", ...).
+
+Nothing of this is stored: no friend, request, mute or character row is written for a bot. With `Bots:Chat:Enabled` (default `true`)
+bots also speak on the local (Say) channel, to the players that see them: city chatter (`Bots:Chat:SayChancePerMinute` 0.05 per city
+bot in view, lines `Chat.Say`), an emote back when you emote at a city bot or near one (8 m; `Bots:Chat:EmoteReplies`, the
+`Chat.EmoteReplies` table, sometimes a `Chat.Greet` line) and a `Chat.Win` / `Chat.Loss` line half the time after a fight
+(`Bots:Chat:FightLines`). All bot lines of a cluster are capped at `Bots:Chat:MaxLinesPerMinutePerCluster` (4) a minute and one per
+bot in 30 s. The lines are content/bots.json `"Chat"`.
+
+| Key | Default | Controls |
+|---|---|---|
+| `Bots:Social:Enabled` | `true` | world bots answer party invites, friend requests and whispers (`false` = "not found" as before) |
+| `Bots:Social:ReplyDelaySeconds` | `"2-6"` | how long a bot takes to answer |
+| `Bots:Social:WhisperReplyChance` | `0.8` | the chance a bot answers a whisper (else silence) |
+| `Bots:Chat:Enabled` | `true` | bots' local lines and emote replies |
+| `Bots:Chat:SayChancePerMinute` | `0.05` | city chatter per city bot in a player's view |
+| `Bots:Chat:EmoteReplies` | `true` | a city bot answers a player's emote |
+| `Bots:Chat:FightLines` | `true` | "gg" and taunts after a fight |
+| `Bots:Chat:MaxLinesPerMinutePerCluster` | `4` | the cap of bot lines per cluster and minute (0 = silent) |
+
+#### Bots in your party
+
+With `Bots:Party:Enabled` (default `true`; it needs `Bots:Enabled` and `Bots:Social:Enabled`, so on under pve, off under official) a
+world bot may **accept** a party invite, like a random bot of AzerothCore. It accepts when it stands out of a fight, is in no party, is
+on your map, its gear tier is within `Bots:Party:TierRange` of yours (your average item power: T4 = 700 … T8 = 1100), its kind is
+allowed (`Bots:Party:City` / `Gatherer` / `Patrol` / `Drifter`) and your party has fewer than `Bots:Party:MaxPerParty` such bots;
+then with `Bots:Party:AcceptChance`. Otherwise it declines as before.
+
+Once in, it leaves its world role (a gatherer draws the weapon from its bag, a rider dismounts, a patrol leaves its group, its
+population slot is freed for a newcomer) and plays as your **companion** (see Companions below): it follows you, fights the mobs that
+fight the party, uses its own spells, and goes with you over cluster changes and into dungeons, expeditions, hellgates and the mists
+exactly as a hired companion does (where companions cannot go, it cannot either). Its role comes from its own gear: **healer** with a
+holy or nature staff, **tank** with a shield, mace or hammer, **ranged** with a weapon of 6 m reach or more, else **melee** (a city bot
+without a weapon fights bare-handed); its gear, tier and spells stay its own. It counts as a member in the party's fame split (its
+share is not kept anywhere), its kills are credited to you as a companion's, and it never takes loot or silver. With `Bots:Chat` on it
+says a `Chat.Join` line when it joins and a `Chat.Leave` line when it goes (content/bots.json `"Chat"`).
+
+It leaves when you kick it from the party frame, the party breaks up, you (its inviter) leave the party or are out of the game for
+`Companions:OwnerGraceSeconds`, `.companion dismiss` names it, or after `Bots:Party:MaxMinutes`. Then it **logs out** (despawns): it
+does not go back to its old role; its slot was refilled when it joined. Nothing is saved, and a restart ends it.
+
+| Key | Default | Controls |
+|---|---|---|
+| `Bots:Party:Enabled` | `true` | world bots may accept party invites (`false` = always declined) |
+| `Bots:Party:AcceptChance` | `0.7` | the chance an eligible bot accepts |
+| `Bots:Party:TierRange` | `1` | how many tiers its gear may be from yours |
+| `Bots:Party:MaxPerParty` | `2` | world bots one party may have (hired companions not counted) |
+| `Bots:Party:MaxMinutes` | `120` | how long it stays in the party at most |
+| `Bots:Party:City` / `Gatherer` / `Patrol` / `Drifter` | `true` | which kinds may accept |
+
+#### Support roles in patrol groups
+
+With `Bots:Support:Enabled` (default `true`; it needs `Bots:Enabled`, so on under pve, off under official) a patrol group may bring
+a **healer** and a **tank** instead of damage dealers only. A new population group draws one makeup of its zone class from
+`Bots:Patrol:Makeups` by weight; its members take the makeup's parts in order as they spawn (a fallen healer's replacement is the
+group's healer again), the members beyond the makeup are damage dealers, and a lone Drifter always is one.
+
+- A **healer** carries a holy or nature staff (content/bots.json `Gear.HealerWeapons`, a book with a one-handed one) in cloth, its
+  kit's heals chosen first (from the item's own spell lists, as a hired healer's). In a fight and after it, it heals the member of its
+  group (itself included) with the lowest health share below `Bots:Support:HealBelow`, walking into range when needed; in a fight it
+  also shields the lowest one below `Bots:Support:ShieldBelow` and puts its friendly buffs (HOLYHOT) on the fighting members. Every
+  cast goes through the players' checks (target class, `Pvp:FriendlySpells`, range, cooldown, energy): it never targets a human (a bot
+  and a human are never Friends), a hostile unit or a bot of another group (under `Pvp:FriendlySpells Group` the patrol group is a
+  bot's group); an area heal reaches whom a player's would (under `All` another bot standing in it too).
+- A **tank** carries a mace or hammer (`Gear.TankWeapons`, a shield with a one-handed one) in plate (SET2/SET3 from T4: the armour with
+  TAUNT), its kit's taunts chosen first. It engages without the reaction time, casts its taunts as soon as they are ready, and turns on
+  whoever hits its group's healer.
+- A healer or tank whose weapon items.xml lacks at its tier (no holy staff or mace below T3) is a damage dealer.
+- A healer patrol that joins your party (`Bots:Party`) plays as a companion healer: it heals and revives your party with the companion
+  code (`Companions:HealBelow`).
+- `Bots:Support:Enabled false`: every patrol a damage dealer of `Gear.Weapons` whose friendly spells go on itself only, as before.
+
+| Key | Default | Controls |
+|---|---|---|
+| `Bots:Support:Enabled` | `true` | healers and tanks in patrol groups and their help (`false` = as before) |
+| `Bots:Patrol:Makeups:<zone>` | Default `["dps=90", "healer,dps=7", "tank,healer,dps=3"]`; Red, Black, Roads `["dps=80", "healer,dps,dps=12", "tank,healer,dps=8"]` | a zone class's makeups, `"part,part,...=weight"` (parts `dps`, `healer`, `tank`; weight 0-1000, 1 when left out); `Bots:Patrol:Makeups` alone or `:Default` for every zone class without its own; on the command line a `;` list. The defaults keep nine groups in ten (eight in red and black zones and on the roads) as before |
+| `Bots:Support:HealBelow` | `0.7` | a healer heals a member below this health share |
+| `Bots:Support:ShieldBelow` | `0.9` | in a fight a healer shields a member below this health share |
+
+Client checks: in a yellow zone a patrol with a holy or nature staff and cloth among the others; hit its mate, and the healer's heal
+animation and green numbers on the mate (never on you); a plate patrol with a mace casts TAUNT at whoever hits the healer and turns to
+him; the party frame of a healer patrol you invited, its heals on you.
+
+#### Roster, hours and gear
+
+**Roster.** Like AzerothCore's random bots, the population is a fixed **roster** of `Bots:Roster:Size` identities derived from
+`Bots:Roster:Seed` and the name syllables of content/bots.json: each has a name, a character Guid, a kind (40 % city, 35 % gatherer,
+25 % patrol/Drifter), a home tier (city bots by `CityTiers`, some T1-T2 for the start towns; the others T1-T8), a look and its own
+random numbers for its gear. A free slot takes an offline identity of its kind whose home tier is nearest to the zone's roll and wears
+that tier where the zone has it (a royal city's `CityTiers`, a start town's T1-T2, the open world's map tier ±1); a respawn keeps the
+slot's identity, a turnover's newcomer is another one. So the same names come back, here or on another map, with the **same look and
+gear** (in the same zone and tier) over respawns, turnovers and server restarts; nothing is stored in the database. A roster name a
+character has (or takes later) is skipped, and when every identity of a kind is online a fresh name is drawn as before. An identity
+that is offline is "not online" to a whisper, an invite or a friend request like any offline player; a bot that leaves your party logs
+out and its identity may come back later.
+
+**Hours.** `Bots:Schedule` scales every map's counts by the hour of the server's local time (UTC + `Bots:Schedule:UtcOffsetHours`):
+`Hours` is 24 factors (hour 0 first), or `Points` a few anchors (`{ "0": 0.5, "18": 1.2 }`) with the hours between linear; between two
+hours the factor is linear too. When it rises, the free slots fill as usual (at most `Bots:SpawnPerPass` per pass, out of view, the
+newcomers through an exit); when it falls, `Bots:Schedule:LeavePerPass` surplus bots per map and pass go: one no human sees logs out at
+once, a seen one ends its stay and walks out or logs out as at the end of a stay. Default: flat `1.0` (no change) in both presets;
+config/world.jsonc has a commented evening-peak example.
+
+**Gear.** A population bot's set is mixed: each armour piece, weapon, offhand and cape is with `Bots:Gear:MixedShare` 1 to
+`Bots:Gear:TierSpread` tiers above or below its tier (tools, bags, mounts and a gatherer's set stay); each weapon, offhand and armour
+piece is enchanted `Bots:Gear:Enchant` (.1-.3) with its zone's `Bots:Gear:EnchantChance`, and each weapon and armour piece an artifact
+(content/bots.json `Gear.ArtifactSets` / `ArtifactWeapons`, T4+) with its zone's `Bots:Gear:ArtifactChance`, mostly in black zones.
+The elites (`Bots:Gear:EliteChance`), qualities and red-zone tier bonus are as before. GM `.bot` bots, arena, hellgate and invader
+bots and companions keep their plain sets.
+
+| Key | Default | Controls |
+|---|---|---|
+| `Bots:Roster:Enabled` | `true` | the stable roster (`false` = a fresh name per bot) |
+| `Bots:Roster:Seed` | `1` | the roster's seed |
+| `Bots:Roster:Size` | `1500` | identities (1-8000) |
+| `Bots:Schedule:Hours` | 24 × `1.0` | the factor per hour (0-3); or `Bots:Schedule:Points` `{ hour: factor }` |
+| `Bots:Schedule:UtcOffsetHours` | `0` | local time = UTC + this |
+| `Bots:Schedule:LeavePerPass` | `1` | surplus bots per map and pass that go when the curve falls |
+| `Bots:Gear:MixedShare` / `TierSpread` | `0.25` / `1` | pieces off the bot's tier, and how far |
+| `Bots:Gear:EnchantChance:<zone>` | City 0.03, Start 0, Safe 0.02, Yellow 0.04, Orange 0.06, Red 0.08, Black 0.12, Roads 0.12, Mists 0.08 | an enchanted piece per zone class |
+| `Bots:Gear:Enchant` | `"1-3"` | its level |
+| `Bots:Gear:ArtifactChance:<zone>` | Red 0.02, Black 0.06, Roads 0.06, Mists 0.03, else 0 | an artifact piece per zone class |
+
+#### Travel and gathering trips
+
+**Travel.** A city bot, gatherer or patrol member that walks into an exit no longer just vanishes: it leaves the map as a player
+taking the exit does, is "in transit" for `Bots:Travel:Seconds`, and then appears at the matching entrance of the neighbouring
+cluster (where a player coming through stands) as the same identity: name, Guid, gear, health and what it carries. There it takes a
+free slot of its role (its old slot gets a newcomer later, as at any turnover). Bots only live where players are, so the rule for
+map loading is simple: it travels only when, at the moment it takes the exit, the target map is **loaded with a player on it**, its
+zone gets world bots (`Bots:Zones`, `Bots:<Role>:Enabled`; never a dungeon, island, hellgate, arena, expedition or mists instance),
+its walk grid is ready, it has room under `Bots:MaxPerMap` and a slot of the role is free. Otherwise it simply logs out at the exit,
+as before. If the target stops taking it while it is in transit (unloaded, emptied, the slot taken), it logs out on the way. Nothing
+is stored. City bots therefore travel only between city maps that have city bots; gatherers and patrols move through the open world.
+A road's portals keep their own rules (Bots:Roads:Portals).
+
+**Route.** A leaving bot prefers an exit to a neighbour that takes it, with a zone of its own tier first (a royal city's tiers, a start
+town's T1-T2, the open world's map tier ±1), then the nearest tier; the other exits come after, nearest first.
+
+**Gathering trips.** A gatherer's home city is the nearest royal city or rest (with a bank; not an interior, hall, portal town or the
+Hell Den) within `Bots:Travel:MaxHops` clusters of where it came online. When its bag is full (`Bots:Gatherer:Nodes` nodes) or
+`Bots:Gatherer:TripMinutes` are over and it carries something, it walks home cluster by cluster along the shortest way over the
+cluster exits (never through an instance, a building interior, a road or a zone `Bots:Zones` leaves out), arriving in its city as a
+visitor when the city has no gatherer slot. There it walks to the bank door, pauses a few seconds and its gathered resources are
+banked: gone, in that city only. The regional economy stays as it is: per-city banks and markets, no global storage, and bots bank
+nothing anyone can take out. Then a new trip begins (a visitor walks out again). City bots already walk to their own city's bank and
+market doors among their points of interest. If a hop on the way home does not take it (no player there), it logs out at that exit.
+
+| Key | Default | Controls |
+|---|---|---|
+| `Bots:Travel:Enabled` | `true` | exits lead next door (needs `Bots:Enabled` and `Bots:World:Enabled`: off under official, on under pve); `false` = gone at the exit as before |
+| `Bots:Travel:Seconds` | `"10-20"` | time in transit |
+| `Bots:Travel:MaxHops` | `6` | how far a gatherer's home city may lie (1-50 clusters) |
+| `Bots:Gatherer:TripMinutes` | `30` | a trip's time budget (1-1440) |
+| `Bots:Gatherer:BankAtHome` | `true` | gatherers walk home to bank at the end of a trip (needs travel); `false` = they leave through an exit as before |
+
+### Companions
+
+Companion bots (stageN, `../analysis/work/stageN/companions/SPEC.md`) fill a party for a player who plays alone or with one or two
+friends. In chat, every player (not only GMs):
+
+- `.companion hire <tank|healer|melee|ranged> [tier]` hires one: a **tank** (mace and shield, plate: TAUNT and the other threat
+  spells of its kit), a **healer** (holy staff and book, cloth: its heals), a **melee** damage dealer (claymore, leather) or a
+  **ranged** one (bow, leather). The gear tier follows your average item power (T4 = 700 … T8 = 1100, at least T3) unless you give one.
+- `.companion dismiss [name|role|number|all]` sends companions away (all without an argument); `.companion list` shows them.
+
+At most 4 per player and a party of 5 with them (`Companions:MaxPerPlayer`, `MaxPartySize`). A companion joins your party (a new
+one you lead when you have none): the party frame shows it, and kicking it from there dismisses it. Content that needs a party
+takes you with your companions: a hellgate (it needs a party), a group expedition registered by you as the party leader (a
+player with companions counts as a group). Companions follow you through every exit, portal and instance (open world, random,
+static and corrupted dungeons, expeditions, hellgates, the mists, the roads): on your new map they appear next to you once you
+arrive. Within a map they walk after you on the mobs' walk grid; left 60 m behind or stuck for 6 s they are put next to you.
+
+They fight only the mobs that already fight your party, within 25 m of you (they never pull a camp on their own), and give a
+fight up beyond 35 m of you: the damage dealers assist you (your own enemies first), the tank takes every mob that hits someone
+else (its taunts, its threat counts 3 ×), the ranged keep their distance, the healer heals the party member with the lowest health
+under 85 % and revives a bleeding-out one (the players' 6 s revive; `Pve:PartyRevive` lets you bleed out even with only
+companions around). Mobs fight companions as players: aggro, threat, their spells; a knocked-down companion gets up as a player
+does after the fight, or is revived by you or a healer. **Loot and fame:** a companion's kill is yours (fame, silver, the loot
+bag and its rights); companions take no loot and no fame share, and your fame is not split with them (the party's fame share and
+group bonus count players only). They are never in a PvP fight (Friendly to everyone, every bot too). Nothing of them is saved:
+they go when you log out (after `Companions:OwnerGraceSeconds` without you in game), leave the party, or at a restart.
+`Companions:*` in `config/*.jsonc` (all on under the pve preset, off under official).
+
+What to check in the client: the party frame lists the companions with your character (names, the leader crown on you); they
+stand behind you, walk after you and come with you through an exit (after your loading screen); in a fight the tank's taunt pulls
+the mob off you (the mob turns to it), the healer's heal and its revive cast show on you; a companion that lies down gets up after
+the fight. Not done: a hiring NPC in the cities (the chat command only), party roles in the frame (their role icons stay empty).
 
 ## Chat, friends and muting
 
@@ -1659,7 +2211,7 @@ and `.g` only, as before).
   longer reach you (the whisper is dropped quietly); at most `Social:MuteLimit` 100.
 - Friends, open requests and mutes are saved in `albionlocal.db` (schema v21; an older server build then refuses the file) and go with a deleted character; chat channels,
   lines and whispers are not stored. Not there yet: changing the chat tabs (the client's settings are reset to the default tabs
-  at every Join), alliance and faction channels (no alliances or faction warfare), chat history for players who log in later,
+  at every Join), faction channels (no faction warfare), chat history for players who log in later,
   item links shown from a snapshot, the official whisper limit.
 
 Commands: `.friends [name]` (yours; a GM may name a character), `.chat` (GameMaster: the chat connections and channels).
@@ -1694,7 +2246,8 @@ Right Hand (the guild right "access guild mail"), the guild's; the filters (all,
 
 Not checked in the client yet (SPEC §7): the rows and bodies of the market notices, the envelope count, the write view's error boxes,
 and whether the read view drops a claimed item by itself (the client reads the mail again only after a refusal; reopen the mail if
-an item still shows). Not there: guild applications and alliance invitations by mail, gold market and real estate mails.
+an item still shows). Alliance invitations arrive as their own mail kind (README Alliances). Not there: guild applications by mail,
+gold market and real estate mails.
 
 Commands: `.mail <name> <subject> | <text>` and `.mail item <name> <item> [count] [quality]` (GameMaster: a server notice, with an item attached).
 
@@ -1747,7 +2300,7 @@ Guilds work through the game's own guild window (`../analysis/work/stageH/guilds
   line `[Guild] name: text` to the members without a chat connection.
 - Guilds, members, roles and crests are saved in `albionlocal.db` (schema v17); open invitations are not.
   `Guilds:Enabled false` turns guilds off (saved ones stay; a deleted character still leaves its guild, and a guild
-  left empty is removed at startup). Not there: the guild bank window and the official tax setting, alliances, territories and GvG, the guild finder,
+  left empty is removed at startup). Not there: the guild bank window and the official tax setting, territories and GvG, the guild finder,
   guild mail, custom access tags, crest change; the guild keys of other messages (party invite key 6, Died 3/11, the
   player loot bag 20/21, a mob's owner guild, NewMountObject 9-17) stay empty for now.
 - Known limit: a member whose connection drops in the middle of a cluster change stays "online" for its guild mates
@@ -1771,7 +2324,8 @@ The PvE guild (SPEC §10, PVE-DESIGN step 13 part 2; every part behind its own k
   share its fame like party members (the same split and group bonus) and may take its silver, without a party.
 - **Guild account** (`Guilds:SilverTax`, pve 0.05): of each silver pile a member takes this share goes to the guild's
   account instead of `Economy:SilverPickupTax` (the client shows it as the guild tax of the pickup and as 5 % in the guild
-  window, whose silver is the account). `.guild payout <name> <silver>` pays a member in game from it (Master of Coin,
+  window, whose silver is the account). `.guild payout <name> <silver>` (with `Guilds:SeasonRewards Content`, a `SilverTax` or
+  `Contracts`) pays a member in game from it (Master of Coin,
   The Right Hand or the guild master). A guild that is deleted (its last member leaves, or `.guild disband`) pays its
   account to that last member or to its guild master (at once, or at the next login when offline).
 - **Contracts** (`Guilds:Contracts`, pve true): every `Guilds:ContractPeriod` (`Weekly` from Monday 10:00 UTC, or
@@ -1789,6 +2343,211 @@ Commands (Player unless noted): `.g <text>`, `.guild info [name]`, `.guild creat
 (`Recruit`, `Member`, `Guardsman`, `Officer`, `Warmaster`, `MasterOfCoin`, `TheRightHand`, `Guildmaster`), `.guild contracts`,
 `.guild payout <name> <silver>`, `.guild list` and `.guild xp <guild> <amount>` (GameMaster), `.guild disband <name>` (Admin):
 the same rules as the window, for when a dialog does not do what it should.
+
+### Alliances
+
+Guilds can join in alliances through the guild window's alliance tab (`../analysis/work/stageP/hideouts/SPEC.md` phases A1/A2;
+`Alliances:Enabled`, true in both presets):
+
+- **Create** with a name (3-30 latin letters, digits, `-`, `_`, single spaces) and a tag (2-5 latin letters and digits), both
+  unique ignoring case. Only a guild master or The Right Hand (the ALLIANCE_MANAGEMENT right) creates, and the cost,
+  `Alliances:CreateCost` (5000000 silver, gamedata), is paid from the **guild account** (official; the client says so when it is
+  short). The creating guild is the founder: it alone disbands the alliance and cannot leave it while other guilds are in it.
+- **Invite**: the founder guild's master or Right Hand invites a guild by name; the invitation is an "Alliance Invitation"
+  mail (kind 2) in the invited guild's mailbox (its master and Right Hand read it), whose Accept / Decline buttons answer it.
+  The founder can withdraw an open invitation in the member list (shown there as "(Invited)"). Open invitations are saved.
+- **Kick**: the founder guild kicks any other guild; the founder guild itself cannot be kicked.
+- **Limits** (gamedata): `Alliances:MaxGuilds` 100 guilds (open invitations count) and `Alliances:MaxPlayers` 30000 players in
+  all its guilds; the latter also stops guild invitations and joins of its guilds (4251 / 4123).
+- **Leave / disband**: a member guild leaves (its guild master or The Right Hand); the founder alone leaving disbands it.
+  After founding or joining an alliance a guild founds or joins no other for `Alliances:ChangeCooldownMinutes` (10080,
+  gamedata changecooldownminutes); the same time keeps it from rejoining the alliance it left [H].
+- The alliance shows on the guild window and over every member: GuildUpdate kind 5 (keys 16/17), Join 79/80, NewCharacter
+  51/52 and GuildMemberWorldUpdate 11/12. Whether the official nameplate key carries the alliance's name or its tag is open
+  (capture R3): `Alliances:PlateText` `Name` (default, the SPEC's reading) or `Tag`.
+- **Allies are friends**: in PvP an ally counts like a guild mate (black zones Friendly, red zones as the guild row of the
+  official table), which is what the client draws once it knows the alliance. A guild that leaves (or is kicked, or whose
+  alliance is disbanded) stays friendly with it for `Alliances:LeaveProtectionSeconds` (30, gamedata) [H].
+  `Alliances:NoFriendlyFire` (pve true, official false, as `Guilds:NoFriendlyFire`) makes a Hostile ally (two factions in one
+  alliance) Neutral. Spells with the `alliancemember` target condition reach allies.
+- **Alliance chat**: the chat server's Alliance channel (type 25, `Alliances:Chat` true) for the members of all its guilds,
+  joined and left with the alliance like the guild channel.
+- The alliance window's member list (AllianceGetMemberInfos) and the alliance details (AllianceGetDetailInfo, by name or tag)
+  are answered; the meaning of a few of their fields is inferred (SPEC §2.1-§2.2).
+- Saved in `albionlocal.db` (schema v38: alliances, their guilds, open invitations and the cooldown history). A guild that is
+  deleted leaves its alliance (the founder role passes to the oldest guild; an alliance left without guilds goes).
+  Not there: alliance logs and stats (QueryAllianceGuildStats stays unanswered), the gold upkeep flag, territories.
+
+Commands (Player unless noted): `.alliance info [name or tag]`, `.alliance invite <guild>`, `.alliance accept [alliance]`,
+`.alliance decline [alliance]` (also the way to answer with `Mail:Enabled false`), `.alliance kick <guild>`, `.alliance leave`,
+`.alliance list` and `.alliance disband <name or tag>` (GameMaster).
+
+Not checked in the client yet: the invitation mail's text (its body is stored as `inviting guild|alliance name` [H] for the
+client's "{0} wants you to join the Alliance '{1}'"), the meaning of AllianceGetMemberInfos keys 1/4/5/18 and
+AllianceGetDetailInfo keys 2/3/8-12/20/21, the nameplate text (`Alliances:PlateText`).
+
+### Guild territories and castles
+
+The guild territories of the black zones (`../analysis/work/stageP/territories/SPEC.md`, phases P1-P5;
+`Territories:Enabled` and `Castles:Enabled`, true in both presets): the data, the world presence, the claim, upkeep and season points
+of the watchtower territories and the castle fights. Running a server of this version converts `albionlocal.db` to schema v41 (the tables
+territory_owners, v39, and territory_state, v41: a territory's food, access and tower power; an older server build refuses the
+converted file).
+
+- **Data**: world.xml's 268 watchtower territories (170 resource, 98 farm) and 118 castle territories (23 castles, MEDIUMCASTLE, and
+  95 castle outposts, SMALLCASTLE) in 269 clusters, with territorytypes.bin (claim cost 2 000 000, food, tower levels, base season
+  points by cluster type), castles.bin, the timeregions of worldsettings (prime time = the timeregion's start, UTC, for 1 h; Europe
+  US_22_00 20:00-21:00) and gamedata (1 000 000 guild fame, 15 s claim); the region is `Guild:Region` (europe). The season's
+  seasontimes give the claimable windows (SEASON_34 Europe: day 1 18:00 to day 29 11:00, day 29 18:00 to day 57 11:00); a local
+  season after the client's last one reuses SEASON_34's. All three region files filter those events by the same six timeregions.
+- **World presence**: every watchtower territory's monolith (NewMonolithObject, bound to the landscape tower, key 7 the territory)
+  and every castle territory's castle or castle outpost (NewCastleObject from its tile T1_CASTLE …, the castles.xml type, its phase,
+  owner and chest) stand in their clusters.
+- **Castle fight** (`Castles:Timers` "data" = castles.xml): the castle tile's guards stand (its basic guards and mortars; health ×
+  `Castles:GuardScale`, pve 0.6). Hitting or killing one starts the fight; when all basic guards are dead the elite guards come
+  (castle outposts after 1 min, castles at once), when those are dead the castle lord (outposts after 1 min), and his death opens the
+  capture zone. A phase not won within 30 min fails the attack: the castle stands as before. A capture zone nobody claims for 300 s
+  brings the lord back. The client hears each phase (CastlePhaseChanged 417: 0 at rest, 1 guards, 3/4 elites coming/standing, 5/6
+  lord coming/standing, 7 capture zone, 8 the lord back; only 0 and 7 are decoded in the client, the rest is the server's numbering).
+  No gate yet (the gate buildings are not spawned) and no GameEvent texts.
+- **Capture**: the zone (12 m around the castle) belongs to the team that stands in it alone (a guild with its alliance; a player
+  without a guild never claims; mounted players count as presence only): 16 s fill the claim, another team alone empties it in 8 s,
+  an empty zone lets it run out in 30 s, two teams (or a defender) pause it. A full claim makes the guild the owner (saved, the
+  members are told, the owner's name and crest on the castle; the old owner's guild is told it lost it); the owner's own team in the
+  zone ends the fight and keeps the castle. Then the guards come back after 1 h (territorytypes GuardSettings). A disbanded guild's
+  castles are unowned. The client shows the claim (CastleClaimProgress 513, the claiming guild's crest 514).
+- **Chests** (`Castles:Chests`, `ChestSchedule`): at every respawn of treasuredistribution's castle schedule (every 2 h UTC 10:00 to
+  22:00, the weekend's 18:00 always legendary; "hourly" = every full hour) the data's draw (castles 240/120/40/21 standard to
+  legendary or nothing 579, outposts 400/200/70/21 or nothing 309) puts a TREASURE_CASTLE_* chest (loot of lootchests.xml) on the
+  castle's treasure spot, for 30 min. With `ChestNeedsOwnership` (official) only owned castles get chests and only the owner guild's
+  members open them; pve: every castle, anyone. The castle shows the chest (ChestState) and its rarity.
+- **Claim** (op 302 at the tower, a 15 s channel, `Territories:ClaimChannelSeconds`): a member of a guild with the right Claim Territory
+  (the master always) claims a free watchtower territory when the season has it claimable (`SeasonSchedule` "data"), in the zone's prime
+  time (`PrimeTimeOnly`; not needed within the claimlimitoverrideminutes, 16 h, after the season opens the claims), with no Tower
+  Guardian standing (`Invader`), not in the first 2 minutes after entering the zone, under `MaxPerGuild`, with the guild fame
+  (`GuildFameRequirement` "data": 1 000 000 for the first and each further territory) and the cost in the guild account (`ClaimCost`
+  "data": 2 000 000 silver, taken at the channel's end). Moving, damage or a knockdown break the channel. A refusal shows the client's
+  territory error and a system line saying why. The tower then shows the guild's name and crest, the members get the territory in
+  their guild list, and a hideout's tribute in that zone goes to the new owner.
+- **Food** (`Territories:Food`): a claim stores 4000 food; one is eaten every 22.2 s (the storage of 38 880 lasts 10 days); anybody at
+  the tower may feed it food items (items' nutrition; op 223). An empty store loses the territory (the guild is told). pve: nothing
+  is eaten.
+- **Give up and access**: a member with Give Up Territory lets it go (op 115); Territory Access changes the access setting (op 116;
+  kept and saved, no shield exists yet).
+- **Guild list**: GetMyTerritories (op 138) lists the guild's territories and castles with the food and tower power of each.
+- **Season schedule** (`SeasonSchedule` "data"): the season's resetterritories (SEASON_34: day 1, 29 and 57 at 11:00 UTC) frees every
+  territory, and castle (the season lists CASTLE), held from before it; spawninvader puts the season's Tower Guardian
+  (T6_MOB_ARCANE_ELEMENTAL_ELITE_BOSS) at each free tower of a loaded zone, and claims wait until it is dead (a server restart brings it
+  back until killed again). "off" (pve): always claimable, never reset, no Tower Guardian.
+- **NPC holders** (`Territories:NpcOwners`, pve true): a free watchtower is held by the "Outlands Wardens": fortification guards
+  (T4-T8_MOB_WATCHTOWER_SWORD / CROSSBOW / STAFF by the zone's tier, on the territory's guard spots nearest the tower, health ×
+  `Castles:GuardScale`) stand at the tower; with all of them dead it is free to claim for 1 h, then they hold it again. A territory
+  given up, starved or reset goes back to them. They pay and get nothing (no tribute, no season points).
+- **Territory season points**: every `Territories:ScoreTickMinutes` (60; the official tick is not in the data) a held territory pays
+  its guild's season the base points of its zone (territorytypes: black zone 1 60, 2 75, 3 90, 4 110, 5 130, 6 160) × the season's
+  score multiplier (SEASON_34: 2 from day 29) × `Territories:SeasonPointsFactor`, while the season's territory scoring runs for its
+  timeregion (SEASON_34: from day 1 18:00 to day 29 00:00 local and again from day 29 18:00; always with `SeasonSchedule` "off"),
+  as Holding Territories; a tick in the zone's prime time pays `Territories:PrimeTimeBonus` (1) × as much again as Prime Time:
+  Territory Bonus Points. They count for the standings, brackets and rewards like every season point (the Overview rows, 447). The
+  NPC holders score nothing.
+- **Tower power**: a territory's tower power points (0 at a claim; nothing but the GM raises them yet: power crystals are a later
+  phase) set its tower level by the levels' pools stacked (level 2 from 9613, 3 from 24 609, … 8) and decay by the current level's
+  pool over its decaydays (2 days at level 1 … 4.8 at level 8), level by level; the zone's players get TowerPowerPointUpdate (433)
+  when they are set.
+- **Castle season points**: `Castles:SeasonPoints` (0 = off, both presets: the official amount is not in the data) × `Territories:SeasonPointsFactor`
+  per `Territories:ScoreTickMinutes` to the owner guild's season (the Overview's Territory row).
+- **Territory window**: GetMonolithInfo (117) answers a held territory's food and tower level (0/0 otherwise), GetClaimInfo (118)
+  the guild's fame (its members' fame since joining: PvE, PvP, gathering, crafting), the territories it owns and whether the season
+  lets the territory be claimed now (the client adds its own prime-time check), GetTerritorySeasonPoints (120) only whether the
+  reader's guild holds it (no points breakdown yet: tower level -1, the rest 0).
+- **World map**: the territory clusters stay without map info (the client's map indexes keys 4-18 per territory without checks
+  and no official sample confirms them): `Territories:WorldMapInfo` true sends them, one neutral entry per territory, every
+  array of the same length (a self-test checks it). Try it only with that in mind.
+- `Raids` and `Attacks` are read for the phases still to come; pve presets: 200 000 silver, no fame, any time, no food, no season
+  schedule, no raids, NPC holders, castle chests for anyone, guards × 0.6.
+- Commands: `.territory [id or name]` (the counts and rules, or one territory's cluster, owner, prime time and season window; a
+  castle's phase, claim, chest and guards; a tower's food, power, NPC holder and Tower Guardian), GM
+  `.castle capture|reset|chest|free|owner [guild]` on the nearest castle of the map, GM `.tower owner [guild]|free|food <n>|power <n>|beat`
+  on the nearest territory tower.
+
+Not checked in the client yet (captures T1, T3, T5): the monolith's keys 8-20 and 28 and the castle's key 11 are sent as their
+neutral values (0, false); the castle's key 13 is the standing chest's rarity name ("standard" … "legendary", "" without); the
+phase numbers other than 0 and 7; CastleClaimProgress keys 3-6 (the claim as a7m 0-10000 at the stamp, rate 0: an update every
+change instead) and the crest order of 514 (read from bux.j's call: 2 schema, 3/4 colours, 5 symbol, 6 symbol colour, 7/8 scale and
+offset); whether the client itself lets a non-owner open a castle chest (pve). GetMonolithInfo's two numbers and GetClaimInfo key 2
+have no reader found (food and level, false), and the world map's territory order is world.xml's. Claim (capture T1/T2): the cancel
+reason of an interrupted claim (341 key 1 12080; only 12085, the territory error, is decoded), GuildMemberTerritoryUpdate's keys (the
+territory, gained), GetMyTerritories keys 4-6 (0) and its hideout keys 7-18 (left out), the access byte's meaning, the reading of
+claimlimitoverrideminutes as "claims outside prime time", and whether the Tower Guardian stands at every free tower. Scoring (capture
+T6): the tick length and the prime-time bonus, the tower level's reading of powerpointspool and decaydays, GetTerritorySeasonPoints
+keys 1-8; no ReceivedGvgSeasonPoints (432) is sent for territory points (its key 2 is a mob type).
+
+### Guild hideouts
+
+A guild's hideouts in the black zones (`../analysis/work/stageP/hideouts/SPEC.md`, phases H1-H4; section `Hideouts` of
+`config/world.jsonc`, the same in both presets). Running a server of this version converts `albionlocal.db` to schema v40 (the tables
+hideouts and hideout_homes; an older server build refuses the converted file).
+
+- **Placement** (H1): the kit UNIQUE_HIDEOUT (items.xml hideoutitem, sent as a simple item) is placed like a placeable building: the
+  client's confirmation sends PlaceableObjectPlace (69) with the kit and the hideoutbuilding's type (decoded in the client, not
+  ConstructionSiteCreate). The rules of the data: a zone whose clustertype allows hideouts (OPENPVP_BLACK_1-6; the Roads' hideout
+  tunnels), with a territory (`RequireTerritory`), a guild member whose role has Manage Hideouts, during the zone's prime time
+  (the timeregion's start + 60 min, `RequirePrimeTime`, `PrimeTime`), at most 6 hideouts per guild (`MaxPerGuild`) and one per zone,
+  180 m from another hideout (60 m in a tunnel), and `BlockRadius` (50 m, a choice: the data has no radii) from a territory's monolith
+  (castles twice that), a zone exit and an outpost. After the kit's 15 s the kit is used and the hideout stands; a refusal is a system
+  line with the reason (the client's own CanBuild texts are named in it) and the kit stays.
+- **Construction** (H1): hideouts.xml's phases as timers: 1200 s, then invulnerable until the zone's next prime time, then 1200 s; then
+  the hideout is built at level a (HIDEOUT-0001a, 2 shields) with its starting food (15 000). `ConstructionSeconds` (a number) makes
+  the whole construction that long. Attacks are not made (`Sieges` false): no phase can be lost. The guild gets a mail at the start
+  and at the end (plain text).
+- **Surface object**: NewHideoutObject (419) with the owner guild and alliance, key 13 the level index, 14 the shields left, 15 the
+  mode (1 construction with 17 the phase and 18 its end, 2 established), 21/22 the durability bar; sent again to the zone at every
+  change. AccessStatus: the preset (closed, private, public) with the owner guild's role.
+- **Interior and entry** (H2): a built hideout's interior is the instance `@HIDEOUT@<guid>` built from the world.xml cluster of its
+  level (HIDEOUT-0001a: bank, repair shop, travel point; 0001b/c add the market, the farming merchant, the season store, meld
+  building, vanity store). ExitEnterStart (237) on the surface object channels hideouts.xml enterchanneltime (4 s, 253/255 to those
+  in view; a move, damage or knockdown breaks it with 254), then the push {0 the instance, 1 the level's cluster, 2 the guild's
+  name}; the arrival is the exit's spawn point inside. Inside: NewHideoutManagement (420, key 1 the instance id) with
+  HideoutManagementUpdate (425: level, food, tribute, a running upgrade) and NewHideoutExit (421); the exit leads out the same way
+  to the zone, 12 m in front of the hideout. A ChangeCluster on either object goes at once. Access by the preset
+  (accessrights.xml): private (the default) = the owner guild, public = everyone, closed = the guild master and the members with
+  Manage Hideouts; none while under construction or being upgraded. The alliance has no right of its own in the presets: allies
+  enter a public hideout. A login inside a hideout that is gone puts the character in front of it (without its row: in its last
+  city). HideoutGetOwnerInfo (399) answers the owner guild's name. A disbanded guild's hideouts go, players inside are put out.
+- **Services** (H3): the bank inside opens the hideout's **own vault** (`BankVault` "Own": the location `@HIDEOUT@<guid>`, a vault no
+  city bank opens, and no hideout bank opens a city's; the per-city logistics rule). `BankVault` "City" opens the nearest city's
+  vault instead (by world.xml exits, its "Bank of …" interior). Under `Bank:Shared` it is the shared vault like every bank. The
+  market of levels b and c (MARKETPLACE_HIDEOUT) is a market of its own location (the instance id), the repair shop an ordinary
+  one. **Make Home** (MakeHome 205 on the management; hideouts.xml makehome: levels a/b the owner guild, c also its alliance) and
+  Leave Home (206): saved, Join key 67 carries the home (the instance id), UpdateHome (216) tells the client at once. A death
+  respawns inside the home hideout (`RespawnAtHome`; not while it is being upgraded, not from a mists zone), and the travel
+  window's home entry (BuyJourney kind 1) is the **Journey Back** into it (to its travel point; 8047 while it is being upgraded).
+  The access preset is changed by AccessRightsChangeSettings (198) on the hideout or its management by the guild master or a
+  member with Manage Hideouts (custom roles are read as the nearest preset); the AccessStatus goes out again.
+- **Food, upgrades, tribute** (H4): HideoutFillNutrition (397) on the management takes food items of the inventory (items.xml
+  nutrition, the client's own test) into the store, as many as the level's storage takes (150 000 / 400 000 / 750 000). At each
+  prime-time start of the zone (`Upkeep`) the level's dailyupkeepnutrition (15 000 / 20 000 / 25 000) is eaten; a day with too
+  little food empties the store and costs a shield (the guild gets a mail), a fed day gives one back up to the level's
+  (shieldregenerationrate 1). Attacks are not made, so a starving hideout only loses its shields (no destruction yet, phase H5).
+  UpgradeHideout (394) by a member with Manage Hideouts: the next level's silver (20 M / 80 M) from that member and its resources
+  (GvG tokens, T1 wood and rock, T6 stone blocks) from its inventory, then its time (48 h / 96 h); nobody enters meanwhile, at the
+  end the players inside are put out and the next entry builds the new level (HIDEOUT-0001b/c, with the market and more); the
+  return code is the client's UpgradeResult (2 already upgrading, 3 last level, 4 not the owner guild, 5 no permission, 6 not
+  enough silver, 8 not enough resources). HideoutSetTribute (400) by the guild's managers (else 16000 NoPermission) sets the daily
+  tribute, paid at the prime time from the guild account (at most what it holds) to the guild owning a territory of the zone (the
+  first owned one: today the castles; watchtowers once they can be claimed); nothing without an owner. GM `.hideout day` runs a
+  day's upkeep and tribute now.
+- Commands: `.hideout list [all]` (your guild's hideouts; a GameMaster: all), GM `.hideout finish` (the construction or upgrade of
+  the hideout you are in or the nearest one ends now), GM `.hideout place` (a hideout of your guild where you stand, no kit, no rules), GM `.hideout day` (a day's food and tribute now).
+
+Not checked in the client yet (no capture holds a hideout, SPEC §9 P1/P5): NewHideoutObject keys 10, 12, 16, 19, 20, 23, 24, 26-29 are
+sent neutral (left out: 0, false, ""), key 11 is the placement time [H], key 22 the durability's stamp [H]; the mode values 0 and 3
+of key 15 are not used. The way in is ExitEnterStart (237) on the hideout [H, SPEC Q6] and the way in's ChangeCluster push carries the
+guild's name as key 2 [H]. NewHideoutManagement key 5 is the surface position [H], keys 6 and 8-13 neutral; HideoutManagementUpdate
+keys 4, 5 and 11-14 neutral. MakeHome, LeaveHome, AccessRightsChangeSettings, HideoutFillNutrition and HideoutSetTribute answer the bare
+return code (0 or the codes above), UpgradeHideout the UpgradeResult as its return code [H]. HideoutGetInfo (398) keeps the server's default empty
+answer, as before (its keys are not decoded). Not made yet: destruction and recovery (H5), power cores (H6), sieges (H7), HQ, boosters, moving and the
+world map's hideout keys (H8); outlaws and the static-dungeon rule are not checked at the entrance.
 
 ### Guild goals: the Guild Challenge, weekly goals, ranking and guild might
 
@@ -1835,13 +2594,21 @@ animals (v28) merged in, the conversion goes on to v28.
 - **Member Logs** (guild window → logs → Member Logs): PvE, PvP, gathering (with fishing and crops) and crafting fame, the
   silver tax paid into the account and the silver balance (tax paid less payouts received) per member for This Week, Last
   Week and All Time; the other columns stay 0.
-- **Boss kills**: a boss killed by guild members gives their guild `BossSeasonPoints` (world boss 20, boss 5, miniboss 2)
+- **Boss kills** (only with `Guilds:BossSeasonPoints`, pve true, official false): a boss killed by guild members gives their guild `BossSeasonPoints` (world boss 20, boss 5, miniboss 2)
   × `SeasonPointsFactor` season points, split between the guilds credited (rounded), and every member credited the client's
   floating "+N Season Points" with its chat line naming the boss and the guild.
 - **Ranking**: the season window's Rankings tab lists the guilds of this server with season points (rank, crest, points;
   ties go to the guild that got there first), its Overview the points by activity ("Guild Challenge" = challenge levels and
   weekly goals, "Killing Mobs" = bosses, "Might: …" = might levels). `.guild ranking` shows the top ten in chat.
-- **Season end**: when a season ends (or at the first start after a downtime across its end) each guild with points gets,
+- **Season history and participation** (`../analysis/work/stageP/territories/SPEC.md` phase P2): the Rankings tab's history of a
+  guild (GetGvgSeasonHistoryRankings: every past client season it has points in, with its rank and points), the members' history
+  of a season (GetGvgSeasonGuildMemberHistory: their challenge points and might; this client never reads it), and the reward
+  tab's participation (GvGSeasonPlayerGuildParticipationDetails: the guild, its points and rank, and the member's participation
+  shown as time: this server counts none, so the bar is the member's share of the `MinParticipation` rule above, full when the
+  member qualifies). At every Join of a client season GvgSeasonUpdate carries the previous season's winner among this server's
+  guilds (name, alliance, crest, points, seasons won) for the client's season winner window; without one only the season keys.
+  The Overview's territory rows (TerritoryHold, TerritoryConquer, TerritoryPrimeTime) get points once territories score.
+- **Season end** (the silver and items only with `Guilds:SeasonRewards Content`, the pve preset's; official: none): when a season ends (or at the first start after a downtime across its end) each guild with points gets,
   once, `BracketSilver` of its bracket (iron 0.5 M, bronze 1 M, silver 2 M, gold 4 M, crystal 8 M silver) into the guild
   account, and every member who gave something and at least `MinParticipation` (51 %) of the members' average, in Guild
   Challenge points or in guild might, gets `BracketItems` (iron 10 T4 crystal shards, bronze 20 T4, silver 20 T5, gold 30 T5, crystal 50 T6; `{ "bracket": {
@@ -1876,12 +2643,14 @@ the season-end lines and the journal's bracket rewards (`.guildgoal season end`)
 
 Phases 1-3 of `../analysis/work/stageH/islands/SPEC.md` (PVE-DESIGN step 14): an owned personal island, the trip there and
 back, a login on it, buying and upgrading at the island merchant, the showroom, and farms and herb gardens with their crops.
-Animals, building from the build menu, houses, furniture and labourers come later (phases 4-6).
+Animals (phase 4) and building farm buildings from the build menu (phase 5) work; houses, furniture and labourers come later.
 
 - **Getting one.** The island merchant (the NPC at the harbour of Thetford, Lymhurst, Bridgewatch, Caerleon, Martlock or
   Fort Sterling) sells the island of its city: the first personal island costs 20,000 silver, every further one (another
   city) 1,000,000, as worldsettings.xml prices them; `Islands:FreeIslands true` makes buying and upgrading free. The window
-  offers "Buy" only with 7 premium days: the server sends `Islands:PremiumDays` (31, Join key 91; 0 = none, no buying).
+  offers "Buy" only with 7 premium days: the server sends `Islands:PremiumDays` (31, Join key 91; 0 = none, no buying) to a premium
+  character, and with `Islands:BuyWithoutPremium` (true in both presets for now) to everyone: until premium can be had for gold,
+  everyone may buy and upgrade islands. The strict official rule is `false` (islands for premium characters only).
   With `Islands:StarterIsland` (pve true, official false) a character that owns no personal island gets one free when it
   opens the merchant, at `Islands:StarterLevel` (0 = the smallest, template `…0001a`; up to 5 = `…0001f`), a PvE choice
   beyond the SPEC. A GM gives one with `.island give [city] [level]` (one per character and city).
@@ -1899,7 +2668,7 @@ Animals, building from the build menu, houses, furniture and labourers come late
 - **Farming.** A farm (`T1_FARMHOUSE`: carrots, beans, wheat, turnips, cabbages, potatoes, corn, pumpkins) or a herb
   garden (`T1_HERBGARDEN`: agaric … yarrow) has 3 × 3 slots 6 m apart around its centre. With `Islands:StarterBuildings`
   (pve true) a new island gets one of each (at (145, 105) and (145, 135)), and so does an island without any building
-  when its map loads (one given before farming existed); otherwise a GM builds them
+  when its map loads (one given before farming existed); otherwise the player builds them (below) or a GM
   (`.island build T1_HERBGARDEN [x z]`). Planting a seed from the inventory into a slot takes 1 s (dismounted first); a
   crop grows for 22 h (`<harvest growtime>` 79200 s) divided by `Islands:GrowthSpeed` (pve 4: 5.5 h; the client's bar runs
   at normal speed between the server's updates, which come every 5 min while the speed is not 1 and when the crop is
@@ -1908,13 +2677,39 @@ Animals, building from the build menu, houses, furniture and labourers come late
   carrots, 87 % for T6 herbs). Watering, harvesting and destroying need the player within 12 m of the crop. The harvest gives the seed's loot list (T6 foxglove 3-6 and sometimes a worm) and 100
   farming fame (× `Rates:Fame`; the destiny board's farming nodes). A crop can also be destroyed.
 - **Animals.** A pasture (`T1_PASTURE`: chickens … cows, horses, oxen, giant stags) or a kennel (`T1_KENNEL`: cougars,
-  direwolves, direboars, swamp dragons, direbears), built by a GM like the farms (`.island build T1_PASTURE [x z]`), takes
+  direwolves, direboars, swamp dragons, direbears), built from the build menu (below) or by a GM (`.island build T1_PASTURE [x z]`), takes
   baby animals from the farming merchant into its slots the same way. A baby grows only while it has food: feeding it
   (the client's feed button) takes crops (`foodcategory` plants; meat for the kennel) at 48 nutrition each (the favourite
   twice that) up to its `nutritionmax`; a full feed lasts its whole growtime (T3 horse: 10 crops, 44 h, ÷
   `Islands:GrowthSpeed`). A grown baby is collected: the grown animal (`T3_FARM_HORSE_GROWN`, the stable's mount
   resource), the baby back with its offspring chance (84 % for the T3 horse; more after a focus care), and its fame. A
   grown chicken, goat, … placed in a pasture eats too and gives its product (eggs, milk) once per production time.
+- **Building (phase 5, `../analysis/work/stageN/islands5/SPEC.md`).** On the own island the client's build menu places a farm
+  (`T1_FARMHOUSE`), herb garden, pasture or kennel (the four buildings.xml farm buildings) on a free plot: the island template's
+  buildable ground (tiles.xml BuildingAndFertile), 2 x 2 cells of 10 m per building, so level 0 has 1 plot (centre (185, 115)) and
+  level 5 16. There is no construction site: the building's `placecost` in silver (50-100) and its materials (pasture: 30 T1_WOOD,
+  30 T1_ROCK, 30 T3_PLANKS, 30 T3_STONEBLOCK; kennel: 50 T6_WOOD, 50 T6_ROCK, 10 T6_METALBAR) are taken from the inventory at once and
+  the finished building stands there; a refusal says in chat what is missing. Giving a building up (the building's give-up button)
+  removes it with its crops, nothing comes back (destructionreturnfactor 0); not while an animal stands in it. Houses are not built yet.
+- **Picking up.** A placed animal (baby or grown) is picked up again from its window ("Pick Up"): the item goes back into the
+  inventory, its growth and food are lost (the client warns). Seeds cannot be picked up. A hungry animal only stops growing.
+- **Yield.** An island's crops and animal products listed for its home city in farmingmodifiers.xml give 10 % more (Lymhurst:
+  carrots, burdock, goose eggs, pumpkins), times the premium factor (now for products too). Collecting a product with the client's
+  "take all" setting on (the default) collects every ready animal of the same kind in that building.
+- **Houses and labourers (`../analysis/work/stageN/labourers/SPEC.md`).** The build menu offers the player house
+  (`T2_PLAYERHOUSE`: 100 silver, 30 T1 wood, 3 T1 stone, 180 T2 stone blocks) on a free plot; the house's Upgrade
+  (renovation) raises it a tier (T3 … T8, each tier's silver and resources taken at once) for more labourers (1 / 2 / 2 / 3)
+  and furniture (5 / 7 / 10 / 14). Beds, tables and trophies (any indoor furniture item) are placed inside the house from the
+  inventory and picked up again from their window. A labourer is hired from the house's "Hire labourer" menu (a T2 one,
+  1000 silver) or by placing a labourer contract (`T4_LABOURER_CONTRACT_WOOD`: a T4 lumberjack, the contract is used up)
+  inside the house. It settles in for 30 minutes, then takes a full journal it accepts (its tier or lower, its profession or
+  the trophy journals) and comes back after 22 hours with the journal's loot: about `baselootamount` picks of its loot list
+  (a T4 lumberjack's journal 48 T4 wood, some enchanted) times the yield. The yield depends on its happiness: a bed and a
+  table of the journal's tier (and trophies of its profession) give 100 %, more up to 150 %, less below (under 50 % it does not
+  start). Happiness moves towards what the house's furniture gives by 100 every 6 minutes. Each loot teaches the labourer
+  fame; with enough it advances a tier ("Advance to Tier"). It also sells empty journals at the journal merchant's price.
+  A house with labourers or furniture in it cannot be given up. Labourers are saved in schema v33 (`island_labourers`);
+  furniture is an `island_farmables` row of its house.
 - **Coming back.** The harbour's travel point on the island offers the home city; the journey is free and ends at the
   city's harbour travel point.
 - **Logging out** on the island logs in there again. A character whose island is gone (deleted, or `Islands:Enabled`
@@ -1931,8 +2726,9 @@ Commands (GameMaster): `.island give [city] [level]`, `.island level <0-5> [city
 building, its centre at x z or here), `.island unbuild` (the nearest one within 15 m, with its crops), `.island farms [city]`
 (buildings and crop growth), `.island ripen [city]` (every crop grown now).
 
-Not done: the rabbits of the island templates (world.xml `<mobcounts>`; the server spawns no mobcounts, so the SPEC's
-`Islands:ExtraMobCounts` would need that first), the farmingmodifiers.xml island yield bonus, guests on islands, guild
+Not done: construction sites (materials are taken at once), house repairs and skins, decorative furniture use (chests), the
+labourers' loot container window (the loot goes straight into the inventory), city plots, the rabbits of the island templates (world.xml `<mobcounts>`; the server spawns no mobcounts, so the SPEC's
+`Islands:ExtraMobCounts` would need that first), guests on islands, guild
 islands. Not yet checked with the client (SPEC §1.8 C1-C6, §2.6 C7-C11, §3.5 C12-C15): "Visit" / "Buy" in the merchant
 window, the island's loading and map name, the way back, the login on the island, the island bank and farming merchant,
 the island management window; other effects of Join key 91 (premium UI elsewhere?), the purchase and the "upgrading"
@@ -1954,8 +2750,8 @@ Commands start with a `.` and are typed either into the game's chat or into the 
 | Command | Level | What it does |
 |---|---|---|
 | `.help [command]` | Player | the commands you may use, with their arguments (`.help item`) |
-| `.save` | Player | saves every player in game now |
-| `.who` | Player | the players in game, one per line: object id, cluster, position |
+| `.save` | GameMaster | saves every player in game now |
+| `.who` | GameMaster | the players in game, one per line: object id, cluster, position |
 | `.gps` | Player | cluster and position of the player |
 | `.friends [name]` | Player | your friends (online or not), open friend requests sent and received, and muted players; a GameMaster may name another character |
 | `.chat` | GameMaster | the chat server's connections (character, channels joined, logged out) and the channels that have members |
@@ -1991,7 +2787,7 @@ Commands start with a `.` and are typed either into the game's chat or into the 
 | `.exp leave` | GameMaster | takes the player out of its expedition to its way back |
 | `.exp level <n>` | GameMaster | opens the hardcore expedition levels 1-n for the player (the ladder) |
 | `.cd` | Player | your corrupted dungeon infamy and its peak, the reward bonus per rank, your runs and completions, the run you are in |
-| `.cd leave` | Player | takes you out of your corrupted dungeon to where you cast the entrance (not knocked down or in combat) |
+| `.cd leave` | Player (`Corrupted:LeaveCommand`) | takes you out of your corrupted dungeon to where you cast the entrance (not knocked down or in combat) |
 | `.cd enter <1-3> [map]` | GameMaster | sends the player into a new corrupted dungeon (1 Hunter, 2 Stalker, 3 Slayer) on `CORRUPT-0nn` (or its number; default 1), without the entrance or its gates, the way back where it stands |
 | `.cd finish` | GameMaster | completes the player's corrupted dungeon now (infamy, rewards, the boss chest, the exit portal) |
 | `.cd infamy <n>` | GameMaster | sets the player's corrupted dungeon infamy and its peak (Slayer opens at 100 000) |
@@ -2024,6 +2820,7 @@ Commands start with a `.` and are typed either into the game's chat or into the 
 | `.mists close [id]` | GameMaster | your mists zone (or the one of that id) closes now: everyone inside goes out to the way back |
 | `.mob kill [nearest\|all]` | GameMaster | takes the mob nearest to the player in view (or every mob in view) off the map (Leave); its spawn point respawns it after the scaled respawn time. A despawn, not a kill: no corpse, rewards or loot |
 | `.mob respawnscale [scale]` | GameMaster | shows or sets the factor on mob respawn times, the old form of `Rates:Respawn` (= 1 / it; 0.01 = a hundred times faster) |
+| `.mob escape` | GameMaster | the nearest living mob in view flees: its mobs.xml EscapeSpellSequence (a tracking mob's immunity, escape spell and dash away from its threat), then it leaves the map; a mob without one leaves at once |
 | `.mob ai [on\|off]` | GameMaster | switches the mob AI (`World:MobAi`, on); without an argument: whether it is on and what the nearest living mob in view is doing (AI, state, threat, target, walk, home, last reset) |
 | `.bot` | GameMaster | the player bots of every loaded cluster: zone class, players, bots by role, slots filled, the walk grid (cells, walkable, lattice, POIs, exits, build time); whether bots are on |
 | `.bot list` | GameMaster | the bots of this cluster, nearest first: name, role, tier, persona, object id, distance, what it does |
@@ -2034,7 +2831,8 @@ Commands start with a `.` and are typed either into the game's chat or into the 
 | `.bot grid` | GameMaster | the bots' walk grid at the player: the cell blocked or walkable, the nearest walkable point, the grid's numbers |
 | `.bot path <x> <z>` | GameMaster | the bots' path from the player to (x, z): legs and length; a new GM city bot walks it |
 | `.mob spells [on\|off]` | GameMaster | switches the mobs' `<AI>` spells (`MobSpells` in content/combat.json, on); without an argument: whether they are on |
-| `.rates [name value]` | GameMaster / Admin | show rates; Admin: `.rates harvest 2` changes the world temporarily; `.rates reset` restores startup values. Restart discards changes; `save` is unsupported |
+| `.rates [name value]` | GameMaster / Admin | display active rates; Admin changes are temporary and global; `.rates reset` restores startup values; `save` is rejected |
+| `.vanity list [text]`, `.vanity grant <id\|name>`, `.vanity revoke <id\|name>`, `.vanity drop [theme]` | GameMaster | the cosmetics (Cosmetics above): owned or catalogue search, unlock, take back, a drop now |
 | `.damage <amount>` | GameMaster | takes `amount` health from the player (a HealthUpdate caused by itself, no combat); at 0 it is knocked down |
 | `.kill` | GameMaster | knocks the player down (PvE knockdown); it gets up by itself 18 s later |
 | `.heal` | GameMaster | full health and energy; a knocked-down player gets up at once |

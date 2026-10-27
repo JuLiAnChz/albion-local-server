@@ -32,4 +32,13 @@ public interface IIslandStore
 
     /// <summary>Removes a crop (harvested or destroyed).</summary>
     void DeleteFarmable(Guid id);
+
+    /// <summary>Every labourer of every island's houses (schema v33).</summary>
+    IReadOnlyList<IslandLabourer> LoadLabourers();
+
+    /// <summary>Stores <paramref name="labourer"/> (hired or changed).</summary>
+    void SaveLabourer(IslandLabourer labourer);
+
+    /// <summary>Removes a dismissed labourer.</summary>
+    void DeleteLabourer(Guid id);
 }

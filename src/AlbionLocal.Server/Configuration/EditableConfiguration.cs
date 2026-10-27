@@ -74,7 +74,8 @@ public static class ConfigurationOptions
     {
         if (key.Equals("Preset", StringComparison.OrdinalIgnoreCase) || key.Equals("Network:BindAddress", StringComparison.OrdinalIgnoreCase)
             || key.Equals("Network:PublicAddress", StringComparison.OrdinalIgnoreCase) || key.Equals("Paths:ClientGameData", StringComparison.OrdinalIgnoreCase)
-            || key.Equals("Paths:Content", StringComparison.OrdinalIgnoreCase) || key.StartsWith("Log:", StringComparison.OrdinalIgnoreCase)) return "common.jsonc";
+            || key.Equals("Paths:Content", StringComparison.OrdinalIgnoreCase) || key.StartsWith("Log:", StringComparison.OrdinalIgnoreCase)
+            || key.StartsWith("Web:", StringComparison.OrdinalIgnoreCase) || key.StartsWith("Backup:", StringComparison.OrdinalIgnoreCase)) return "common.jsonc";
         if (key.Equals("Network:LoginPort", StringComparison.OrdinalIgnoreCase) || key.StartsWith("Accounts:", StringComparison.OrdinalIgnoreCase)) return "login.jsonc";
         if (key.Equals("Network:ChatPort", StringComparison.OrdinalIgnoreCase) || key.StartsWith("Chat:", StringComparison.OrdinalIgnoreCase)) return "chat.jsonc";
         if (key.Equals("Paths:Saves", StringComparison.OrdinalIgnoreCase) || key.StartsWith("Persistence:", StringComparison.OrdinalIgnoreCase)) return "persistence.jsonc";

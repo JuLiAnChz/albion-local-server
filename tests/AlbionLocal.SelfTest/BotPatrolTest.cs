@@ -48,6 +48,10 @@ public static class BotPatrolTest
         ("bots patrol: the target beyond the leash: every member gives up, the leader walks back to a stop, the others behind it", LeashWalkBack),
         ("bots patrol: two Red players in a duel next to it are not attacked", Duelists),
         ("bots patrol: a riding Red player hit by it: its hits on the mount bar, the hostile dismount at 0 (Mounted key 13)", RiderDismounted),
+        ("bots botpower: a pve patrol has a full-spec player's health and board, potions; at low health it drinks one", PvePower),
+        ("bots botpower: a ranged patrol steps back from a Red player 2 m away along the walk grid", Kites),
+        ("bots switches: Bots:Pvp:Enabled false: a patrol never attacks a Red player on sight, but answers his hit", PvpOff),
+        ("bots switches: Bots:Rewards:Enabled false: a beaten patrol gives no fame, goal credit, bag or silver", RewardsOff),
     ];
 
     private static void Check(bool cond, string what) => AlbionTests.Check(cond, what);
@@ -159,6 +163,43 @@ public static class BotPatrolTest
               && Of(peer, EventCodes.HealthUpdate, mark).Any(p => L(p, 0) == red.Id && L(p, 6) == bot.Id && Convert.ToInt32(p[7]) == -1),
               $"a Red player 8 m away: its Attack 13 {{0 bot, 2 him}} and his HealthUpdate {{6 bot, 7 -1}} (target {bot.Bot.Fight.TargetId})");
         Check(!Of(bluePeer, EventCodes.HealthUpdate, 0).Any(p => L(p, 0) == blue.Id), "the Blue player was never hit");
+    }
+
+    private static void PvpOff()
+    {
+        using var f = new Field(Quick with { PvpEnabled = false }, BotTest.NoPopulation, Yellow);
+        var nav = f.Nav();
+        var bot = Patrol(f, nav);
+        var (_, peer, red) = f.Join("Rolf", Near(f, nav, bot, 8), Pvp.Red);
+        var mark = peer.Events.Count;
+        f.Run(5);
+        Check(!Of(peer, EventCodes.Attack, mark).Any(p => L(p, 0) == bot.Id) && bot.Bot!.Fight.TargetId == 0 && Pvp.Of(bot, red) == Relation.Neutral && Pvp.Of(red, bot) == Relation.Hostile,
+              $"Pvp off: a Red player 8 m away is not attacked in 5 s, the patrol Neutral to him, he may attack it ({bot.Bot!.Brain.State})");
+        Hit(f, red, bot, 1);
+        mark = peer.Events.Count;
+        var interval = SpellCasts.SwingInterval(bot) / (double)TimeSpan.TicksPerSecond;
+        Until(f, f.World.Config.Bots.ReactionMs / 1000.0 + interval + 4, () => Of(peer, EventCodes.Attack, mark).Any(p => L(p, 0) == bot.Id && L(p, 2) == red.Id));
+        Check(Pvp.Of(bot, red) == Relation.Hostile && Of(peer, EventCodes.Attack, mark).Any(p => L(p, 0) == bot.Id && L(p, 2) == red.Id),
+              "after his hit it answers him (Hostile, its Attack on him)");
+    }
+
+    private static void RewardsOff()
+    {
+        using var f = new Field(Quick with { GearDropChance = 1, RewardsEnabled = false }, BotTest.NoPopulation, Yellow);
+        var nav = f.Nav();
+        var bot = Patrol(f, nav);
+        var (_, peer, blue) = f.Join("Nora", Near(f, nav, bot, 3));
+        var persona = bot.Bot!.PersonaId;
+        var silver = blue.Character.Silver;
+        var mark = peer.Events.Count;
+        Hit(f, blue, bot, 1e7);
+        var fame = Of(peer, EventCodes.UpdateFame, mark).Where(p => L(p, 0) == blue.Id).Sum(p => L(p, 2));
+        Check(Of(peer, EventCodes.KnockedDown, mark).Any(p => L(p, 0) == bot.Id) && fame == 0 && blue.Character.Goals?.PvpVictims.ContainsKey("b:" + persona) != true,
+              $"Rewards off: knocked down, no fame ({fame}), no PvP goal credit");
+        f.Run(11);
+        Check(!f.Map.Objects.Values.OfType<PlayerLootBag>().Any(b => b.VictimId == bot.Id) && !f.Map.Objects.Values.OfType<SilverPile>().Any(p => p.SourceId == bot.Id)
+              && Of(peer, EventCodes.NewLoot, mark).Count == 0 && blue.Character.Silver == silver && bot.Map is null,
+              "at its despawn no bag and no silver pile");
     }
 
     private static void JoinGrace()
@@ -358,6 +399,51 @@ public static class BotPatrolTest
         Check(plain > 0 && Math.Abs(bot.Health.Max - Math.Round(plain * 2)) < 1, $"its maximum health {bot.Health.Max} = 2 x {plain}");
     }
 
+    /// <summary>StageN botpower: the pve preset's bot keys as they are (full mastery and health, Bots:Combat:Potions) on a T6 patrol.</summary>
+    private static void PvePower()
+    {
+        var pve = ServerConfig.PveDefaults.Bots with
+        {
+            ThinkSeconds = (0.3, 0.3), JoinGraceSeconds = 0, RouteDwellSeconds = (300, 300), RouteEndDwellSeconds = (300, 300), GearDropChance = 0, Potions = (2, 2),
+        };
+        using var f = new Field(pve, BotTest.NoPopulation, Yellow);
+        var nav = f.Nav();
+        var bot = Patrol(f, nav, 6);
+        var potion = bot.Inventory.Equipment[8];
+        Check(bot.Progression == f.World.UnlockAll && bot.Progression is not null && Math.Abs(bot.Health.Max - bot.ComputeStats().MaxHealth) < 1
+              && potion is { Count: 2 } && potion.Template.Name.EndsWith("_POTION_HEAL", StringComparison.Ordinal) && bot.Inventory.Equipment.Items.Where(i => i.Template.Slot is "head" or "armor").All(i => i.Quality is >= 1 and <= 2),
+              $"a T6 patrol on the full board with its gear's whole health {bot.Health.Max} (stats {bot.ComputeStats().MaxHealth}), {potion?.Count} x {potion?.Template.Name}");
+        var (_, _, red) = f.Join("Rolf", Near(f, nav, bot, 4), Pvp.Red);
+        Until(f, 4, () => bot.Bot!.Fight.TargetId == red.Id);
+        lock (f.World.Sync) bot.Health.Set(bot.Health.Max * 0.2f, f.World.GameNow);
+        Until(f, 3, () => bot.Inventory.Equipment[8] is not { Count: 2 });
+        Check(bot.Bot!.Fight.TargetId == red.Id && bot.Inventory.Equipment[8] is not { Count: 2 },
+              $"at 20 % health it drinks a potion ({bot.Inventory.Equipment[8]?.Count ?? 0} left, health {bot.Health.At(f.World.GameNow):0}/{bot.Health.Max})");
+    }
+
+    /// <summary>StageN botpower: Bots:Combat:KiteDistance; a T4 bow for the patrol's weapon.</summary>
+    private static void Kites()
+    {
+        using var f = new Field(Quick with { Potions = (0, 0) }, BotTest.NoPopulation, Yellow);
+        var nav = f.Nav();
+        var bot = Patrol(f, nav);
+        lock (f.World.Sync)
+        {
+            var bow = f.World.Items.Find("T4_2H_BOW")!;
+            bot.Inventory.Equipment.Take(1);
+            bot.Inventory.Equipment.Take(0);
+            bot.Inventory.Equipment.Put(0, new Item(f.World.ObjectIds.Next(), bow, 1, 1, bow.FullDurabilityRaw, [], []));
+            bot.RecalculateStats(f.World.GameNow);
+        }
+        var (_, _, red) = f.Join("Ria", Near(f, nav, bot, 2), Pvp.Red);
+        var from = red.PositionAt(DateTime.UtcNow);
+        var start = Vector2.Distance(bot.PositionAt(f.World.Bots.Time), from);
+        Until(f, 5, () => bot.Bot!.Fight.KiteUntil != 0 && !bot.Bot.Motion.Busy);
+        var end = Vector2.Distance(bot.PositionAt(f.World.Bots.Time), from);
+        Check(bot.Bot!.Fight.KiteUntil != 0 && end > start + 2 && nav.Grid.Walkable(bot.PositionAt(f.World.Bots.Time)),
+              $"it stepped back from {start:0.#} m to {end:0.#} m, on walkable ground");
+    }
+
     private static void LethalToPlayers()
     {
         using var f = new Field(Quick with { DamageFactor = 1000, LethalToPlayers = true }, BotTest.NoPopulation, RedZone, config: c => c with { PvpLethalDeath = true });
@@ -394,13 +480,13 @@ public static class BotPatrolTest
         var dir = NewDir();
         var file = Path.Combine(dir, "albionlocal.json");
         File.WriteAllText(file, """{ "Bots": { "Patrol": { "AggroRadius": 12, "GroupSize": "2-3" }, "Rewards": { "LootProtectionSeconds": null }, "PvpRulesByZone": { "Red": "Official" } } }""");
-        var c = LoadTestConfig(file, []).Bots;
+        var c = LoadTestConfig(file, ["--Preset=pve"]).Bots;
         Check(c is { AggroRadius: 12, GroupSize: (2, 3), LootProtectionSeconds: null, SpareMinutes: 5, JoinGraceSeconds: 10, AttackMounted: true, LethalToPlayers: false,
-                  DamageFactor: 1, HealthFactor: 0.7 /* the pve preset (stageM pvp-damage) */, FameFactor: 0.5, GearDropChance: 0.2, ResourceDropShare: 0.5, BagsPerHour: 30, SameBotMinutes: 10 }
+                  DamageFactor: 1, HealthFactor: 1 /* the pve preset since stageN botpower (0.7 before) */, FameFactor: 0.5, GearDropChance: 0.2, ResourceDropShare: 0.5, BagsPerHour: 30, SameBotMinutes: 10 }
               && LoadTestConfig(file, ["--Bots:Rewards:LootProtectionSeconds=60"]).Bots.LootProtectionSeconds == 60
               && c.PvpRulesIn("red") == BotPvpRules.Official && c.PvpRulesIn("black") == BotPvpRules.Consent && new BotOptions().PvpRulesByZone.Count == 0,
               "Patrol:* and Rewards:* keys with their defaults; LootProtectionSeconds null (gamedata) or seconds; PvpRulesByZone red Official, the rest PvpRules");
-        var pve = LoadTestConfig(Path.Combine(dir, "none.json"), []).Bots;
+        var pve = LoadTestConfig(Path.Combine(dir, "none.json"), ["--Preset=pve"]).Bots;
         Check(pve.PvpRulesIn("red") == BotPvpRules.Official && pve.PvpRulesIn("black") == BotPvpRules.Official && pve.PvpRulesIn("yellow") == BotPvpRules.Consent
               && LoadTestConfig(Path.Combine(dir, "none.json"), ["--Preset=official"]).Bots.PvpRulesByZone.Count == 0,
               "pve preset: patrols use the official rules in red and black zones, consent elsewhere; official preset: no zone rules");

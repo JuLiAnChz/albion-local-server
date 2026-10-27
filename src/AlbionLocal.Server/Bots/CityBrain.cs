@@ -24,7 +24,9 @@ public interface IBotBrain
 /// emote (Bots:City:EmoteChance, the weights of content/bots.json; a looping one, sitting or dancing, is shown to whoever comes into view
 /// later and stopped before it walks on) or a short shuffle of 1-3 m, then walks on: 60 % to another POI by weight (not one Bots:City:PerPoi
 /// bots dwell at already, nor one it found no path to), 40 % to a spot 15-40 m away, always along <see cref="RoadMap.Path"/>. When its stay
-/// is over it walks to an exit and is gone there, or logs out where it stands (World:LogoutSeconds, then gone): a player leaving.
+/// is over it walks to an exit and is gone there, or logs out where it stands (World:LogoutSeconds, then gone): a player leaving. With
+/// Bots:Travel:Enabled the exit leads next door when the neighbour takes it (<see cref="BotManager.Travellers"/>); the bank and market doors
+/// are among its POIs (its city's own: per city, as a player's).
 /// </summary>
 public sealed class CityBrain(BotManager bots) : IBotBrain
 {
@@ -75,7 +77,7 @@ public sealed class CityBrain(BotManager bots) : IBotBrain
         var info = bot.Bot!;
         if (_phase == Phase.Leave && Vector2.Distance(bot.PositionAt(bots.Time), _exit) <= ExitReach)
         {
-            bots.Despawn(bot, "left through an exit", BotRefill.Arrival); // at the trigger before the gate: gone as it walks in
+            bots.LeaveThrough(bot, _exit); // at the trigger before the gate: gone as it walks in (bot-travel: next door)
             return;
         }
         if (info.Motion.Busy || bot.Map is not { } map || bots.NavOf(map) is not { } nav) return;
@@ -86,7 +88,7 @@ public sealed class CityBrain(BotManager bots) : IBotBrain
                 if (Poi is not null && bots.Random.NextDouble() < bots.Options.CityEmoteChance) bots.Emote(bot, PickEmote());
                 return;
             case Phase.Leave:
-                bots.Despawn(bot, "left through an exit", BotRefill.Arrival);
+                bots.LeaveThrough(bot, _exit);
                 return;
             case Phase.Logout:
                 if (now >= _until) bots.Despawn(bot, "logged out", BotRefill.Arrival);
@@ -130,8 +132,9 @@ public sealed class CityBrain(BotManager bots) : IBotBrain
         }
         BotPoi? poi = null;
         Vector2? goal = null;
-        if (bots.Random.NextDouble() < 0.6 && bots.PickPoi(map, nav, except: Poi) is { } p) (poi, goal) = (p, p.At);
-        else goal = nav.Grid.RandomNear(bots.Random, here, 15, 40) ?? nav.Roads.RandomNode(bots.Random);
+        var (near, far) = bots.Options.CityWanderMeters;
+        if (bots.Random.NextDouble() < bots.Options.CityPoiShare && bots.PickPoi(map, nav, except: Poi) is { } p) (poi, goal) = (p, p.At); // Bots:City:PoiShare
+        else goal = nav.Grid.RandomNear(bots.Random, here, (float)near, (float)far) ?? nav.Roads.RandomNode(bots.Random); // Bots:City:WanderMeters
         if (goal is not { } g) return;
         if (bots.FindPath(nav, here, g) is not { } path)
         {
@@ -144,14 +147,14 @@ public sealed class CityBrain(BotManager bots) : IBotBrain
     }
 
     /// <summary>
-    /// The stay is over: half the time to the gate of the nearest exit with a path (<see cref="BotExit.Gate"/>, facing the trigger; gone
+    /// The stay is over: with Bots:City:ExitShare (0.5) to the gate of the nearest exit with a path (<see cref="BotExit.Gate"/>, facing the trigger; gone
     /// there or within 2 m of the trigger, SPEC §1.4), else (or without one) a logout where it stands.
     /// </summary>
     private void Leave(Player bot, ClusterNav nav, TimeSpan now)
     {
         var here = bot.PositionAt(bots.Time);
-        if (bots.Random.NextDouble() < 0.5)
-            foreach (var exit in nav.Exits.OrderBy(e => Vector2.DistanceSquared(e.Gate, here)))
+        if (bots.Random.NextDouble() < bots.Options.CityExitShare)
+            foreach (var exit in bots.ExitOrder(bot, nav.Exits, here)) // bot-travel: a neighbour that takes it first
                 if (bots.FindPath(nav, here, exit.Gate) is { } path)
                 {
                     Poi = null;

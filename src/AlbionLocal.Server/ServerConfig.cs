@@ -3,6 +3,7 @@ using System.Text.Json;
 using AlbionLocal.Photon;
 using AlbionLocal.Server.Data;
 using AlbionLocal.Server.Persistence;
+using AlbionLocal.Server.Web;
 
 namespace AlbionLocal.Server;
 
@@ -157,21 +158,28 @@ public sealed record ServerConfig
     /// <summary>Server content under git (Paths:Content, ARCHITECTURE.md §5.2): starter.json, opcode-stubs.json, combat.json, kits.json.</summary>
     public string ContentPath { get; init; } = Path.Combine(Environment.CurrentDirectory, "content");
 
-    /// <summary>Start cluster, position and kit of new characters (Content/StarterKit).</summary>
-    public string StarterPath => Path.Combine(ContentPath, "starter.json");
+    /// <summary>Start cluster, position and kit of new characters (Content/StarterKit): content/starter.json unless set (the self-test
+    /// points it at a missing file, so its characters get the built-in T4 kit whatever the shipped one is).</summary>
+    public string StarterPath { get => _starterPath ?? Path.Combine(ContentPath, "starter.json"); init => _starterPath = value; }
+
+    private readonly string? _starterPath;
 
     /// <summary>Start cluster, position and kit of a new character under Progression:NewCharacters = FairStart (Content/StarterKit).</summary>
     public string FairStarterPath => Path.Combine(ContentPath, "starter-fair.json");
 
     /// <summary>
-    /// Progression:NewCharacters: the destiny board a new character starts with. UnlockAll (the default, as before):
-    /// none of its own, everything unlocked, no fame on the board; FairStart: an empty board (START in progress) that
-    /// fame fills, with the kit of <see cref="FairStarterPath"/>. Existing characters keep theirs (a GM's .progress mode
-    /// switches one).
+    /// Progression:NewCharacters (FairStart, official; the pve preset UnlockAll): the destiny board a new character starts with. FairStart:
+    /// an empty board (START in progress) that fame fills, with the kit of <see cref="FairStarterPath"/>, as an official character; UnlockAll:
+    /// none of its own, everything unlocked, no fame on the board. Existing characters keep theirs (a GM's .progress mode switches one).
+    /// Tutorial:Opening's characters start from the tutorial's own fair board either way.
     /// </summary>
-    public NewCharacterProgression NewCharacters { get; init; } = NewCharacterProgression.UnlockAll;
+    public NewCharacterProgression NewCharacters { get; init; } = NewCharacterProgression.FairStart;
 
-    /// <summary>Explicit tutorial lab for NEW characters, from the beach through departure to a starter town.</summary>
+    /// <summary>
+    /// Tutorial:Opening (true when the key is missing, both presets: the official game starts every new character in it): the tutorial for NEW
+    /// characters, from the beach through departure to a starter town; false = they start where content/starter.json puts them. The record's
+    /// own value stays false: a config built in code (the self-tests, tools) has no tutorial data to load; <see cref="Validate"/> gives true.
+    /// </summary>
     public bool TutorialOpening { get; init; }
 
     /// <summary>Answers of side requests without a handler (Content/OpcodeStubs).</summary>
@@ -345,7 +353,7 @@ public sealed record ServerConfig
 
     /// <summary>
     /// The rate modifiers (section Rates: Fame, CombatFame, GatheringFame, CraftingFame, Harvest, Silver, Loot, Respawn,
-    /// Regrowth, CraftingReturn; all 1). The world starts from these;
+    /// Regrowth, CraftingReturn, ChampionWeight, ChestRespawn; all 1). The world starts from these;
     /// a GM changes them while the server runs (.rates). World:MobRespawnScale, the respawn time factor of before, is read
     /// as Rates:Respawn = 1 / it (0 = the fastest, <see cref="Game.Rates.Max"/>).
     /// </summary>
@@ -404,9 +412,25 @@ public sealed record ServerConfig
     /// Loot:BlackMarketChance (0.1): the chance that a mob drops a rolled loot.xml item marked useblackmarket="true" (all the
     /// DIRECTLOOTDROP equipment). The client's loot printer calls them "drops only via blackmarket": the official server drops
     /// such an item only when its Black Market holds one, which a local server has no stock for. 0.1 fits the 18 captured mob
-    /// kills (3 of about 28 expected such items came; stage 5 SPEC §5c.4); 1 drops every roll, 0 none.
+    /// kills (3 of about 28 expected such items came; stage 5 SPEC §5c.4); 1 drops every roll, 0 none. Mob kills and opened chests
+    /// alike; not × Rates:Loot (that is on the loot factor already; loot-balance SPEC §2.1).
     /// </summary>
     public double LootBlackMarketChance { get; init; } = 0.1;
+
+    /// <summary>
+    /// Loot:BlackMarketSoftCap (0 = none, official; the pve preset 4): in one roll of a mob's or chest's loot, past this many useblackmarket items each further
+    /// one only with cap / (its number) (<see cref="Data.LootTables.RollMob"/>): about sqrt(2 × cap × n) of n, so the chests whose
+    /// lists name hundreds of Black Market rolls (Avalonian, static and hellgate chests, world bosses) give tens of items, not
+    /// hundreds, while a mob or a solo chest (a few) is untouched (loot-balance SPEC §2.3 [design]).
+    /// </summary>
+    public int LootBlackMarketSoftCap { get; init; }
+
+    /// <summary>
+    /// Loot:TierCap (false, official; the pve preset true): a common loot entry of a mob or chest gives at most its content's tier + 1 (an
+    /// item above it is moved down to that tier), only an explicitly rare entry more (<see cref="Data.LootTables.RollMob"/>, loot-balance SPEC
+    /// [design]); false = the loot lists' items as rolled.
+    /// </summary>
+    public bool LootTierCap { get; init; }
 
     /// <summary>
     /// Pvp:RespawnCluster (""): the cluster a player who died in a lethal zone respawns in (its respawn point, else its first
@@ -422,28 +446,33 @@ public sealed record ServerConfig
     public bool PvpDeathSilverDrop { get; init; }
 
     /// <summary>
-    /// Preset (a root key, not a section): the rules the keys below default to (PVE-DESIGN.md §1). <see cref="ServerPreset.Pve"/>,
-    /// what <see cref="Load"/> takes without the key: consensual PvP (Pvp:Mode Consensual), no lethal deaths (Pvp:LethalDeath false,
+    /// Preset (a root key, not a section): the rules the keys below default to (PVE-DESIGN.md §1). <see cref="ServerPreset.Official"/>, what
+    /// <see cref="Load"/> takes without the key: the official rules, the defaults of this record. <see cref="ServerPreset.Pve"/>: consensual PvP
+    /// (Pvp:Mode Consensual), no lethal deaths (Pvp:LethalDeath false,
     /// Pvp:FullLoot false), no wear on a PvP knockdown (Pvp:KnockdownWear 0), a Red flag removed without its lock
-    /// (Pvp:RedLockMinutes 0), Loot:BlackMarketChance 0.35, a chest on every POI spot (Chests:PoiLimit 0), the Black Market's NPC buyer (Bm:BuyFactor 5), cheap open guilds (Guilds:CreateCost 100000,
+    /// (Pvp:RedLockMinutes 0), Loot:BlackMarketChance 0.15 and BlackMarketSoftCap 4, a chest on every POI spot (Chests:PoiLimit 0), the Black Market's NPC buyer (Bm:BuyFactor 5), cheap open guilds (Guilds:CreateCost 100000,
     /// Guilds:JoinRole Member, Guilds:RejoinCooldownMinutes 0) with the PvE guild of SPEC §10 (Guilds:NoFriendlyFire, ShareWithoutParty and
     /// Contracts true, XpShare 0.1, ClearXp 2000, SilverTax 0.05), a free starter island with a farm and a herb garden (Islands:StarterIsland, Islands:StarterBuildings true) whose crops grow 4 times as fast
     /// (Islands:GrowthSpeed 4) and are watered without focus (Islands:WaterFocusFactor 0), one world chat channel in the GENERAL tab with the
     /// language channels merged (Chat:WorldChannel, Chat:MergeLanguageChannels true), everyone premium (Premium:Mode Free) with a new character's
-    /// focus and learning points of the premium lifetime reward (Focus:Start 30000, LearningPoints:Start 500), the corrupted dungeons' exit portal from
+    /// focus and learning points of the premium lifetime reward (Focus:Start 30000, LearningPoints:Start 500) and everything unlocked
+    /// (Progression:NewCharacters UnlockAll), the corrupted dungeons' exit portal from
     /// the start with more infamy and rewards (Corrupted:ExitPortal Always, InfamyFactor 2, EarlyLeaveShare 0.5, RewardFactor 1.5) and invasions only by
     /// consent with a bot invader, nothing lost, one per run, no anti-reset imps and a chain bonus (Corrupted:Invasions / PlayerInvasions Consent,
-    /// BotInvaders true, InfamyLossOnDefeat 0, MaxInvasionsPerRun 1, AntiReset false, ChainBonus 0.1), the hellgates' fixed-mode shrine with an enemy
+    /// BotInvaders true, InfamyLossOnDefeat 0, MaxInvasionsPerRun 1, AntiReset false, ChainBonus 0.1), the corrupted maps as invasion tickets and
+    /// .cd leave (Corrupted:MapsOpenDungeons false, LeaveCommand true), the hellgates' fixed-mode shrine with an enemy
     /// team of bots only in the lethal modes, as many as the party, scaled demons, 30 s knockdowns and .hg leave (Hellgates:ShrineMode Fixed,
     /// VersusModes, EnemyTeamSize Party, CheckItemPower false, BossMapFactor 3, GroupScaling true, KnockdownSeconds 30, LeaveCommand true,
-    /// FinishedLingerSeconds 300; phase B RestrictedArea false, SpawnBuffs false, Matchmaking Bots), .roads for every player (Roads:Command All; phase B
+    /// FinishedLingerSeconds 300; phase B RestrictedArea false, SpawnBuffs false, Matchmaking Bots), .roads for every player and the rescue link
+    /// (Roads:Command All, Rescue true; phase B
     /// Roads:LogoutSeconds "world", Roads:ThrowOutAfterMinutes 0), a private mists zone per team that lasts twice as long, unlocks its treasures
     /// twice as fast, weakens a duo zone's mobs for one player, leads its open-world exit back to the entrance, gives the mist boss's
     /// damagers a reward chest and draws the portals' rarity more often enchanted (Mists:Matchmaking Private, LifetimeFactor 2, BlockFactor
     /// 0.5, DuoSoloScaling 0.6, OpenWorldExit Entrance, UnrestrictedZones false, BossChest true, RarityWeights 6000/1600/1200/800/400; phase B
-    /// StandingFactor 2), and the rates Fame 2,
-
-    /// Silver 1.5, Loot 1.5, Respawn 2, Harvest 1.5, Regrowth 2, ChampionWeight 2 (<see cref="PveDefaults"/>). <see cref="ServerPreset.Official"/>: the official rules, the defaults of this record.
+    /// StandingFactor 2), the arena's scaled-down matches with bots, silver and fame (<see cref="ArenaOptions.PveDefaults"/>), the server's own content of content/*.json (Events:PlayerInvasions, Bounties:Enabled, PvpGoals:Enabled,
+    /// Dungeons:GroupScaling, Guilds:BossSeasonPoints, Loot:TierCap, WorldBosses:ExtraSpawns true; Dungeons:DailyBonus, WorldBosses:Loot,
+    /// Season:Rules, Guilds:SeasonRewards, Expeditions:Rules Content), and the rates Fame 2, Silver 1.5, Respawn 2, Harvest 1.5, Regrowth 2,
+    /// ChampionWeight 2 (Loot 1; <see cref="PveDefaults"/>).
     /// Every key given in the file or on the command line wins over its preset's value.
     /// </summary>
     public ServerPreset Preset { get; init; } = ServerPreset.Official;
@@ -500,6 +529,39 @@ public sealed record ServerConfig
     /// rule auto-attacks use (so under the consensual mode only a Red player, a duel opponent, a bot by the zone's flags); false = they
     /// reach mobs only and a CastStart of an enemy spell at a player is refused (auto-attacks unchanged).
     /// </summary>
+
+    /// <summary>
+    /// DeathRecap:Enabled (true in both presets; stageP league-pvp SPEC §2.1): the hits, heals and crowd control on a player are recorded
+    /// and DeathRecap (op 492) answers with the last recap (<see cref="Systems.DeathRecaps"/>); false = nothing recorded, the empty recap.
+    /// </summary>
+    public bool DeathRecapEnabled { get; init; } = true;
+
+    /// <summary>DeathRecap:Seconds (null = gamedata &lt;DeathRecap timeframe&gt;, 180 s, both presets): the recap's window before the knockdown.</summary>
+    public double? DeathRecapSeconds { get; init; }
+
+    /// <summary>
+    /// Pvp:HealingSickness (true in both presets; stageP SPEC §2.2): a player or bot healed by 2 or more distinct other players or bots
+    /// within 10 s gets HEALINGSICKNESS_n (gamedata PlayerHealingSickness), which cuts the heals it receives (<see cref="Systems.PvpDetails"/>).
+    /// </summary>
+    public bool PvpHealingSickness { get; init; } = true;
+
+    /// <summary>
+    /// Pvp:Resilience (true in both presets; stageP SPEC §2.3): a player or bot hit by 2 or more distinct players or bots within 10 s takes
+    /// less damage from players for 5 s (gamedata PlayerFocusFire, focusfireprotectionpenetration; <see cref="Systems.PvpDetails"/>).
+    /// </summary>
+    public bool PvpResilience { get; init; } = true;
+
+    /// <summary>
+    /// Pvp:SpawnBuffs (true in both presets; stageP SPEC §2.4): the worldsettings spawnbuff lists' SPAWN_* buffs (SPAWN_INVULNERABILITY,
+    /// SPAWN_SPEED, SPAWN_BUFFIMMUNITY, …) on a cluster change's arrival and a respawn outside the hellgates (<see cref="Systems.SpawnBuffs"/>).
+    /// </summary>
+    public bool PvpSpawnBuffs { get; init; } = true;
+
+    /// <summary>
+    /// Pvp:EnterSpellCooldowns (true in both presets; stageP SPEC §2.4): the clustertype's spellcooldownsonenteringseconds (15 s in the
+    /// yellow, red and black zones) on every gear spell slot on arriving there.
+    /// </summary>
+    public bool PvpEnterSpellCooldowns { get; init; } = true;
     public bool PvpSpells { get; init; } = true;
 
     /// <summary>
@@ -516,20 +578,92 @@ public sealed record ServerConfig
     /// </summary>
     public bool PvePartyRevive { get; init; }
 
+    // ---- The server's own content of content/*.json (official audit 2026-10-26). The official value (false / 1 / Official / Killer) turns
+    // ---- it off whatever the file says; the pve preset's lets the file decide (Content.ContentRules applies them at the start).
+
+    /// <summary>
+    /// Events:PlayerInvasions (false, official; the pve preset true): the invasions players start (.invasion, the tickets), the tickets' NPC
+    /// sell orders and their drops (content/events.json Player, Merchant, Drops; the stage I invasions). False: none of them, whatever the file
+    /// says; the GM's .event start and the file's Scheduled events stay.
+    /// </summary>
+    public bool EventsPlayerInvasions { get; init; }
+
+    /// <summary>Bounties:Enabled (false, official; the pve preset true): the server bounties of content/goals.json Bounties (.bounty); false = none.</summary>
+    public bool BountiesEnabled { get; init; }
+
+    /// <summary>
+    /// PvpGoals:Enabled (false, official; the pve preset true): content/goals.json Pvp (challenge points for PvP kills and duels, a knockdown
+    /// as a kill); false = the built-in official rules (no points, a journal kill only for a death).
+    /// </summary>
+    public bool PvpGoalsEnabled { get; init; }
+
+    /// <summary>
+    /// Dungeons:DailyBonus (1, official: no dungeon of the day; the pve preset "content"): the dungeon of the day's factor on fame, silver and
+    /// loot; a number replaces content/dungeons.json DailyBonus, null ("content") keeps the file's.
+    /// </summary>
+    public double? DungeonsDailyBonus { get; init; } = 1;
+
+    /// <summary>Dungeons:GroupScaling (false, official; the pve preset true): content/dungeons.json GroupScaling may scale the group dungeons' mobs to the party; false = never.</summary>
+    public bool DungeonsGroupScaling { get; init; }
+
+    /// <summary>Guilds:BossSeasonPoints (false, official; the pve preset true): content/goals.json Guild BossSeasonPoints (guild season points for boss kills); false = none.</summary>
+    public bool GuildBossSeasonPoints { get; init; }
+
+    /// <summary>
+    /// Guilds:SeasonRewards (Official; the pve preset Content): Content = content/goals.json Guild BracketSilver and BracketItems at a season's
+    /// end and .guild payout; Official = none of these server rewards (the official season rewards are not modelled), .guild payout only
+    /// where another source fills the guild account (Guilds:SilverTax above 0, Guilds:Contracts).
+    /// </summary>
+    public RuleSource GuildSeasonRewards { get; init; } = RuleSource.Official;
+
+    /// <summary>
+    /// Season:Rules (Official; the pve preset Content): Official = the Adventurer's Challenge of the client data (its own factors, no boss bonus,
+    /// points x 1, the boughtpremium rewards only for premium, no daily extra items): only content/goals.json Season Enabled is read; Content =
+    /// the file's Season section as written.
+    /// </summary>
+    public RuleSource SeasonRules { get; init; } = RuleSource.Official;
+
+    /// <summary>
+    /// Expeditions:Rules (Official; the pve preset Content): Official = the client's rules over content/expeditions.json (no solo runs of the
+    /// group categories, the 262 invitation window, no hardcore carry, no group scaling, no extra items on every run, the leave penalty);
+    /// Content = the file's SoloGroupCategories, PartyAutoAccept, HardcorePartyCarry, GroupScaling, EveryRunItems and LeavePenalty.
+    /// </summary>
+    public RuleSource ExpeditionsRules { get; init; } = RuleSource.Official;
+
+    /// <summary>WorldBosses:ExtraSpawns (false, official; the pve preset true): content/bosses.json ExtraSpawns (the server's own bosses in 0204 and 1207); false = none.</summary>
+    public bool WorldBossesExtraSpawns { get; init; }
+
+    /// <summary>
+    /// WorldBosses:Loot (Killer, official; the pve preset null = "content"): who gets a world boss's loot (Killer, Shared, Personal, as
+    /// content/bosses.json Loot); null keeps the file's Loot.
+    /// </summary>
+    public Content.BossLoot? WorldBossesLoot { get; init; } = Content.BossLoot.Killer;
+
     /// <summary>The values <see cref="ServerPreset.Pve"/> gives the keys a config leaves out (see <see cref="Preset"/>).</summary>
     public static ServerConfig PveDefaults { get; } = new()
     {
         Preset = ServerPreset.Pve, PvpMode = PvpMode.Consensual, PvpLethalDeath = false, PvePartyRevive = true, PvpFullLoot = false, PvpKnockdownWear = 0,
-        PvpRedLockMinutes = 0, LootBlackMarketChance = 0.35, ChestsPoiLimit = 0, BmBuyFactor = 5,
+        PvpRedLockMinutes = 0, LootBlackMarketChance = 0.15, LootBlackMarketSoftCap = 4, LootTierCap = true, ChestsPoiLimit = 0, BmBuyFactor = 5,
+        NewCharacters = NewCharacterProgression.UnlockAll,
+        // The server's own content as content/*.json has it (official audit 2026-10-26).
+        EventsPlayerInvasions = true, BountiesEnabled = true, PvpGoalsEnabled = true, DungeonsDailyBonus = null, DungeonsGroupScaling = true,
+        GuildBossSeasonPoints = true, GuildSeasonRewards = RuleSource.Content, SeasonRules = RuleSource.Content, ExpeditionsRules = RuleSource.Content,
+        WorldBossesExtraSpawns = true, WorldBossesLoot = null,
+        Arena = ArenaOptions.PveDefaults,
+        Territories = TerritoryOptions.PveDefaults,
+        Hideouts = HideoutOptions.PveDefaults,
         GuildCreateCost = 100_000, GuildJoinRole = Game.GuildRole.Member, GuildRejoinCooldownMinutes = 0,
         GuildNoFriendlyFire = true, GuildXpShare = 0.1, GuildClearXp = 2000, GuildShareWithoutParty = true, GuildSilverTax = 0.05, GuildContracts = true,
+        AllianceNoFriendlyFire = true,
         IslandsStarterIsland = true, IslandsGrowthSpeed = 4, IslandsWaterFocusFactor = 0, IslandsStarterBuildings = true,
         ChatWorldChannel = true, ChatMergeLanguageChannels = true, MailRewardOverflow = true,
         PremiumMode = PremiumMode.Free, FocusStart = 30_000, LearningPointsStart = 500,
-        Rates = new Game.Rates { Fame = 2, Silver = 1.5, Loot = 1.5, Respawn = 2, Harvest = 1.5, Regrowth = 2, ChampionWeight = 2 },
+        Rates = new Game.Rates { Fame = 2, Silver = 1.5, Loot = 1, Respawn = 2, Harvest = 1.5, Regrowth = 2, ChampionWeight = 2 },
         Bots = new BotOptions
         {
-            Enabled = true, CrimesAgainstBots = false, GearMastery = 0.5, GearDamageBonus = false, HealthFactor = 0.7, DeathGearDropChance = 0.5, MinItems = 1,
+            // StageN botpower (the user's choice 2026-10-18, "fighting them should be a real risk"): full mastery, the worn spell bonus and full
+            // health like an equal-tier player (before: Mastery 0.5, DamageBonus false, HealthFactor 0.7); Bots:Difficulty scales them.
+            Enabled = true, CrimesAgainstBots = false, DeathGearDropChance = 0.5, MinItems = 1,
             // The user's choice (2026-10-18): patrols attack Blue players too in the red and black zones (the roads are black), as officially.
             PvpRulesByZone = new Dictionary<string, BotPvpRules>(StringComparer.OrdinalIgnoreCase) { ["red"] = BotPvpRules.Official, ["black"] = BotPvpRules.Official },
         },
@@ -537,7 +671,7 @@ public sealed record ServerConfig
         {
             ExitPortal = CorruptedExitMode.Always, InfamyFactor = 2, EarlyLeaveShare = 0.5, RewardFactor = 1.5,
             Invasions = CorruptedInvasionMode.Consent, BotInvaders = true, PlayerInvasions = CorruptedInvasionMode.Consent, InfamyLossOnDefeat = 0,
-            MaxInvasionsPerRun = 1, AntiReset = false, ChainBonus = 0.1,
+            MaxInvasionsPerRun = 1, AntiReset = false, ChainBonus = 0.1, MapsOpenDungeons = false, LeaveCommand = true,
         },
         Hellgates = new HellgateOptions
         {
@@ -545,7 +679,9 @@ public sealed record ServerConfig
             EnemyTeamSize = HellgateEnemyTeam.Party, KnockdownSeconds = 30, LeaveCommand = true, FinishedLingerSeconds = 300,
             RestrictedArea = false, SpawnBuffs = false, Matchmaking = HellgateMatchmaking.Bots, // phase B: no closing area, no spawn debuffs, no party vs party
         },
-        Roads = new RoadsOptions { Command = RoadsCommandAccess.All, LogoutSeconds = null, ThrowOutAfterMinutes = 0 }, // phase B: the world's logout, never thrown out
+        Companions = new CompanionOptions { Enabled = true, GearMastery = 0.5, GearDamageBonus = false }, // stageN botpower: the companions keep the old pve bot strength
+        Roads = new RoadsOptions { Command = RoadsCommandAccess.All, Rescue = true, LogoutSeconds = null, ThrowOutAfterMinutes = 0 }, // phase B: the world's logout, never thrown out
+        Web = new WebOptions { Enabled = true }, // the web panel on 127.0.0.1:8080 (SPEC analysis/work/stageN/webpanel)
         Mists = new MistsOptions
         {
             Matchmaking = MistsMatchmaking.Private, LifetimeFactor = 2, BlockFactor = 0.5, DuoSoloScaling = 0.6, OpenWorldExit = MistsExitTarget.Entrance,
@@ -658,6 +794,49 @@ public sealed record ServerConfig
     public long GuildContractSilver { get; init; } = 100_000;
 
     /// <summary>
+    /// Alliances:Enabled (true): alliances of guilds (analysis/work/stageP/hideouts/SPEC.md §1.2, §4; <see cref="Systems.Alliances"/>). False:
+    /// every alliance request is refused, no alliance key is sent and allies are no longer friends; saved alliances stay.
+    /// </summary>
+    public bool AlliancesEnabled { get; init; } = true;
+
+    /// <summary>Alliances:CreateCost (5000000 silver, gamedata &lt;Alliance cost&gt;): what AllianceCreate takes from the founding guild's account (8320).</summary>
+    public long AllianceCreateCost { get; init; } = 5_000_000;
+
+    /// <summary>Alliances:MaxGuilds (100, gamedata maxguilds): an alliance with this many guilds refuses invitations (8445) and joins (8483).</summary>
+    public int AllianceMaxGuilds { get; init; } = 100;
+
+    /// <summary>
+    /// Alliances:MaxPlayers (30000, gamedata maxplayers): the members of all its guilds together; refuses invitations (8446), joins (8484)
+    /// and guild invitations (4251) and joins (4123) that would pass it.
+    /// </summary>
+    public int AllianceMaxPlayers { get; init; } = 30_000;
+
+    /// <summary>
+    /// Alliances:ChangeCooldownMinutes (10080, gamedata changecooldownminutes): after founding or joining an alliance a guild can found (8330)
+    /// or join (8485) no other for this long, and after leaving one it cannot rejoin that one (8486) for this long [H: same value]; 0 = none.
+    /// </summary>
+    public double AllianceChangeCooldownMinutes { get; init; } = 10_080;
+
+    /// <summary>
+    /// Alliances:LeaveProtectionSeconds (30, gamedata allianceleaveprotectioninsec): a guild that left (or was kicked from, or saw the
+    /// disband of) an alliance stays friendly with it for this long [H: the server refuses the damage, the client draws the new state].
+    /// </summary>
+    public double AllianceLeaveProtectionSeconds { get; init; } = 30;
+
+    /// <summary>Alliances:NoFriendlyFire (false; the pve preset true, as Guilds:NoFriendlyFire): allied players are never Hostile to each other outside a duel.</summary>
+    public bool AllianceNoFriendlyFire { get; init; }
+
+    /// <summary>Alliances:Chat (true): the chat server offers the Alliance channel (ChatChannelType 25) to the members of an alliance's guilds.</summary>
+    public bool AllianceChat { get; init; } = true;
+
+    /// <summary>
+    /// Alliances:PlateText (Name): what the alliance keys of the nameplates and the guild window carry (GuildUpdate 16, Join 79, NewCharacter
+    /// 51, GuildMemberWorldUpdate 12): the alliance's name (the SPEC's reading of the client fields) or its tag (official nameplates show
+    /// "[TAG]"; open until capture R3).
+    /// </summary>
+    public AlliancePlateText AlliancePlateText { get; init; } = AlliancePlateText.Name;
+
+    /// <summary>
     /// Islands:Enabled (true): the personal islands (stageH islands SPEC phase 1, <see cref="Systems.Islands"/>): the merchant lists the
     /// character's islands (GetIslandInfos), the journey there and back, the island instance. False: an empty island list as before,
     /// every island journey refused; a character saved on an island logs in at its city's travel point.
@@ -676,10 +855,18 @@ public sealed record ServerConfig
     public int IslandsStarterLevel { get; init; }
 
     /// <summary>
-    /// Islands:PremiumDays (31, as captured): Join key 91, the premium days the island merchant compares with the island type's
-    /// premiumrequirement (7) before it offers "Buy" or "Upgrade" (stageH islands SPEC §2.1); 0 = the key left out (no buying in the client).
+    /// Islands:PremiumDays (31, as captured): Join key 91 of a premium character (of everyone with <see cref="IslandsBuyWithoutPremium"/>),
+    /// the premium days the island merchant compares with the island type's premiumrequirement (7) before it offers "Buy" or "Upgrade"
+    /// (stageH islands SPEC §2.1); 0 = the key left out (no buying in the client).
     /// </summary>
     public int IslandsPremiumDays { get; init; } = 31;
+
+    /// <summary>
+    /// Islands:BuyWithoutPremium (true in both presets, for now): a character without premium gets Join key 91 (Islands:PremiumDays) too, so
+    /// the island merchant sells and upgrades islands to everyone. Temporary (the user's decision 2026-10-26): there is no gold shop and no
+    /// premium to buy yet; the strict official rule is false (islands for premium characters only), the default once premium can be had.
+    /// </summary>
+    public bool IslandsBuyWithoutPremium { get; init; } = true;
 
     /// <summary>Islands:FreeIslands (false): buying and upgrading an island cost nothing (SPEC "PvE direction" 4); false = the worldsettings.xml prices.</summary>
     public bool IslandsFreeIslands { get; init; }
@@ -761,11 +948,32 @@ public sealed record ServerConfig
     /// <summary>StageL: the hellgates (Hellgates:*, <see cref="HellgateOptions"/>; the pve preset's fixed shrine, versus modes, scaling and knockdowns).</summary>
     public HellgateOptions Hellgates { get; init; } = new();
 
+    /// <summary>Stage N: the arena queues, matches and ratings (Arena:*, <see cref="ArenaOptions"/>).</summary>
+    public ArenaOptions Arena { get; init; } = new();
+
+    /// <summary>Stage N: the cosmetics' drops (Vanity:*, <see cref="VanityOptions"/>).</summary>
+    public VanityOptions Vanity { get; init; } = new();
+
+    /// <summary>StageP: the guild territories and castles (Territories:*, Castles:*, <see cref="TerritoryOptions"/>).</summary>
+    public TerritoryOptions Territories { get; init; } = new();
+
+    /// <summary>StageP: the guild hideouts (Hideouts:*, <see cref="HideoutOptions"/>).</summary>
+    public HideoutOptions Hideouts { get; init; } = new();
+
     /// <summary>StageL: the Roads of Avalon (Roads:*, <see cref="RoadsOptions"/>; the pve preset's .roads for every player).</summary>
     public RoadsOptions Roads { get; init; } = new();
 
     /// <summary>StageL: the Mists (Mists:*, <see cref="MistsOptions"/>; the pve preset's private zones, longer lifetime, sooner treasures).</summary>
     public MistsOptions Mists { get; init; } = new();
+
+    /// <summary>Web:* (<see cref="WebOptions"/>): the built-in web panel (off; the pve preset on, at 127.0.0.1:8080).</summary>
+    public WebOptions Web { get; init; } = new();
+
+    /// <summary>Backup:* (<see cref="BackupOptions"/>): the database backups into Paths:Saves/backups.</summary>
+    public BackupOptions Backup { get; init; } = new();
+
+    /// <summary>StageN companions: the hired companion bots (Companions:*, <see cref="CompanionOptions"/>; off under Preset official, on under pve).</summary>
+    public CompanionOptions Companions { get; init; } = new();
 
     /// <summary>
     /// How long a map stays loaded without players (World:MapIdleUnloadMinutes, 5; 0 = never): then it is dropped with its
@@ -821,16 +1029,22 @@ public sealed record ServerConfig
         if (publicAddress is null && bind.Equals(IPAddress.Any))
             throw new InvalidDataException("Network:BindAddress 0.0.0.0 needs Network:PublicAddress (the address the clients reach this PC at)");
 
-        var preset = Take("Preset") is not { } presetName ? ServerPreset.Pve
+        var preset = Take("Preset") is not { } presetName ? ServerPreset.Official
             : Enum.TryParse<ServerPreset>(presetName, ignoreCase: true, out var ps) && Enum.IsDefined(ps) ? ps
             : throw new InvalidDataException($"Preset: '{presetName}' is not pve or official");
         var d = preset == ServerPreset.Pve ? PveDefaults : new ServerConfig(); // the fallbacks of the keys a preset sets
         bool Flag(string key, bool fallback) => Take(key) is not { } v ? fallback
             : bool.TryParse(v, out var f) ? f : throw new InvalidDataException($"{key}: '{v}' is not true or false");
+        RuleSource Rules(string key, RuleSource fallback) => Take(key) is not { } v ? fallback
+            : Enum.TryParse<RuleSource>(v, ignoreCase: true, out var rs) && Enum.IsDefined(rs) ? rs
+            : throw new InvalidDataException($"{key}: '{v}' is not Official or Content");
 
+        var (web, backup) = WebOptions.Load(values, d.Web, d.Backup);
         var config = new ServerConfig
         {
             Preset = preset,
+            Web = web,
+            Backup = backup,
             PersistenceProvider = Take("Persistence:Provider") is not { } provider || provider.Equals("SQLite", StringComparison.OrdinalIgnoreCase) ? "SQLite" : throw new InvalidDataException($"Persistence:Provider: '{provider}' is not supported; use SQLite"),
             PvpMode = Take("Pvp:Mode") is not { } mode ? d.PvpMode
                 : Enum.TryParse<PvpMode>(mode, ignoreCase: true, out var pm) && Enum.IsDefined(pm) ? pm
@@ -850,6 +1064,14 @@ public sealed record ServerConfig
                 : throw new InvalidDataException($"Pvp:FriendlySpells: '{friendly}' is not one of {string.Join(", ", Enum.GetNames<FriendlySpells>())}"),
             PvpDuelIsolation = Flag("Pvp:DuelIsolation", d.PvpDuelIsolation),
             PvpSpells = Flag("Pvp:Spells", d.PvpSpells),
+            PvpHealingSickness = Flag("Pvp:HealingSickness", d.PvpHealingSickness),
+            PvpResilience = Flag("Pvp:Resilience", d.PvpResilience),
+            PvpSpawnBuffs = Flag("Pvp:SpawnBuffs", d.PvpSpawnBuffs),
+            PvpEnterSpellCooldowns = Flag("Pvp:EnterSpellCooldowns", d.PvpEnterSpellCooldowns),
+            DeathRecapEnabled = Flag("DeathRecap:Enabled", d.DeathRecapEnabled),
+            DeathRecapSeconds = Take("DeathRecap:Seconds") is not { } recapSeconds || recapSeconds.Equals("gamedata", StringComparison.OrdinalIgnoreCase) ? d.DeathRecapSeconds
+                : double.TryParse(recapSeconds, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var drs) && drs is > 0 and <= 3600 ? drs
+                : throw new InvalidDataException($"DeathRecap:Seconds: '{recapSeconds}' is not 1..3600 or gamedata"),
             PveKnockdownWear = Number("Pve:KnockdownWear", d.PveKnockdownWear, 0, 1),
             PvePartyRevive = Flag("Pve:PartyRevive", d.PvePartyRevive),
             LoginEndPoint = new IPEndPoint(bind, Port("Network:LoginPort", 5055)),
@@ -883,10 +1105,10 @@ public sealed record ServerConfig
             LockTime = TimeSpan.FromMinutes(Int("Accounts:LockMinutes", 15, 1, 100_000)),
             Maintenance = Take("Accounts:Maintenance") is not { } maint ? false
                 : bool.TryParse(maint, out var maintenance) ? maintenance : throw new InvalidDataException($"Accounts:Maintenance: '{maint}' is not true or false"),
-            NewCharacters = Take("Progression:NewCharacters") is not { } progression ? NewCharacterProgression.UnlockAll
+            NewCharacters = Take("Progression:NewCharacters") is not { } progression ? d.NewCharacters
                 : Enum.TryParse<NewCharacterProgression>(progression, ignoreCase: true, out var np) && Enum.IsDefined(np) ? np
                 : throw new InvalidDataException($"Progression:NewCharacters: '{progression}' is not one of {string.Join(", ", Enum.GetNames<NewCharacterProgression>())}"),
-            TutorialOpening = Take("Tutorial:Opening") is not { } tutorial ? false
+            TutorialOpening = Take("Tutorial:Opening") is not { } tutorial ? true
                 : bool.TryParse(tutorial, out var opening) ? opening : throw new InvalidDataException("Tutorial:Opening must be true or false"),
             EventLayers = Take("World:EventLayers") is not { } layers ? Array.Empty<string>() : Flags(layers),
             BuildingIdOffset = Take("ClientNumbering:BuildingIdOffset") is not { } offset ? 1
@@ -918,6 +1140,25 @@ public sealed record ServerConfig
             SilverPickupFactor = Number("Economy:SilverPickupFactor", 1, 0, 100),
             SilverPickupTax = Number("Economy:SilverPickupTax", 0, 0, 1),
             LootBlackMarketChance = Number("Loot:BlackMarketChance", d.LootBlackMarketChance, 0, 1),
+            LootBlackMarketSoftCap = Int("Loot:BlackMarketSoftCap", d.LootBlackMarketSoftCap, 0, 1000),
+            LootTierCap = Flag("Loot:TierCap", d.LootTierCap),
+            EventsPlayerInvasions = Flag("Events:PlayerInvasions", d.EventsPlayerInvasions),
+            BountiesEnabled = Flag("Bounties:Enabled", d.BountiesEnabled),
+            PvpGoalsEnabled = Flag("PvpGoals:Enabled", d.PvpGoalsEnabled),
+            DungeonsDailyBonus = Take("Dungeons:DailyBonus") is not { } dailyBonus ? d.DungeonsDailyBonus
+                : dailyBonus.Trim().Equals("content", StringComparison.OrdinalIgnoreCase) ? null
+                : double.TryParse(dailyBonus, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var db) && db is >= 1 and <= 100 ? db
+                : throw new InvalidDataException($"Dungeons:DailyBonus: '{dailyBonus}' is not 1..100 or content"),
+            DungeonsGroupScaling = Flag("Dungeons:GroupScaling", d.DungeonsGroupScaling),
+            GuildBossSeasonPoints = Flag("Guilds:BossSeasonPoints", d.GuildBossSeasonPoints),
+            GuildSeasonRewards = Rules("Guilds:SeasonRewards", d.GuildSeasonRewards),
+            SeasonRules = Rules("Season:Rules", d.SeasonRules),
+            ExpeditionsRules = Rules("Expeditions:Rules", d.ExpeditionsRules),
+            WorldBossesExtraSpawns = Flag("WorldBosses:ExtraSpawns", d.WorldBossesExtraSpawns),
+            WorldBossesLoot = Take("WorldBosses:Loot") is not { } bossLoot ? d.WorldBossesLoot
+                : bossLoot.Trim().Equals("content", StringComparison.OrdinalIgnoreCase) ? null
+                : Enum.TryParse<Content.BossLoot>(bossLoot, ignoreCase: true, out var bl) && Enum.IsDefined(bl) ? bl
+                : throw new InvalidDataException($"WorldBosses:Loot: '{bossLoot}' is not Killer, Shared, Personal or Content"),
             PartyMaxSize = Int("Party:MaxSize", 20, 2, 100),
             GuildsEnabled = Flag("Guilds:Enabled", true),
             GuildCreateCost = (long)Number("Guilds:CreateCost", d.GuildCreateCost, 0, 1e9),
@@ -945,10 +1186,22 @@ public sealed record ServerConfig
                 : throw new InvalidDataException($"Guilds:ContractPeriod: '{period}' is not Weekly or Daily"),
             GuildContractXp = (long)Number("Guilds:ContractXp", 20_000, 0, 1e9),
             GuildContractSilver = (long)Number("Guilds:ContractSilver", 100_000, 0, 1e9),
+            AlliancesEnabled = Flag("Alliances:Enabled", true),
+            AllianceCreateCost = (long)Number("Alliances:CreateCost", 5_000_000, 0, 1e10),
+            AllianceMaxGuilds = Int("Alliances:MaxGuilds", 100, 1, 10_000),
+            AllianceMaxPlayers = Int("Alliances:MaxPlayers", 30_000, 1, 1_000_000),
+            AllianceChangeCooldownMinutes = Number("Alliances:ChangeCooldownMinutes", 10_080, 0, 1_000_000),
+            AllianceLeaveProtectionSeconds = Number("Alliances:LeaveProtectionSeconds", 30, 0, 86_400),
+            AllianceNoFriendlyFire = Flag("Alliances:NoFriendlyFire", d.AllianceNoFriendlyFire),
+            AllianceChat = Flag("Alliances:Chat", true),
+            AlliancePlateText = Take("Alliances:PlateText") is not { } plate ? AlliancePlateText.Name
+                : Enum.TryParse<AlliancePlateText>(plate, ignoreCase: true, out var apt) && Enum.IsDefined(apt) ? apt
+                : throw new InvalidDataException($"Alliances:PlateText: '{plate}' is not Name or Tag"),
             IslandsEnabled = Flag("Islands:Enabled", true),
             IslandsStarterIsland = Flag("Islands:StarterIsland", d.IslandsStarterIsland),
             IslandsStarterLevel = Int("Islands:StarterLevel", 0, 0, 5),
             IslandsPremiumDays = Int("Islands:PremiumDays", 31, 0, 10_000),
+            IslandsBuyWithoutPremium = Flag("Islands:BuyWithoutPremium", d.IslandsBuyWithoutPremium),
             IslandsFreeIslands = Flag("Islands:FreeIslands", false),
             IslandsGrowthSpeed = Number("Islands:GrowthSpeed", d.IslandsGrowthSpeed, 0.01, 10_000),
             IslandsFocusSeedReturn = Flag("Islands:FocusSeedReturn", true),
@@ -1012,8 +1265,13 @@ public sealed record ServerConfig
             Bots = LoadBots(values, d.Bots),
             Corrupted = LoadCorrupted(values, d.Corrupted),
             Hellgates = LoadHellgates(values, d.Hellgates),
+            Arena = ArenaOptions.Load(values, d.Arena),
+            Vanity = VanityOptions.Load(values, d.Vanity),
+            Territories = TerritoryOptions.Load(values, d.Territories),
+            Hideouts = HideoutOptions.Load(values, d.Hideouts),
             Roads = LoadRoads(values, d.Roads),
             Mists = LoadMists(values, d.Mists),
+            Companions = LoadCompanions(values, d.Companions),
             MapIdleUnload = Take("World:MapIdleUnloadMinutes") is not { } idle ? TimeSpan.FromMinutes(5)
                 : double.TryParse(idle, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var min) && min is >= 0 and <= 1440
                     ? TimeSpan.FromMinutes(min) : throw new InvalidDataException($"World:MapIdleUnloadMinutes: '{idle}' is not 0..1440"),
@@ -1033,6 +1291,8 @@ public sealed record ServerConfig
         var ports = new (string Key, int Port)[] { ("Network:LoginPort", config.LoginEndPoint.Port), ("Network:GamePort", config.GameEndPoint.Port), ("Network:ChatPort", config.ChatEndPoint.Port) };
         if (ports.Where(p => p.Port != 0 && (p.Key != "Network:ChatPort" || config.ChatEnabled)).GroupBy(p => p.Port).FirstOrDefault(g => g.Count() > 1) is { } clash)
             throw new InvalidDataException($"{string.Join(" and ", clash.Select(p => p.Key))} are both {clash.Key}: give each listener its own port");
+        if (config.Web is { Enabled: true, Port: > 0 } w && ports.FirstOrDefault(p => p.Port == w.Port && (p.Key != "Network:ChatPort" || config.ChatEnabled)) is { Key: { } taken })
+            throw new InvalidDataException($"Web:Port and {taken} are both {w.Port}: give the web panel its own port");
         return config;
     }
 
@@ -1115,6 +1375,39 @@ public sealed record ServerConfig
                 : Parse(logout) is { } ls && ls is >= 0 and <= 3600 ? ls : throw new InvalidDataException($"Roads:LogoutSeconds: '{logout}' is not \"world\" or 0..3600"),
             ThrowOutAfterMinutes = Number("Roads:ThrowOutAfterMinutes", d.ThrowOutAfterMinutes, 0, 100_000),
             TempPortalSeconds = Number("Roads:TempPortalSeconds", d.TempPortalSeconds, 0, 600),
+        };
+    }
+
+    /// <summary>The Companions section out of <paramref name="values"/> over the preset's <paramref name="d"/> (stageN companions): every key optional.</summary>
+    private static CompanionOptions LoadCompanions(Dictionary<string, string> values, CompanionOptions d)
+    {
+        var inv = System.Globalization.CultureInfo.InvariantCulture;
+        string? Take(string key) => values.Remove(key, out var v) ? v : null;
+        double Number(string key, double fallback, double min, double max) => Take(key) is not { } v ? fallback
+            : double.TryParse(v, System.Globalization.NumberStyles.Float, inv, out var n) && double.IsFinite(n) && n >= min && n <= max ? n
+            : throw new InvalidDataException($"{key}: '{v}' is not {min.ToString(inv)}..{max.ToString(inv)}");
+        bool Flag(string key, bool fallback) => Take(key) is not { } v ? fallback
+            : bool.TryParse(v, out var f) ? f : throw new InvalidDataException($"{key}: '{v}' is not true or false");
+        return new CompanionOptions
+        {
+            Enabled = Flag("Companions:Enabled", d.Enabled),
+            MaxPerPlayer = (int)Number("Companions:MaxPerPlayer", d.MaxPerPlayer, 0, 4),
+            MaxPartySize = (int)Number("Companions:MaxPartySize", d.MaxPartySize, 2, 20),
+            MinTier = (int)Number("Companions:MinTier", d.MinTier, 1, 8),
+            MaxTier = (int)Number("Companions:MaxTier", d.MaxTier, 1, 8),
+            HealthFactor = Number("Companions:HealthFactor", d.HealthFactor, 0.1, 10),
+            DamageFactor = Number("Companions:DamageFactor", d.DamageFactor, 0, 10),
+            TankThreatFactor = Number("Companions:TankThreatFactor", d.TankThreatFactor, 1, 20),
+            HealBelow = Number("Companions:HealBelow", d.HealBelow, 0.1, 1),
+            FollowDistance = Number("Companions:FollowDistance", d.FollowDistance, 1, 30),
+            AssistRange = Number("Companions:AssistRange", d.AssistRange, 5, 80),
+            LeashDistance = Number("Companions:LeashDistance", d.LeashDistance, 10, 200),
+            TeleportDistance = Number("Companions:TeleportDistance", d.TeleportDistance, 10, 500),
+            StuckSeconds = Number("Companions:StuckSeconds", d.StuckSeconds, 1, 120),
+            OwnerGraceSeconds = Number("Companions:OwnerGraceSeconds", d.OwnerGraceSeconds, 5, 3600),
+            SpellChance = Number("Companions:SpellChance", d.SpellChance, 0, 1),
+            GearMastery = Number("Companions:GearMastery", d.GearMastery, 0, 1),
+            GearDamageBonus = Flag("Companions:GearDamageBonus", d.GearDamageBonus),
         };
     }
 
@@ -1279,6 +1572,7 @@ public sealed record ServerConfig
             InvadeCountdownSeconds = Number("Corrupted:InvadeCountdownSeconds", d.InvadeCountdownSeconds, 0, 600),
             OpenWorldPortals = Flag("Corrupted:OpenWorldPortals", d.OpenWorldPortals),
             MapsOpenDungeons = Flag("Corrupted:MapsOpenDungeons", d.MapsOpenDungeons),
+            LeaveCommand = Flag("Corrupted:LeaveCommand", d.LeaveCommand),
             AntiReset = Flag("Corrupted:AntiReset", d.AntiReset),
             AntiResetImps = (int)Number("Corrupted:AntiResetImps", d.AntiResetImps, 0, 20),
             Chain = Flag("Corrupted:Chain", d.Chain),
@@ -1341,6 +1635,27 @@ public sealed record ServerConfig
         return new BotOptions
         {
             Enabled = Flag("Bots:Enabled", d.Enabled),
+            WorldEnabled = Flag("Bots:World:Enabled", d.WorldEnabled),
+            CityEnabled = Flag("Bots:City:Enabled", d.CityEnabled),
+            GathererEnabled = Flag("Bots:Gatherer:Enabled", d.GathererEnabled),
+            PatrolEnabled = Flag("Bots:Patrol:Enabled", d.PatrolEnabled),
+            DrifterEnabled = Flag("Bots:Drifter:Enabled", d.DrifterEnabled),
+            Zones = Take("Bots:Zones") is { } zones ? BotZones(zones) is { Count: > 0 } z ? z : BotOptions.AllZones : d.Zones,
+            ArenaEnabled = Flag("Bots:Arena:Enabled", d.ArenaEnabled),
+            HellgateEnabled = Flag("Bots:Hellgate:Enabled", d.HellgateEnabled),
+            InvaderEnabled = Flag("Bots:Invader:Enabled", d.InvaderEnabled),
+            PvpEnabled = Flag("Bots:Pvp:Enabled", d.PvpEnabled),
+            RewardsEnabled = Flag("Bots:Rewards:Enabled", d.RewardsEnabled),
+            CityPoiShare = Number("Bots:City:PoiShare", d.CityPoiShare, 0, 1),
+            CityWanderMeters = Range("Bots:City:WanderMeters", d.CityWanderMeters, 1, 1000),
+            CityExitShare = Number("Bots:City:ExitShare", d.CityExitShare, 0, 1),
+            FleeSeconds = Number("Bots:Gatherer:FleeSeconds", d.FleeSeconds, 0, 600),
+            FleeDistance = Number("Bots:Gatherer:FleeDistance", d.FleeDistance, 1, 500),
+            FollowSpacing = Number("Bots:Patrol:FollowSpacing", d.FollowSpacing, 0.5, 20),
+            RetargetSeconds = Number("Bots:Combat:RetargetSeconds", d.RetargetSeconds, 0.1, 600),
+            RetargetShare = Number("Bots:Combat:RetargetShare", d.RetargetShare, 0, 100),
+            KiteSeconds = Number("Bots:Combat:KiteSeconds", d.KiteSeconds, 0, 60),
+            KiteEverySeconds = Number("Bots:Combat:KiteEverySeconds", d.KiteEverySeconds, 0, 600),
             MaxTotal = Int("Bots:MaxTotal", d.MaxTotal, 0, 2000),
             MaxPerMap = Int("Bots:MaxPerMap", d.MaxPerMap, 0, 500),
             PopulateSeconds = Number("Bots:PopulateSeconds", d.PopulateSeconds, 0.05, 3600),
@@ -1413,7 +1728,164 @@ public sealed record ServerConfig
             DieInLethalZones = Flag("Bots:Defeat:DieInLethalZones", d.DieInLethalZones),
             // Below the shortest PvP get-up (90 s): a defeated bot is gone before it could stand up again.
             DownDespawnSeconds = Number("Bots:DownDespawnSeconds", d.DownDespawnSeconds, 0, 89),
+            // StageN botpower (analysis/work/stageN/botpower/SPEC.md).
+            Difficulty = Number("Bots:Difficulty", d.Difficulty, 0.1, 10),
+            RedZoneTierBonus = Int("Bots:Gear:RedZoneTierBonus", d.RedZoneTierBonus, 0, 3),
+            Quality = Range("Bots:Gear:Quality", d.Quality, 1, 5),
+            EliteChance = Number("Bots:Gear:EliteChance", d.EliteChance, 0, 1),
+            EliteEnchant = Range("Bots:Gear:EliteEnchant", d.EliteEnchant, 0, 4),
+            EliteQuality = Range("Bots:Gear:EliteQuality", d.EliteQuality, 1, 5),
+            Tactics = Flag("Bots:Combat:Tactics", d.Tactics),
+            KiteDistance = Number("Bots:Combat:KiteDistance", d.KiteDistance, 0, 30),
+            RetreatHealth = Number("Bots:Combat:RetreatHealth", d.RetreatHealth, 0, 1),
+            Potions = Range("Bots:Combat:Potions", d.Potions, 0, 10),
+            Food = Flag("Bots:Combat:Food", d.Food),
+            FocusWeakest = Flag("Bots:Combat:FocusWeakest", d.FocusWeakest),
+            RedGroupSize = Range("Bots:Patrol:RedGroupSize", d.RedGroupSize, 1, 10),
+            // Bot support roles: healers and tanks in patrol groups (Bots:Patrol:Makeups), their friendly spells on the group.
+            SupportEnabled = Flag("Bots:Support:Enabled", d.SupportEnabled),
+            SupportHealBelow = Number("Bots:Support:HealBelow", d.SupportHealBelow, 0, 1),
+            SupportShieldBelow = Number("Bots:Support:ShieldBelow", d.SupportShieldBelow, 0, 1),
+            PatrolMakeups = Makeups(d.PatrolMakeups),
+            EliteSilverFactor = Number("Bots:Rewards:EliteSilverFactor", d.EliteSilverFactor, 0, 100),
+            EliteExtraItems = Int("Bots:Rewards:EliteExtraItems", d.EliteExtraItems, 0, 6),
+            // Bot social presence and chat (bot-social; the lines are content/bots.json "Chat").
+            SocialEnabled = Flag("Bots:Social:Enabled", d.SocialEnabled),
+            ReplyDelaySeconds = Range("Bots:Social:ReplyDelaySeconds", d.ReplyDelaySeconds, 0, 600),
+            WhisperReplyChance = Number("Bots:Social:WhisperReplyChance", d.WhisperReplyChance, 0, 1),
+            ChatEnabled = Flag("Bots:Chat:Enabled", d.ChatEnabled),
+            SayChancePerMinute = Number("Bots:Chat:SayChancePerMinute", d.SayChancePerMinute, 0, 1),
+            FightLines = Flag("Bots:Chat:FightLines", d.FightLines),
+            EmoteReplies = Flag("Bots:Chat:EmoteReplies", d.EmoteReplies),
+            MaxLinesPerMinutePerCluster = Int("Bots:Chat:MaxLinesPerMinutePerCluster", d.MaxLinesPerMinutePerCluster, 0, 600),
+            // Bot-party: world bots that accept a party invite (BotSocial.WantsParty, Companions.Recruit).
+            PartyEnabled = Flag("Bots:Party:Enabled", d.PartyEnabled),
+            PartyAcceptChance = Number("Bots:Party:AcceptChance", d.PartyAcceptChance, 0, 1),
+            PartyTierRange = Int("Bots:Party:TierRange", d.PartyTierRange, 0, 8),
+            PartyMaxPerParty = Int("Bots:Party:MaxPerParty", d.PartyMaxPerParty, 0, 20),
+            PartyMaxMinutes = Number("Bots:Party:MaxMinutes", d.PartyMaxMinutes, 0.1, 10080),
+            PartyCity = Flag("Bots:Party:City", d.PartyCity),
+            PartyGatherer = Flag("Bots:Party:Gatherer", d.PartyGatherer),
+            PartyPatrol = Flag("Bots:Party:Patrol", d.PartyPatrol),
+            PartyDrifter = Flag("Bots:Party:Drifter", d.PartyDrifter),
+            // Bot-roster: the stable roster, the population by the hour, gear realism.
+            RosterEnabled = Flag("Bots:Roster:Enabled", d.RosterEnabled),
+            RosterSeed = Int("Bots:Roster:Seed", d.RosterSeed, int.MinValue, int.MaxValue),
+            RosterSize = Int("Bots:Roster:Size", d.RosterSize, 1, 8000),
+            ScheduleHours = Schedule(d.ScheduleHours),
+            ScheduleUtcOffsetHours = Number("Bots:Schedule:UtcOffsetHours", d.ScheduleUtcOffsetHours, -12, 14),
+            ScheduleLeavePerPass = Int("Bots:Schedule:LeavePerPass", d.ScheduleLeavePerPass, 0, 100),
+            GearMixedShare = Number("Bots:Gear:MixedShare", d.GearMixedShare, 0, 1),
+            GearTierSpread = Int("Bots:Gear:TierSpread", d.GearTierSpread, 0, 3),
+            EnchantChance = ByZone("Bots:Gear:EnchantChance:", d.EnchantChance),
+            GearEnchant = Range("Bots:Gear:Enchant", d.GearEnchant, 1, 4),
+            ArtifactChance = ByZone("Bots:Gear:ArtifactChance:", d.ArtifactChance),
+            // Bot-travel: exits lead next door, gatherers' trips home to their city's bank.
+            TravelEnabled = Flag("Bots:Travel:Enabled", d.TravelEnabled),
+            TravelSeconds = Range("Bots:Travel:Seconds", d.TravelSeconds, 0, 3600),
+            TravelMaxHops = Int("Bots:Travel:MaxHops", d.TravelMaxHops, 1, 50),
+            GathererTripMinutes = Number("Bots:Gatherer:TripMinutes", d.GathererTripMinutes, 1, 1440),
+            GathererBankAtHome = Flag("Bots:Gatherer:BankAtHome", d.GathererBankAtHome),
         };
+
+        // Bots:Gear:EnchantChance:<zone> / ArtifactChance:<zone>: chances 0..1 per zone class over the preset's (a zone left out keeps its value).
+        IReadOnlyDictionary<string, double> ByZone(string prefix, IReadOnlyDictionary<string, double> fallback)
+        {
+            var keys = values.Keys.Where(k => k.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (keys.Count == 0) return fallback;
+            var result = new Dictionary<string, double>(fallback, StringComparer.OrdinalIgnoreCase);
+            foreach (var key in keys)
+            {
+                var zone = Content.BotSettings.Zones.FirstOrDefault(z => z.Equals(key[prefix.Length..], StringComparison.OrdinalIgnoreCase))
+                    ?? throw new InvalidDataException($"{key}: not one of {string.Join(", ", Content.BotSettings.Zones)}");
+                result[zone] = Number(key, 0, 0, 1);
+            }
+            return result;
+        }
+
+        // Bots:Patrol:Makeups:<zone> (or Bots:Patrol:Makeups alone = Default): a JSON array (the file) or a ';' list (the command line) of
+        // "part,part,...=weight" (parts dps, healer, tank; weight 0..1000, 1 when left out) over the preset's (a zone left out keeps its list).
+        IReadOnlyDictionary<string, IReadOnlyList<PatrolMakeup>> Makeups(IReadOnlyDictionary<string, IReadOnlyList<PatrolMakeup>> fallback)
+        {
+            const string prefix = "Bots:Patrol:Makeups";
+            var keys = values.Keys.Where(k => k.Equals(prefix, StringComparison.OrdinalIgnoreCase) || k.StartsWith(prefix + ":", StringComparison.OrdinalIgnoreCase)).ToList();
+            if (keys.Count == 0) return fallback;
+            var result = new Dictionary<string, IReadOnlyList<PatrolMakeup>>(fallback, StringComparer.OrdinalIgnoreCase);
+            foreach (var key in keys)
+            {
+                var name = key.Length == prefix.Length ? BotOptions.DefaultMakeupZone : key[(prefix.Length + 1)..];
+                var zone = name.Equals(BotOptions.DefaultMakeupZone, StringComparison.OrdinalIgnoreCase) ? BotOptions.DefaultMakeupZone
+                    : Content.BotSettings.Zones.FirstOrDefault(z => z.Equals(name, StringComparison.OrdinalIgnoreCase))
+                    ?? throw new InvalidDataException($"{key}: not Default or one of {string.Join(", ", Content.BotSettings.Zones)}");
+                result[zone] = PatrolMakeup.ParseList(Take(key)!, key);
+            }
+            return result;
+        }
+
+        // Bots:Schedule:Hours: 24 factors 0..3 (a JSON array, or a comma list on the command line); Bots:Schedule:Points: { hour: factor }
+        // with the hours between linear (wrapping at midnight). Not both.
+        IReadOnlyList<double> Schedule(IReadOnlyList<double> fallback)
+        {
+            const string points = "Bots:Schedule:Points:";
+            var pointKeys = values.Keys.Where(k => k.StartsWith(points, StringComparison.OrdinalIgnoreCase)).ToList();
+            var hours = Take("Bots:Schedule:Hours");
+            if (hours is not null && pointKeys.Count > 0) throw new InvalidDataException("Bots:Schedule: give Hours or Points, not both");
+            if (hours is not null)
+            {
+                double?[] list;
+                try
+                {
+                    list = hours.TrimStart().StartsWith('[') ? JsonSerializer.Deserialize<double?[]>(hours) ?? []
+                        : [.. hours.Split(',', StringSplitOptions.TrimEntries).Select(Parse)];
+                }
+                catch (JsonException)
+                {
+                    list = [];
+                }
+                if (list.Length != 24 || list.Any(x => x is not (>= 0 and <= 3)))
+                    throw new InvalidDataException($"Bots:Schedule:Hours: '{hours}' is not 24 factors 0..3 (hour 0 first)");
+                return [.. list.Select(x => x!.Value)];
+            }
+            if (pointKeys.Count == 0) return fallback;
+            var anchors = new SortedDictionary<int, double>();
+            foreach (var key in pointKeys)
+            {
+                var name = key[points.Length..];
+                if (!int.TryParse(name, System.Globalization.NumberStyles.Integer, inv, out var hour) || hour is < 0 or > 23)
+                    throw new InvalidDataException($"{key}: '{name}' is not an hour 0..23");
+                anchors[hour] = Number(key, 1, 0, 3);
+            }
+            var a = anchors.ToList();
+            var curve = new double[24];
+            for (var h = 0; h < 24; h++)
+            {
+                // The anchors before and after h (wrapping), linear between them.
+                var before = a.LastOrDefault(x => x.Key <= h, a[^1]);
+                var after = a.FirstOrDefault(x => x.Key > h, a[0]);
+                var span = ((after.Key - before.Key) % 24 + 24) % 24;
+                var into = ((h - before.Key) % 24 + 24) % 24;
+                curve[h] = span == 0 ? before.Value : before.Value + (after.Value - before.Value) * into / span;
+            }
+            return curve;
+        }
+    }
+
+    /// <summary>Bots:Zones: a JSON array of strings (the file) or a comma list (the command line); a zone class (BotSettings.Zones) or a cluster id each.</summary>
+    private static IReadOnlyList<string> BotZones(string value)
+    {
+        string[] zones;
+        try
+        {
+            zones = value.TrimStart().StartsWith('[') ? JsonSerializer.Deserialize<string[]>(value) ?? []
+                : value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        }
+        catch (JsonException)
+        {
+            throw new InvalidDataException($"Bots:Zones: '{value}' is not a list of zone classes or cluster ids");
+        }
+        if (zones.FirstOrDefault(z => string.IsNullOrWhiteSpace(z)) is not null) throw new InvalidDataException("Bots:Zones: an empty entry");
+        // A known zone class in its own spelling; anything else is taken as a cluster id.
+        return [.. zones.Select(z => Content.BotSettings.Zones.FirstOrDefault(n => n.Equals(z.Trim(), StringComparison.OrdinalIgnoreCase)) ?? z.Trim())];
     }
 
     /// <summary>
@@ -1494,13 +1966,25 @@ public enum PremiumMode
     Free,
 }
 
+/// <summary>
+/// Season:Rules, Guilds:SeasonRewards, Expeditions:Rules (<see cref="ServerConfig.SeasonRules"/>): whose rules a part of the content follows.
+/// </summary>
+public enum RuleSource
+{
+    /// <summary>The official game's (the client data's); the content file's server additions are ignored.</summary>
+    Official,
+
+    /// <summary>The content file's, as written (the pve preset).</summary>
+    Content,
+}
+
 /// <summary>The rule set the config's keys default to (Preset, <see cref="ServerConfig.Preset"/>).</summary>
 public enum ServerPreset
 {
-    /// <summary>The PvE server of PVE-DESIGN.md §1 (<see cref="ServerConfig.PveDefaults"/>); Load's default.</summary>
+    /// <summary>The PvE server of PVE-DESIGN.md §1 (<see cref="ServerConfig.PveDefaults"/>).</summary>
     Pve,
 
-    /// <summary>The official rules: every key at the official value (the record's defaults).</summary>
+    /// <summary>The official rules: every key at the official value (the record's defaults); Load's default without the Preset key.</summary>
     Official,
 }
 
@@ -1528,6 +2012,13 @@ public enum PvpMode
 
     /// <summary>Only duel opponents are Hostile.</summary>
     Off,
+}
+
+/// <summary>Alliances:PlateText (<see cref="ServerConfig.AlliancePlateText"/>): the alliance's name or tag in the nameplate keys.</summary>
+public enum AlliancePlateText
+{
+    Name,
+    Tag,
 }
 
 /// <summary>Guilds:ContractPeriod (<see cref="ServerConfig.GuildContractPeriod"/>): how often the guild contracts change.</summary>
@@ -1586,7 +2077,8 @@ public enum CorruptedExitMode
 /// StageL: the corrupted dungeons' switches (Corrupted:*, analysis/work/stageL/corrupted/SPEC.md §4.7); the tables are content/corrupted.json
 /// (<see cref="Content.CorruptedSettings"/>). The record's values are the official preset's; the pve preset changes ExitPortal (Always),
 /// InfamyFactor (2), EarlyLeaveShare (0.5) and RewardFactor (1.5), and of phase B Invasions and PlayerInvasions (Consent), BotInvaders (true),
-/// InfamyLossOnDefeat (0), MaxInvasionsPerRun (1), AntiReset (false) and ChainBonus (0.1) (<see cref="ServerConfig.PveDefaults"/>).
+/// InfamyLossOnDefeat (0), MaxInvasionsPerRun (1), AntiReset (false), ChainBonus (0.1), MapsOpenDungeons (false) and LeaveCommand (true)
+/// (<see cref="ServerConfig.PveDefaults"/>).
 /// </summary>
 public sealed record CorruptedOptions
 {
@@ -1676,10 +2168,17 @@ public sealed record CorruptedOptions
     public bool OpenWorldPortals { get; init; } = true;
 
     /// <summary>
-    /// Corrupted:MapsOpenDungeons (false): the two corrupted dungeon maps open a personal corrupted portal (their activaterandomdungeon), and the
-    /// invasion tickets move to the Knight's Vows (SPEC §4.8, <see cref="Content.EventSettings.MoveTickets"/>). Off: the maps stay invasion tickets.
+    /// Corrupted:MapsOpenDungeons (true, as the client data's activaterandomdungeon; pve false): the two corrupted dungeon maps open a personal
+    /// corrupted portal, and the invasion tickets move to the Knight's Vows (SPEC §4.8, <see cref="Content.EventSettings.MoveTickets"/>). Off:
+    /// the maps stay invasion tickets (the pve preset's player invasions).
     /// </summary>
-    public bool MapsOpenDungeons { get; init; }
+    public bool MapsOpenDungeons { get; init; } = true;
+
+    /// <summary>
+    /// Corrupted:LeaveCommand (false; pve true): .cd leave takes a player out of its corrupted dungeon. Officially only the exit portal and
+    /// the escape spell lead out.
+    /// </summary>
+    public bool LeaveCommand { get; init; }
 
     /// <summary>
     /// Corrupted:AntiReset (true; pve false): during an invasion the anti-reset imps (CD_DEMON_IMP_ANTIRESET) come every
@@ -1900,13 +2399,270 @@ public enum BotPvpRules
 
 /// <summary>
 /// Stage I: the player bots' switches and timings (Bots:*, analysis/work/stageI/bots/SPEC.md §3.1); the tables are content/bots.json
-/// (<see cref="Content.BotSettings"/>). Bots are not an official feature: off under Preset official, on under pve; every other key is the same
-/// in both presets. Ranges are (min, max), drawn uniformly.
+/// (<see cref="Content.BotSettings"/>). Bots are not an official feature: off under Preset official, on under pve; the pve preset also changes
+/// Pvp:CrimesAgainstBots, PvpRulesByZone, Rewards:DeathGearDropChance and Rewards:MinItems (<see cref="ServerConfig.PveDefaults"/>). Ranges are
+/// (min, max), drawn uniformly.
 /// </summary>
 public sealed record BotOptions
 {
-    /// <summary>Bots:Enabled (official false, pve true): the master switch; .bot on|off changes it while running (not saved).</summary>
+    /// <summary>
+    /// Bots:Enabled (official false, pve true): the master switch over every bot kind but the companions; .bot on|off changes it for this
+    /// run only (not saved: the next start reads world.jsonc again).
+    /// </summary>
     public bool Enabled { get; init; }
+
+    // ---- the switch matrix (bot-switches): Bots:Enabled is the master over every kind below; each kind switch is true by default, so the
+    // official preset is all off through the master alone (Bots:Enabled false) and the pve preset (Bots:Enabled true) runs every kind. ----
+
+    /// <summary>
+    /// Bots:World:Enabled (true; inert while Bots:Enabled is false): the open-world population (City, Gatherer, Patrol and Drifter bots of
+    /// content/bots.json). false = no world bot anywhere; the content bots (Arena, Hellgate, Invader) keep their own switches.
+    /// </summary>
+    public bool WorldEnabled { get; init; } = true;
+
+    /// <summary>Bots:City:Enabled, Bots:Gatherer:Enabled, Bots:Patrol:Enabled, Bots:Drifter:Enabled (true each): one world role on or off.</summary>
+    public bool CityEnabled { get; init; } = true;
+
+    public bool GathererEnabled { get; init; } = true;
+
+    public bool PatrolEnabled { get; init; } = true;
+
+    public bool DrifterEnabled { get; init; } = true;
+
+    /// <summary>
+    /// Bots:Zones ([] = every zone content/bots.json gives bots): the zone classes (City, Start, Roads, Mists, Safe, Yellow, Orange, Red,
+    /// Black) or cluster ids where world bots may spawn; any other map gets none.
+    /// </summary>
+    public IReadOnlyList<string> Zones { get; init; } = AllZones;
+
+    /// <summary>The empty Bots:Zones (one instance: a default config equals a loaded one).</summary>
+    public static readonly IReadOnlyList<string> AllZones = [];
+
+    /// <summary>Whether Bots:Zones lets world bots onto a map of zone class <paramref name="zone"/> and cluster <paramref name="cluster"/>.</summary>
+    public bool ZoneAllowed(string zone, string cluster) =>
+        Zones.Count == 0 || Zones.Any(z => z.Equals(zone, StringComparison.OrdinalIgnoreCase) || z.Equals(cluster, StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// Bots:Arena:Enabled (true): bots may fill arena teams (with Arena:Bots); Bots:Hellgate:Enabled (true): a hellgate's bot enemy team (else
+    /// the guardian); Bots:Invader:Enabled (true): corrupted dungeon bot invaders (with Corrupted:BotInvaders). Each needs Bots:Enabled, not
+    /// Bots:World:Enabled.
+    /// </summary>
+    public bool ArenaEnabled { get; init; } = true;
+
+    public bool HellgateEnabled { get; init; } = true;
+
+    public bool InvaderEnabled { get; init; } = true;
+
+    /// <summary>
+    /// Bots:Pvp:Enabled (true): world bots may start fights with players. false = a patrol or Drifter never attacks on sight; every bot still
+    /// answers whoever hit it (or its group) within Bots:Pvp:EngageSeconds. The content bots (arena, hellgate, invader) are not affected.
+    /// </summary>
+    public bool PvpEnabled { get; init; } = true;
+
+    /// <summary>
+    /// Bots:Rewards:Enabled (true): a defeated bot gives fame, PvP goal credit, silver and a loot bag (Bots:Rewards:*). false = none of them
+    /// (the kill message and a crime's reputation stay).
+    /// </summary>
+    public bool RewardsEnabled { get; init; } = true;
+
+    /// <summary>
+    /// Bots:Social:Enabled (true; inert while Bots:Enabled is false): world bots (City, Gatherer, Patrol, Drifter) count as online players by
+    /// name for party invites, friend requests and whispers: an invite is declined, a friend request declined and a whisper answered with a
+    /// line of content/bots.json Chat.Whisper, each after Bots:Social:ReplyDelaySeconds. false = they are "not found" / "not online" as before.
+    /// Nothing of it is stored (no request, friend or mute row).
+    /// </summary>
+    public bool SocialEnabled { get; init; } = true;
+
+    /// <summary>Bots:Social:ReplyDelaySeconds ("2-6"): how long a bot takes to answer an invite, a friend request or a whisper.</summary>
+    public (double Min, double Max) ReplyDelaySeconds { get; init; } = (2, 6);
+
+    /// <summary>Bots:Social:WhisperReplyChance (0.8): the chance a bot answers a whisper at all (else it stays silent); one reply per sender in 30 s.</summary>
+    public double WhisperReplyChance { get; init; } = 0.8;
+
+    /// <summary>
+    /// Bots:Chat:Enabled (true; inert while Bots:Enabled is false): world bots speak on the local Say channel (ChatSay 74 to the players that
+    /// see them): city chatter (Bots:Chat:SayChancePerMinute), a wave back at a player's emote (Bots:Chat:EmoteReplies) and a line after a
+    /// fight (Bots:Chat:FightLines), at most Bots:Chat:MaxLinesPerMinutePerCluster lines a minute per cluster and one per bot in 30 s.
+    /// </summary>
+    public bool ChatEnabled { get; init; } = true;
+
+    /// <summary>Bots:Chat:SayChancePerMinute (0.05): the chance per minute that a city bot a player sees says a line of Chat.Say.</summary>
+    public double SayChancePerMinute { get; init; } = 0.05;
+
+    /// <summary>Bots:Chat:FightLines (true): a bot that knocked a player down or was beaten may say a line of Chat.Win / Chat.Loss (half the time).</summary>
+    public bool FightLines { get; init; } = true;
+
+    /// <summary>Bots:Chat:EmoteReplies (true): a city bot a player emotes at (or the nearest one within 8 m) answers with Chat.EmoteReplies' emote, sometimes a Chat.Greet line.</summary>
+    public bool EmoteReplies { get; init; } = true;
+
+    /// <summary>Bots:Chat:MaxLinesPerMinutePerCluster (4): the bots' local lines of one cluster in any minute (0 = none); whisper replies do not count.</summary>
+    public int MaxLinesPerMinutePerCluster { get; init; } = 4;
+
+    /// <summary>
+    /// Bots:Party:Enabled (true; inert while Bots:Enabled or Bots:Social:Enabled is false): a world bot may accept a party invite
+    /// (<see cref="Bots.BotSocial.WantsParty"/>): out of a fight, in no party, on the inviter's map, its tier within Bots:Party:TierRange of the
+    /// inviter's, its kind allowed (Bots:Party:City / Gatherer / Patrol / Drifter), fewer than Bots:Party:MaxPerParty such bots in the party,
+    /// then with Bots:Party:AcceptChance. It then plays as its inviter's companion (role from its gear) until it is kicked, the party breaks
+    /// up, the inviter leaves the party or stays away for Companions:OwnerGraceSeconds, or Bots:Party:MaxMinutes pass; then it goes.
+    /// false = every invite is declined, as before.
+    /// </summary>
+    public bool PartyEnabled { get; init; } = true;
+
+    /// <summary>Bots:Party:AcceptChance (0.7): the chance an eligible bot accepts an invite.</summary>
+    public double PartyAcceptChance { get; init; } = 0.7;
+
+    /// <summary>Bots:Party:TierRange (1): how many tiers a bot's gear may be from the inviter's (average item power: T4 700 ... T8 1100).</summary>
+    public int PartyTierRange { get; init; } = 1;
+
+    /// <summary>Bots:Party:MaxPerParty (2): world bots one party may have at once (hired companions not counted; 0 = none).</summary>
+    public int PartyMaxPerParty { get; init; } = 2;
+
+    /// <summary>Bots:Party:MaxMinutes (120): a world bot leaves its party after this long.</summary>
+    public double PartyMaxMinutes { get; init; } = 120;
+
+    /// <summary>Bots:Party:City / Gatherer / Patrol / Drifter (true): which kinds of world bots may accept a party invite.</summary>
+    public bool PartyCity { get; init; } = true;
+
+    public bool PartyGatherer { get; init; } = true;
+
+    public bool PartyPatrol { get; init; } = true;
+
+    public bool PartyDrifter { get; init; } = true;
+
+    // ---- bot-roster: a stable roster of identities, the population by the hour, gear realism (audit-bots.md improvements 5 and 8) ----
+
+    /// <summary>
+    /// Bots:Roster:Enabled (true): the population's bots are drawn from a fixed roster of Bots:Roster:Size identities (name, character Guid,
+    /// kind, home tier, look, gear) derived from Bots:Roster:Seed (<see cref="Bots.BotRoster"/>): the same names come back with the same look
+    /// and gear over respawns, turnovers and restarts; nothing is stored. A name a character has is skipped. false = a fresh name per bot, as before.
+    /// </summary>
+    public bool RosterEnabled { get; init; } = true;
+
+    /// <summary>Bots:Roster:Seed (1): the seed of the roster (another seed = other names, looks and gear).</summary>
+    public int RosterSeed { get; init; } = 1;
+
+    /// <summary>Bots:Roster:Size (1500, 1-8000): how many identities the roster has; when all of a kind are online a fresh name is drawn as before.</summary>
+    public int RosterSize { get; init; } = 1500;
+
+    /// <summary>
+    /// Bots:Schedule:Hours (24 × 1.0) or Bots:Schedule:Points ({ hour: factor }, linear between the points, wrapping at midnight): the factor
+    /// (0-3) on every map's population counts by the hour of the server's local time (UTC + Bots:Schedule:UtcOffsetHours), linear between two
+    /// hours. Fewer: the surplus bots leave one by one (Bots:Schedule:LeavePerPass per map and pass, through an exit or a logout as at the end
+    /// of a stay); more: the free slots fill as usual.
+    /// </summary>
+    public IReadOnlyList<double> ScheduleHours { get; init; } = FlatSchedule;
+
+    public static readonly IReadOnlyList<double> FlatSchedule = [.. Enumerable.Repeat(1.0, 24)];
+
+    /// <summary>Bots:Schedule:UtcOffsetHours (0, -12..14): the server's local time for Bots:Schedule.</summary>
+    public double ScheduleUtcOffsetHours { get; init; }
+
+    /// <summary>Bots:Schedule:LeavePerPass (1, 0-100): surplus bots per map sent away at each population pass when the curve falls (0 = they stay their stay out).</summary>
+    public int ScheduleLeavePerPass { get; init; } = 1;
+
+    /// <summary>
+    /// Bots:Gear:MixedShare (0.25) and Bots:Gear:TierSpread (1, 0-3): each armour piece, weapon, offhand and cape of a population bot is with this
+    /// chance 1..TierSpread tiers above or below its tier (within 1-8; tools, bags and mounts stay at its tier). 0 = one tier, as before.
+    /// </summary>
+    public double GearMixedShare { get; init; } = 0.25;
+
+    public int GearTierSpread { get; init; } = 1;
+
+    /// <summary>
+    /// Bots:Gear:EnchantChance:&lt;zone class&gt; (City 0.03, Start 0, Safe 0.02, Yellow 0.04, Orange 0.06, Red 0.08, Black 0.12, Roads 0.12,
+    /// Mists 0.08): each weapon, offhand and armour piece of a population bot is enchanted Bots:Gear:Enchant ("1-3") with this chance in that zone.
+    /// </summary>
+    public IReadOnlyDictionary<string, double> EnchantChance { get; init; } = DefaultEnchantChance;
+
+    public static readonly IReadOnlyDictionary<string, double> DefaultEnchantChance = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["City"] = 0.03, ["Start"] = 0, ["Safe"] = 0.02, ["Yellow"] = 0.04, ["Orange"] = 0.06, ["Red"] = 0.08, ["Black"] = 0.12, ["Roads"] = 0.12, ["Mists"] = 0.08,
+    };
+
+    public (double Min, double Max) GearEnchant { get; init; } = (1, 3);
+
+    /// <summary>
+    /// Bots:Gear:ArtifactChance:&lt;zone class&gt; (Red 0.02, Black 0.06, Roads 0.06, Mists 0.03, else 0): each weapon and armour piece of a
+    /// population bot (not a gatherer's set or tool) is an artifact (content/bots.json Gear.ArtifactWeapons, Gear.ArtifactSets; T4+) with this chance.
+    /// </summary>
+    public IReadOnlyDictionary<string, double> ArtifactChance { get; init; } = DefaultArtifactChance;
+
+    public static readonly IReadOnlyDictionary<string, double> DefaultArtifactChance = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Red"] = 0.02, ["Black"] = 0.06, ["Roads"] = 0.06, ["Mists"] = 0.03,
+    };
+
+    // ---- bot-travel: world bots that leave through an exit reappear next door (audit-bots.md improvement 6) ----
+
+    /// <summary>
+    /// Bots:Travel:Enabled (true; inert while Bots:Enabled or Bots:World:Enabled is false, so off under official): a City, Gatherer or Patrol
+    /// bot that walks into an exit is "in transit" for Bots:Travel:Seconds and then appears at the matching entrance of the neighbouring
+    /// cluster with the same name, Guid, gear and bag, in a free slot of its role there. Only when that map is loaded with a player on it,
+    /// its zone allows world bots (Bots:Zones) and gets bots of the role, and it is no instance; otherwise (and at arrival if that has
+    /// changed meanwhile) it simply logs out as before. false = every bot walking into an exit is gone there (the old behaviour).
+    /// </summary>
+    public bool TravelEnabled { get; init; } = true;
+
+    /// <summary>Bots:Travel:Seconds ("10-20"): how long a travelling bot is between two clusters (a player's loading screen and walk-in).</summary>
+    public (double Min, double Max) TravelSeconds { get; init; } = (10, 20);
+
+    /// <summary>Bots:Travel:MaxHops (6, 1-50): how far (clusters) a gatherer's home city may lie, and its way home.</summary>
+    public int TravelMaxHops { get; init; } = 6;
+
+    /// <summary>
+    /// Bots:Gatherer:TripMinutes (30, 1-1440): a gatherer's trip ends after this long (or when its bag is full: Bots:Gatherer:Nodes nodes);
+    /// with Bots:Gatherer:BankAtHome it then walks home to bank.
+    /// </summary>
+    public double GathererTripMinutes { get; init; } = 30;
+
+    /// <summary>
+    /// Bots:Gatherer:BankAtHome (true; needs Bots:Travel:Enabled): a gatherer whose trip is over walks back to its home city (the nearest
+    /// royal city or rest within Bots:Travel:MaxHops of where it first came online) cluster by cluster, to that city's bank door, pauses
+    /// and its gathered resources are gone (banked there: per city, nothing global). false = it leaves through an exit as before.
+    /// </summary>
+    public bool GathererBankAtHome { get; init; } = true;
+
+    /// <summary>The factor of Bots:Schedule at <paramref name="utc"/> (local = UTC + the offset; linear between two hours).</summary>
+    public double ScheduleAt(DateTime utc)
+    {
+        var hours = ScheduleHours;
+        if (hours.Count != 24) return 1;
+        var h = ((utc.TimeOfDay.TotalHours + ScheduleUtcOffsetHours) % 24 + 24) % 24;
+        var i = (int)Math.Floor(h) % 24;
+        var frac = h - Math.Floor(h);
+        return hours[i] + (hours[(i + 1) % 24] - hours[i]) * frac;
+    }
+
+    // ---- behaviour constants (bot-switches; today's values in both presets) ----
+
+    /// <summary>Bots:City:PoiShare (0.6): a city bot's next goal is a point of interest with this chance, else a spot Bots:City:WanderMeters ("15-40") away.</summary>
+    public double CityPoiShare { get; init; } = 0.6;
+
+    public (double Min, double Max) CityWanderMeters { get; init; } = (15, 40);
+
+    /// <summary>Bots:City:ExitShare (0.5): a city bot whose stay is over walks out through an exit with this chance, else it logs out in place.</summary>
+    public double CityExitShare { get; init; } = 0.5;
+
+    /// <summary>Bots:Gatherer:FleeSeconds (20) / FleeDistance (25 m): a fleeing gatherer's run; a retreating fighter runs half the distance.</summary>
+    public double FleeSeconds { get; init; } = Bots.BotCombat.FleeSeconds;
+
+    public double FleeDistance { get; init; } = Bots.BotCombat.FleeDistance;
+
+    /// <summary>Bots:Patrol:FollowSpacing (2.5 m): a patrol group's member walks this far × its place behind the leader.</summary>
+    public double FollowSpacing { get; init; } = Bots.PatrolBrain.FollowSpacing;
+
+    /// <summary>
+    /// Bots:Combat:RetargetSeconds (5) / RetargetShare (1.5): an attacker that dealt this share of the target's health damage within this
+    /// window becomes the target.
+    /// </summary>
+    public double RetargetSeconds { get; init; } = Bots.BotCombat.RetargetSeconds;
+
+    public double RetargetShare { get; init; } = Bots.BotCombat.RetargetShare;
+
+    /// <summary>Bots:Combat:KiteSeconds (1.2) / KiteEverySeconds (2.5): a ranged bot's step back and how often it may.</summary>
+    public double KiteSeconds { get; init; } = Bots.BotCombat.KiteSeconds;
+
+    public double KiteEverySeconds { get; init; } = Bots.BotCombat.KiteEverySeconds;
 
     /// <summary>Bots:MaxTotal (400; 150 before stageM bots) and Bots:MaxPerMap (40): the caps of the population.</summary>
     public int MaxTotal { get; init; } = 400;
@@ -2055,23 +2811,23 @@ public sealed record BotOptions
     public bool LethalToPlayers { get; init; }
 
     /// <summary>
-    /// Bots:Combat:DamageFactor (1.0) on a bot's hits on players, Bots:Combat:HealthFactor (1.0; the pve preset 0.7) on a bot's maximum
-    /// health (corrupted-dungeon invaders too): the difficulty. pve 0.7: the user's T4 quarterstaff (AP 313.4) needs about a third fewer
-    /// hits on a T6-T7 full-spec bot (stageM pvp-damage NOTES §1).
+    /// Bots:Combat:DamageFactor (1.0) on a bot's hits on players, Bots:Combat:HealthFactor (1.0 in both presets) on a bot's maximum
+    /// health (corrupted-dungeon invaders too): the difficulty. Before stageN botpower the pve preset had 0.7 (the user's T4 quarterstaff,
+    /// AP 313.4, needed about a third fewer hits on a T6-T7 full-spec bot, stageM pvp-damage NOTES §1).
     /// </summary>
     public double DamageFactor { get; init; } = 1.0;
 
     public double HealthFactor { get; init; } = 1.0;
 
     /// <summary>
-    /// Bots:Gear:Mastery (1.0; the pve preset 0.5): the share of a full destiny board's item power a bot's gear carries (its spec levels ×
+    /// Bots:Gear:Mastery (1.0 in both presets; stageN botpower, before: pve 0.5): the share of a full destiny board's item power a bot's gear carries (its spec levels ×
     /// this, so 1 = every node at its base level count, the official-like full-spec player: T7 gatherer gear at IP 1288; 0 = the items' own
     /// item power: T7 1000 + quality). Their armour, health and ability power follow (stageM pvp-damage NOTES §5.2b).
     /// </summary>
     public double GearMastery { get; init; } = 1.0;
 
     /// <summary>
-    /// Bots:Gear:DamageBonus (true; the pve preset false): a bot's spells add its worn items' spell damage bonus as a player's do
+    /// Bots:Gear:DamageBonus (true in both presets; stageN botpower, before: pve false): a bot's spells add its worn items' spell damage bonus as a player's do
     /// (Combat:GearDamageBonus; official-like: a cloth patrol's spells × 1.4-1.5, leather × 1.2-1.3, plate × 1-1.1). false = a bot's
     /// spells keep only its buffs and passives, as before that bonus came (stageM pvp-damage review).
     /// </summary>
@@ -2146,6 +2902,150 @@ public sealed record BotOptions
 
     /// <summary>Bots:DownDespawnSeconds (10, below 90): a knocked-down bot is gone this long after its defeat (a dead one after playervisibilityafterdeath).</summary>
     public double DownDespawnSeconds { get; init; } = 10;
+
+    // ---- stageN botpower (analysis/work/stageN/botpower/SPEC.md) ----
+
+    /// <summary>
+    /// Bots:Difficulty (1.0, 0.1-10): x the maximum health and x the hits on players of every bot but the hired companions, on top of
+    /// Bots:Combat:HealthFactor / DamageFactor (1 = an equal-tier, full-spec player).
+    /// </summary>
+    public double Difficulty { get; init; } = 1.0;
+
+    /// <summary>Bots:Gear:RedZoneTierBonus (1, 0-3): patrols in red and black zones (and on the roads) wear gear this many tiers above the open world's roll.</summary>
+    public int RedZoneTierBonus { get; init; } = 1;
+
+    /// <summary>Bots:Gear:Quality ("1-2", 1-5): the quality of a world bot's gear (1 normal .. 5 masterpiece: its item power, and its drop).</summary>
+    public (double Min, double Max) Quality { get; init; } = (1, 2);
+
+    /// <summary>
+    /// Bots:Gear:EliteChance (0.06): a patrol or Drifter spawns as an elite with this chance: its weapon, offhand and armour enchanted
+    /// Bots:Gear:EliteEnchant ("1-3") where items.xml has the level, of quality Bots:Gear:EliteQuality ("3-4").
+    /// </summary>
+    public double EliteChance { get; init; } = 0.06;
+
+    public (double Min, double Max) EliteEnchant { get; init; } = (1, 3);
+
+    public (double Min, double Max) EliteQuality { get; init; } = (3, 4);
+
+    /// <summary>
+    /// Bots:Combat:Tactics (true): a fighting bot picks its spells by the situation (a gap closer when far, a heal or shield when low, crowd
+    /// control on a casting target, its damage when the target is low: those as soon as off cooldown, without the SpellChance roll), drinks its
+    /// potion or falls back once below Bots:Combat:RetreatHealth (0.3), and a ranged one steps back from a target nearer than
+    /// Bots:Combat:KiteDistance (5 m edge to edge; 0 = never). false = the stageM behaviour (spells by SpellChance, heals first when hurt).
+    /// </summary>
+    public bool Tactics { get; init; } = true;
+
+    public double KiteDistance { get; init; } = 5;
+
+    public double RetreatHealth { get; init; } = 0.3;
+
+    /// <summary>Bots:Combat:Potions ("1-2", 0-10): the healing potions (T{t}_POTION_HEAL) a patrol, Drifter or gatherer carries in its potion slot.</summary>
+    public (double Min, double Max) Potions { get; init; } = (1, 2);
+
+    /// <summary>Bots:Combat:Food (true): a patrol or Drifter eats a meal (T{t}_MEAL_STEW) at its spawn: the food buff for its stay.</summary>
+    public bool Food { get; init; } = true;
+
+    /// <summary>Bots:Combat:FocusWeakest (true): a patrol attacks the weakest player in reach (lowest health share) and turns to one nearly down.</summary>
+    public bool FocusWeakest { get; init; } = true;
+
+    /// <summary>Bots:Patrol:RedGroupSize ("2-3"): the patrol groups of red and black zones (the roads keep Bots:Roads:PatrolGroupSize).</summary>
+    public (double Min, double Max) RedGroupSize { get; init; } = (2, 3);
+
+    /// <summary>
+    /// Bots:Support:Enabled (true; inert while Bots:Enabled is false, so official off, pve on): patrol groups get healers and tanks by
+    /// Bots:Patrol:Makeups. A healer (a holy or nature staff, its kit's heals first) heals, shields and buffs its group's members and itself
+    /// with the players' cast checks (Pvp:FriendlySpells, cooldowns, energy; never a human, a Hostile unit or a bot of another group); a tank
+    /// (a mace or hammer, a shield, its kit's taunts first) engages first and turns on whoever hits its healer. false = every patrol a
+    /// damage dealer whose friendly spells go on itself only, as before.
+    /// </summary>
+    public bool SupportEnabled { get; init; } = true;
+
+    /// <summary>Bots:Support:HealBelow (0.7): a healer heals the group member (itself included) with the lowest health share below this.</summary>
+    public double SupportHealBelow { get; init; } = 0.7;
+
+    /// <summary>Bots:Support:ShieldBelow (0.9): in a fight a healer shields the group member with the lowest health share below this.</summary>
+    public double SupportShieldBelow { get; init; } = 0.9;
+
+    /// <summary>The zone key of Bots:Patrol:Makeups that a zone class without its own list uses.</summary>
+    public const string DefaultMakeupZone = "Default";
+
+    /// <summary>
+    /// Bots:Patrol:Makeups:&lt;zone class or Default&gt; (with Bots:Support:Enabled): the makeups a new patrol group draws by weight, its members
+    /// taking the parts in order as they spawn, the ones beyond the makeup damage dealers. Default "dps=90", "healer,dps=7", "tank,healer,dps=3";
+    /// Red, Black and Roads "dps=80", "healer,dps,dps=12", "tank,healer,dps=8": nine groups in ten (eight in the red and black zones) as before.
+    /// </summary>
+    public IReadOnlyDictionary<string, IReadOnlyList<PatrolMakeup>> PatrolMakeups { get; init; } = DefaultPatrolMakeups;
+
+    public static readonly IReadOnlyDictionary<string, IReadOnlyList<PatrolMakeup>> DefaultPatrolMakeups = RedBlack(
+        PatrolMakeup.ParseList("dps=90;healer,dps=7;tank,healer,dps=3", "default"), PatrolMakeup.ParseList("dps=80;healer,dps,dps=12;tank,healer,dps=8", "default"));
+
+    private static Dictionary<string, IReadOnlyList<PatrolMakeup>> RedBlack(IReadOnlyList<PatrolMakeup> all, IReadOnlyList<PatrolMakeup> red) =>
+        new(StringComparer.OrdinalIgnoreCase) { [DefaultMakeupZone] = all, ["Red"] = red, ["Black"] = red, ["Roads"] = red };
+
+    /// <summary>The makeups of zone class <paramref name="zone"/>: its own list, else Default's, else none.</summary>
+    public IReadOnlyList<PatrolMakeup> MakeupsOf(string? zone) =>
+        zone is not null && PatrolMakeups.TryGetValue(zone, out var own) ? own : PatrolMakeups.GetValueOrDefault(DefaultMakeupZone) ?? [];
+
+    /// <summary>
+    /// Bots:Rewards:EliteSilverFactor (2) x an elite bot's silver; Bots:Rewards:EliteExtraItems (1): its bag holds this many more of its worn
+    /// items than Bots:Rewards:MinItems (its enchanted gear drops as it was worn).
+    /// </summary>
+    public double EliteSilverFactor { get; init; } = 2;
+
+    public int EliteExtraItems { get; init; } = 1;
+}
+
+/// <summary>
+/// One entry of Bots:Patrol:Makeups: the parts of a patrol group's members in their spawn order (the ones beyond them damage dealers) and its
+/// weight among its zone's entries.
+/// </summary>
+public sealed record PatrolMakeup(IReadOnlyList<Entities.PatrolPart> Parts, double Weight)
+{
+    /// <summary>"part,part,...=weight" (dps, healer, tank; the weight 0..1000, 1 when left out).</summary>
+    public static PatrolMakeup Parse(string text, string key)
+    {
+        var (roles, weight) = text.Split('=', 2, StringSplitOptions.TrimEntries) is [var r, var w] ? (r, w) : (text.Trim(), "1");
+        if (!double.TryParse(weight, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var n) || !double.IsFinite(n) || n is < 0 or > 1000)
+            throw new InvalidDataException($"{key}: '{text}': the weight '{weight}' is not 0..1000");
+        var parts = new List<Entities.PatrolPart>();
+        foreach (var word in roles.Split(',', StringSplitOptions.TrimEntries))
+            parts.Add(word.ToLowerInvariant() switch
+            {
+                "dps" => Entities.PatrolPart.Dps,
+                "healer" => Entities.PatrolPart.Healer,
+                "tank" => Entities.PatrolPart.Tank,
+                _ => throw new InvalidDataException($"{key}: '{text}': '{word}' is not dps, healer or tank"),
+            });
+        return new PatrolMakeup(parts, n);
+    }
+
+    /// <summary>A JSON array of entries or a ';' list of them; at least one.</summary>
+    public static IReadOnlyList<PatrolMakeup> ParseList(string value, string key)
+    {
+        string[] items;
+        try
+        {
+            items = value.TrimStart().StartsWith('[') ? JsonSerializer.Deserialize<string[]>(value) ?? []
+                : value.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        }
+        catch (JsonException)
+        {
+            throw new InvalidDataException($"{key}: '{value}' is not a list of makeups like \"tank,dps,healer=5\"");
+        }
+        if (items.Length == 0) throw new InvalidDataException($"{key}: no makeup");
+        return [.. items.Select(i => Parse(i, key))];
+    }
+
+    /// <summary>One of <paramref name="makeups"/> by weight; null when none weighs anything.</summary>
+    public static PatrolMakeup? Pick(IReadOnlyList<PatrolMakeup> makeups, Random random)
+    {
+        var total = makeups.Sum(m => m.Weight);
+        if (total <= 0) return null;
+        var roll = random.NextDouble() * total;
+        foreach (var m in makeups)
+            if ((roll -= m.Weight) < 0) return m;
+        return makeups.Last(m => m.Weight > 0);
+    }
 }
 
 /// <summary>Bots:Combat:Spells: whether fighting bots cast their gear's spells (stageJ pvp-spells SPEC §2.9).</summary>
@@ -2198,6 +3098,70 @@ public enum MistsExitTarget
 
     /// <summary>A world cluster of the warning type drawn by the mode's openworldexitdistribution, tier ±1, on the entrance's continent (official).</summary>
     Random,
+}
+
+/// <summary>
+/// StageN companions (analysis/work/stageN/companions/SPEC.md): bots a player hires with .companion hire &lt;tank|healer|melee|ranged&gt; [tier]
+/// that join its party, follow it over every cluster change and fight the mobs that fight the party (<see cref="Bots.Companions"/>). The
+/// record's values are the official preset's (off); the pve preset switches them on. Nothing of them is saved: they go at a restart or logout.
+/// </summary>
+public sealed record CompanionOptions
+{
+    /// <summary>Companions:Enabled (false; pve true): .companion is accepted.</summary>
+    public bool Enabled { get; init; }
+
+    /// <summary>Companions:MaxPerPlayer (4, at most 4): companions one player may have at once.</summary>
+    public int MaxPerPlayer { get; init; } = 4;
+
+    /// <summary>Companions:MaxPartySize (5): a companion is hired only while the party (humans and companions) stays within this.</summary>
+    public int MaxPartySize { get; init; } = 5;
+
+    /// <summary>Companions:MinTier / MaxTier (3 / 8): the gear tier a hire gets from the owner's average item power is kept within these.</summary>
+    public int MinTier { get; init; } = 3;
+
+    public int MaxTier { get; init; } = 8;
+
+    /// <summary>
+    /// Companions:GearMastery (1.0; the pve preset 0.5) and Companions:GearDamageBonus (true; pve false): a companion's share of a full destiny
+    /// board's item power and whether its spells add its worn spell damage bonus (stageN botpower: split off Bots:Gear:Mastery / DamageBonus,
+    /// so that stronger world bots leave the hired allies as they were).
+    /// </summary>
+    public double GearMastery { get; init; } = 1.0;
+
+    public bool GearDamageBonus { get; init; } = true;
+
+    /// <summary>Companions:HealthFactor (1): × a companion's maximum health (its gear's, as a player's).</summary>
+    public double HealthFactor { get; init; } = 1;
+
+    /// <summary>Companions:DamageFactor (1): × a companion's auto-attack and spell damage on mobs.</summary>
+    public double DamageFactor { get; init; } = 1;
+
+    /// <summary>Companions:TankThreatFactor (3): a tank's damage on a mob counts this many times as threat.</summary>
+    public double TankThreatFactor { get; init; } = 3;
+
+    /// <summary>Companions:HealBelow (0.85): a healer heals a party member under this share of its health.</summary>
+    public double HealBelow { get; init; } = 0.85;
+
+    /// <summary>Companions:FollowDistance (4 m): out of a fight a companion walks back to its owner beyond this.</summary>
+    public double FollowDistance { get; init; } = 4;
+
+    /// <summary>Companions:AssistRange (25 m): a companion takes on the mobs fighting the party within this of its owner.</summary>
+    public double AssistRange { get; init; } = 25;
+
+    /// <summary>Companions:LeashDistance (35 m): a fighting companion this far from its owner gives up the fight and follows.</summary>
+    public double LeashDistance { get; init; } = 35;
+
+    /// <summary>Companions:TeleportDistance (60 m): a companion this far from its owner (or stuck, below) is put next to it.</summary>
+    public double TeleportDistance { get; init; } = 60;
+
+    /// <summary>Companions:StuckSeconds (6): a companion that has not come nearer to its owner for this long is put next to it.</summary>
+    public double StuckSeconds { get; init; } = 6;
+
+    /// <summary>Companions:OwnerGraceSeconds (120): companions wait this long for an owner that is not in game (a cluster change, a relog) before they go.</summary>
+    public double OwnerGraceSeconds { get; init; } = 120;
+
+    /// <summary>Companions:SpellChance (0.5): the chance per second of a fight that a companion casts one of its spells.</summary>
+    public double SpellChance { get; init; } = 0.5;
 }
 
 /// <summary>
@@ -2277,7 +3241,7 @@ public sealed record MistsOptions
 /// <summary>
 /// StageL: the Roads of Avalon (Roads:*, analysis/work/stageL/roads/SPEC.md §5.8): the portal network, its portals and the travel through them,
 /// the road camps' chests. The network's rules, lifetimes and charges are the client data's (tunnelsystem.xml) in both presets; the pve preset
-/// only opens .roads to every player (<see cref="ServerConfig.PveDefaults"/>). PvP in the roads follows Pvp:* (black zones: under Pvp:Mode
+/// opens .roads to every player, keeps the rescue link and changes the roads' logout and throw-out (<see cref="ServerConfig.PveDefaults"/>). PvP in the roads follows Pvp:* (black zones: under Pvp:Mode
 /// Consensual only two Red players fight there).
 /// </summary>
 public sealed record RoadsOptions
@@ -2317,8 +3281,11 @@ public sealed record RoadsOptions
     /// </summary>
     public double? EnterRadius { get; init; }
 
-    /// <summary>Roads:Rescue (true) and Roads:RescueMinutes (60): a road with a human inside and no link gets one at once, this long (SPEC §5.2).</summary>
-    public bool Rescue { get; init; } = true;
+    /// <summary>
+    /// Roads:Rescue (false, official: the roads keep no link for a player left inside; the pve preset true) and Roads:RescueMinutes (60): a road
+    /// with a human inside and no link gets one at once, this long (SPEC §5.2, a server addition of verification V6).
+    /// </summary>
+    public bool Rescue { get; init; }
 
     public double RescueMinutes { get; init; } = 60;
 

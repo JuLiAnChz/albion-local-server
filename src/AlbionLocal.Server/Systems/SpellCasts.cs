@@ -111,6 +111,9 @@ public static partial class SpellCasts
         // StageN spells-bosses: learning point books (Consumables.Award ran them only in name), the gathering tomes, the fish food's
         // fishing fame, the repair kits, the fame buffs (Combat.Kill: FameBuff).
         "awardlearningpoints", "adddestinyboardgatheringfame", "adddestinyboardfishingfame", "repairequipment", "mobfamebycategoryovertime",
+        // StageN spells2: the stored targets of the multispell follow-ups, and two tags run outside this list all along: a dungeon map's
+        // activaterandomdungeon (Execute, Consumables) and castspellaftermoving (the mounts' speed buff, Systems.Mounts.Update).
+        "storetargets", "removestoredtargets", "activaterandomdungeon", "castspellaftermoving",
     };
 
     /// <summary>
@@ -206,6 +209,13 @@ public static partial class SpellCasts
             point = aim;
             if (Vector2.Distance(here, aim) > spell.CastRange + RangeTolerance) return (null, CastRefusal.OutOfRange);
         }
+        else if (cls == SpellTargets.Cls.StoredTarget && Stored(p, spell, start) is { } stored)
+        {
+            // StageN spells2: the newest stored target of its tag (a unit, or a point such as AFTER_IMAGE's image), within castrange + 1 m.
+            target = stored.Unit;
+            point = stored.Unit is { } u ? SpellMovement.PositionOf(u, start) : stored.Point;
+            if (Vector2.Distance(here, point) > spell.CastRange + RangeTolerance + (stored.Unit is Mob sm ? sm.Template.CollisionRadius : 0)) return (null, CastRefusal.OutOfRange);
+        }
         else if (SpellTargets.NamesTarget(cls))
         {
             var (unit, why) = CastTarget(p, spell, cls, targetId, here, start);
@@ -239,14 +249,15 @@ public static partial class SpellCasts
         var map = p.Map!;
         if (map.FindPlayer(id) is { } q)
         {
-            if (!p.Observers.Contains(q)) return (null, CastRefusal.NoTarget);
+            // A companion sees no other bot (it has no client), nor does a world bot (bot support roles: a healer's group mates).
+            if (!p.Observers.Contains(q) && !((p.IsCompanion || p.IsBot && q.IsBot) && q.Map == p.Map)) return (null, CastRefusal.NoTarget);
             var facts = SpellTargets.Of(p, q, now);
             if (!SpellTargets.Cast(cls, facts))
                 return (null, Enemy(cls) ? CastRefusal.NotHostile
                     : p.World.Config.PvpDuelIsolation && (p.World.Duels.Of(p) is not null || p.World.Duels.Of(q) is not null) ? CastRefusal.InDuel : CastRefusal.NotFriend);
             return Pvp.EdgeDistance(p, here, q) > spell.CastRange + RangeTolerance ? (null, CastRefusal.OutOfRange) : (q, CastRefusal.None);
         }
-        if (map.Objects.GetValueOrDefault(id) is not Mob { Attackable: true } mob || !p.Visibility.Knows(mob)) return (null, CastRefusal.NoTarget);
+        if (map.Objects.GetValueOrDefault(id) is not Mob { Attackable: true } mob || !p.Visibility.Knows(mob) && !p.IsCompanion) return (null, CastRefusal.NoTarget);
         if (!SpellTargets.Cast(cls, SpellTargets.Of(p, mob, now))) return (null, Enemy(cls) ? CastRefusal.NoTarget : CastRefusal.NotFriend);
         return Combat.EdgeDistance(p, here, mob) > spell.CastRange + RangeTolerance ? (null, CastRefusal.OutOfRange) : (mob, CastRefusal.None);
     }
@@ -330,7 +341,8 @@ public static partial class SpellCasts
         var map = p.Map;
         if (map is null) return;
         var consumable = Consumables.IsSlot(cast.Slot);
-        if (cast.Target is { } aimed && !SpellTargets.Cast(SpellTargets.Parse(cast.Spell.Target), SpellTargets.Of(p, aimed, cast.End))
+        var storedCast = SpellTargets.Parse(cast.Spell.Target) == SpellTargets.Cls.StoredTarget; // stageN spells2: its unit was checked when stored
+        if (cast.Target is { } aimed && !storedCast && !SpellTargets.Cast(SpellTargets.Parse(cast.Spell.Target), SpellTargets.Of(p, aimed, cast.End))
             || consumable && !Consumables.InSlot(p, cast))
         {
             Cancel(p, cast, interrupted: true);
@@ -339,8 +351,9 @@ public static partial class SpellCasts
         var spell = cast.Spell;
         var energy = p.Energy.At(cast.End) - cast.EnergyCost;
         p.Energy.Set(energy, Math.Max(cast.End, p.Energy.Stamp));
-        var point = cast.Target is { } at ? SpellMovement.PositionOf(at, cast.End) : spell.Target == "ground" ? cast.Aim : p.PositionAt(DateTime.UtcNow);
-        var flight = spell.ProjectileSpeed is { } speed ? Vector2.Distance(p.PositionAt(DateTime.UtcNow), point) / speed : 0;
+        var point = cast.Target is { } at ? SpellMovement.PositionOf(at, cast.End) : spell.Target == "ground" || storedCast ? cast.Aim : p.PositionAt(DateTime.UtcNow);
+        var flight
+ = spell.ProjectileSpeed is { } speed ? Vector2.Distance(p.PositionAt(DateTime.UtcNow), point) / speed : 0;
         var hit = cast.End + Seconds(spell.HitDelay + flight);
         var targetId = cast.Target?.Id ?? (NamesCaster(spell) ? p.Id : 0);
         var cooldown = CooldownFactorOf(p);
@@ -983,6 +996,12 @@ public static partial class SpellCasts
                 case "cancelmultispell":
                     CancelMulti(c, node);
                     break;
+                case "storetargets": // stageN spells2: what the follow-up spell is cast at
+                    Store(c, spell, node);
+                    break;
+                case "removestoredtargets":
+                    RemoveStored(c, node);
+                    break;
                 case "setcooldowns":
                     ResetCooldowns(c, node, set: true);
                     break;
@@ -1138,6 +1157,7 @@ public static partial class SpellCasts
                 GainEnergy(p, Relative(change * c.AbilityPower / 100, p.Energy.At(c.Ticks), p.Energy.Max), spell, c.Ticks, origin, c.Caster.Id);
                 return;
             }
+            if (c.Caster != p) PvpDetails.Healed(c.Caster, p, c.Ticks); // stageP: healing sickness by distinct healers, before this heal
             var amount = Relative(Combat.Heal(change, c.AbilityPower), p.Health.At(c.Ticks), p.Health.Max);
             if (SpellTemplate.Bool(node, "usehealingmodifiers", true)) amount *= Combat.HealBonusFactor(c.Caster, c.Ticks) * SpellEffects.HealFactor(p, c.Ticks);
             Combat.HealPlayer(c.Caster, p, amount, origin, spell.Id, c.Ticks);
@@ -1402,7 +1422,8 @@ public static partial class SpellCasts
                     "friendall" => SpellTargets.Of(c.Caster, unit, c.Ticks).Friend,
                     "groupmember" => unit is Player q && Pvp.SameParty(c.Caster, q),
                     "guildmember" => unit is Player g && c.Caster.World.Guilds.Same(c.Caster.Character.Id, g.Character.Id),
-                    _ => false, // alliancemember: no alliances
+                    "alliancemember" => unit is Player al && c.Caster.World.Alliances.SameAlliance(c.Caster.Character.Id, al.Character.Id),
+                    _ => false,
                 };
             }
             case "IfChance": return c.Map.Random.NextDouble() < SpellTemplate.Float(e, "value", 1);

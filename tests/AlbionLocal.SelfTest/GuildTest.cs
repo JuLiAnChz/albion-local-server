@@ -306,7 +306,7 @@ public static class GuildTest
     private static void Perks()
     {
         // The presets: the pve one turns the PvE guild on, the official one keeps it off; Guilds:Levels is checked.
-        var pve = LoadTestConfig("no-such-config.json", []);
+        var pve = LoadTestConfig("no-such-config.json", ["--Preset=pve"]);
         var official = LoadTestConfig("no-such-config.json", ["--Preset=official"]);
         Check(pve is { GuildNoFriendlyFire: true, GuildXpShare: 0.1, GuildShareWithoutParty: true, GuildSilverTax: 0.05, GuildContracts: true, GuildClearXp: 2000 }
               && official is { GuildNoFriendlyFire: false, GuildXpShare: 0, GuildShareWithoutParty: false, GuildSilverTax: 0, GuildContracts: false, GuildClearXp: 0 }

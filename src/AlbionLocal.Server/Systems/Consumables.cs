@@ -241,6 +241,7 @@ public static class Consumables
         "energymax", "energymaxbonus", "energyregeneration", "energyregenerationbonus",
         "magiccooldownreduction", "attackspeedbonus", "movespeedbonus", "healmodifier", "magicresistance", "physicalarmor",
         "crowdcontrolresistance", "magicspelldamagebonus", "magicattackdamagebonus", "physicalspelldamagebonus", "physicalattackdamagebonus",
+        "fishingspeed", // the fishing bait (econ SPEC §2.2): Fishing.BiteDelay reads it
     };
 
     /// <summary>

@@ -14,6 +14,9 @@ namespace AlbionLocal.Server.Systems;
 /// </summary>
 public sealed record MultiSlot(SpellTemplate Spell, SpellTemplate Holder, long End, bool Once, byte Index = 0);
 
+/// <summary>A stored target of storetargets (stageN spells2): its tag (null: none), the unit (null: a point) and where, until a GameTimeStamp.</summary>
+public sealed record StoredTarget(string? Tag, IUnit? Unit, Vector2 Point, long Until);
+
 /// <summary>
 /// The instant effects of stageD effects batch 2 and 3 (SPEC §7) that the effect tree runs (<see cref="Run"/>): multispell and
 /// cancelmultispell, teleport, resetcooldowns and setcooldowns, the threat effects (changeaggro, maketargettopthreat, matchhighestthreatlevel),
@@ -29,6 +32,51 @@ public static partial class SpellCasts
     {
         "buff", "weightbonus", "resourcegatheringbuff", "applyeffectoneventpassive", "pulsingspellpassive", "healonhitpassive", "dummypassive",
     };
+
+    // ---- stored targets (stageN spells2: storetargets, removestoredtargets, target="storedtarget") ----
+
+    /// <summary>
+    /// storetargets target maxtargets tag time targettype: the node's units (enemy, friendall, enemyunmounted: the context's unit) or, for
+    /// target="ground" (targettype spelleffectarea), the centre of the caster's newest live area of this spell (AFTER_IMAGE's image where it
+    /// was cast, ICE_SCULPTURE's), else the cast's point; kept under the tag for <c>time</c> seconds, at most maxtargets per tag (the oldest go).
+    /// </summary>
+    private static void Store(SpellContext c, SpellTemplate spell, XElement node)
+    {
+        var p = c.Caster;
+        var tag = (string?)node.Attribute("tag") is { Length: > 0 } t ? t : null;
+        var until = c.Ticks + Seconds(SpellTemplate.Float(node, "time", 1));
+        var most = Math.Max(1, (int)SpellTemplate.Float(node, "maxtargets", 1));
+        p.Combat.Stored.RemoveAll(s => s.Until <= c.Ticks);
+        if ((string?)node.Attribute("target") == "ground")
+        {
+            var area = c.Map.Objects.Values.OfType<SpellArea>().Where(a => a.Owner == p && a.Holder == spell && !a.Gone).MaxBy(a => a.Start);
+            p.Combat.Stored.Add(new StoredTarget(tag, null, area?.Origin ?? c.Point, until));
+        }
+        else
+            foreach (var target in Targets(c, node))
+                p.Combat.Stored.Add(new StoredTarget(tag, target ?? p, SpellMovement.PositionOf(target ?? p, c.Ticks), until));
+        var mine = p.Combat.Stored.Where(s => s.Tag == tag).ToList();
+        foreach (var old in mine.Take(Math.Max(0, mine.Count - most))) p.Combat.Stored.Remove(old);
+    }
+
+    /// <summary>removestoredtargets numberoftargets tag: the oldest stored targets of the tag (none: of any tag) go.</summary>
+    private static void RemoveStored(SpellContext c, XElement node)
+    {
+        var tag = (string?)node.Attribute("tag") is { Length: > 0 } t ? t : null;
+        var count = Math.Max(1, (int)SpellTemplate.Float(node, "numberoftargets", 1));
+        foreach (var s in c.Caster.Combat.Stored.Where(s => tag is null || s.Tag == tag).Take(count).ToList()) c.Caster.Combat.Stored.Remove(s);
+    }
+
+    /// <summary>
+    /// The newest live stored target of <paramref name="p"/> for <paramref name="spell"/>'s storedtargettag (none: any tag): a unit still on
+    /// its map and alive (a mob not dead, a player not knocked down), else a point; null when there is none.
+    /// </summary>
+    public static StoredTarget? Stored(Player p, SpellTemplate spell, long now)
+    {
+        p.Combat.Stored.RemoveAll(s => s.Until <= now);
+        return p.Combat.Stored.LastOrDefault(s => (spell.StoredTargetTag is null || s.Tag == spell.StoredTargetTag)
+            && s.Unit switch { null => true, Mob m => !m.Dead && !m.Removed && m.Map == p.Map, Player q => q.Map == p.Map && q.Combat.Down is null, _ => false });
+    }
 
     // ---- multispell (ReplaceSpellSlotWithMultiSpell 457) ----
 
@@ -150,6 +198,36 @@ public static partial class SpellCasts
         p.Session.Send(new SpellCooldownUpdateEvent { dy7 = [.. changed], dy8 = [.. ends], dy9 = [.. starts], dza = [.. spans], dzb = new byte[changed.Count] });
     }
 
+    /// <summary>
+    /// The spell cooldowns on entering a cluster (stageP SPEC §2.4, clustertype spellcooldownsonenteringseconds, 15 s in the yellow, red and
+    /// black zones): every gear spell slot (0-5, not the potion and food slots [infer: "spell cooldowns"; capture R6]) whose spell runs no
+    /// longer cooldown is put on <paramref name="seconds"/> from now; SpellCooldownUpdate (249) as <see cref="ResetCooldowns"/> sends it (key 3
+    /// the larger of the recast and the time set). Returns the slots changed.
+    /// </summary>
+    public static int EnterCooldowns(Player p, double seconds)
+    {
+        if (seconds <= 0) return 0;
+        var slots = p.Session.SpellSlots(p.Inventory);
+        var now = p.World.GameNow;
+        var left = Seconds(seconds);
+        List<byte> changed = [];
+        List<long> ends = [], starts = [], spans = [];
+        for (byte slot = 0; slot < Math.Min(6, slots.Length); slot++)
+        {
+            if (p.World.Spells?.Template(slots[slot]) is not { } spell) continue;
+            if (p.Combat.Cooldowns.TryGetValue(spell.Id, out var end) && end >= now + left) continue;
+            p.Combat.Cooldowns[spell.Id] = now + left;
+            var span = Math.Max(Seconds(spell.RecastDelay), left);
+            changed.Add(slot);
+            ends.Add(now + left);
+            starts.Add(now + left - span);
+            spans.Add(span);
+        }
+        if (changed.Count > 0)
+            p.Session.Send(new SpellCooldownUpdateEvent { dy7 = [.. changed], dy8 = [.. ends], dy9 = [.. starts], dza = [.. spans], dzb = new byte[changed.Count] });
+        return changed.Count;
+    }
+
     // ---- threat ----
 
     /// <summary>
@@ -160,7 +238,7 @@ public static partial class SpellCasts
     /// </summary>
     private static List<IUnit?> ThreatTargets(SpellContext c, XElement node)
     {
-        if (c.Caster.IsBot) return []; // bots never fight mobs (stageJ pvp-spells SPEC §2.9): a bot's TAUNT pulls none onto it
+        if (c.Caster.IsBot && !c.Caster.IsCompanion) return []; // bots never fight mobs (a companion's TAUNT does pull) (stageJ pvp-spells SPEC §2.9): a bot's TAUNT pulls none onto it
         var target = (string?)node.Attribute("target") ?? "";
         if (target is not ("self" or "allmobs")) return Targets(c, node);
         var radius = SpellTemplate.Float(node, "aggroradius");

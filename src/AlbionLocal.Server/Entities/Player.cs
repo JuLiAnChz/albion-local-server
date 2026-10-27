@@ -52,6 +52,9 @@ public sealed class Player(WorldSession session, World world, long id, Character
     /// <summary>Whether this player is a bot (<see cref="Bot"/>).</summary>
     public bool IsBot => Bot is not null;
 
+    /// <summary>StageN companions: a bot a player hired (<see cref="BotRole.Companion"/>): a party member that fights mobs, never players.</summary>
+    public bool IsCompanion => Bot is { Role: BotRole.Companion };
+
     /// <summary>
     /// The item objects created for this Join and the containers they lie in. Join creates the player with empty
     /// containers, sends the world objects of phase A (<see cref="Visibility"/>), then the items, and sets them here.
@@ -97,7 +100,7 @@ public sealed class Player(WorldSession session, World world, long id, Character
 
     /// <summary>
     /// The direction the player faces, degrees: key 2 of its last Move, until then the Join's key 10. A travel-point
-    /// journey keeps it (its Join key 10 is the last Move's direction, captures/albion_20261016_002835).
+    /// journey keeps it (its Join key 10 is the last Move's direction, capture 002835).
     /// </summary>
     public float Facing { get; set; }
 
@@ -304,7 +307,7 @@ public sealed class Player(WorldSession session, World world, long id, Character
             cwo = en.Value, cwp = en.Max, cwq = en.RegenCap, cwr = en.RegenPerSecond, cws = en.Stamp,        // [27-31]
             cw1 = Inventory.EquipmentTypeIds(),                                                              // [40] int[10]
             cw4 = Session.SpellSlots(Inventory),                                                             // [43] int[14]
-            cxg = [-1, -1, -1, -1, -1, -1, -1],                                                              // [55] int[7]
+            cxg = Systems.Vanity.Wardrobe(c),                                                                // [55] int[7] the wardrobe (stageN vanity)
             cwy = (float)Character.Reputation, cwz = World.GameNow, cw0 = Systems.Reputation.Level(this),    // [37] [38] [39]
             cxe = Flag, cxh = Faction,                                                                       // [53] [56]
         };
@@ -379,7 +382,7 @@ public sealed class Player(WorldSession session, World world, long id, Character
     public CharacterStats ComputeStats()
     {
         var s = World.StatCalculator is { } calculator && Progression is { } progression
-            ? calculator.Compute(Inventory.EquippedItems(), progression.Levels)
+            ? calculator.Compute(Inventory.EquippedItems(), progression.Levels, ItemPowerCap)
             : CharacterStats.Naked;
         if (Effects.Idle) return s;
         var now = World.GameNow;
@@ -399,8 +402,11 @@ public sealed class Player(WorldSession session, World world, long id, Character
     /// </summary>
     public DefenseStats ComputeDefense() =>
         World.StatCalculator is { } calculator
-            ? calculator.Defense(Inventory.EquippedItems(), Progression?.Levels ?? NoLevels, World.Config.GearArmor)
+            ? calculator.Defense(Inventory.EquippedItems(), Progression?.Levels ?? NoLevels, World.Config.GearArmor, ItemPowerCap)
             : DefenseStats.None;
+
+    /// <summary>The item power cap the player's items are under now (an arena match's, Arena:ItemPowerCap); null = none.</summary>
+    public ItemPowerCap? ItemPowerCap => Map is not null ? World.Arenas.ItemPowerCapOf(this) : null;
 
     private static readonly IReadOnlyDictionary<int, int> NoLevels = new Dictionary<int, int>();
 
@@ -420,8 +426,11 @@ public sealed class Player(WorldSession session, World world, long id, Character
     {
         Defense = ComputeDefense();
         var s = ComputeStats();
-        if (Bot is not null && World.Config.Bots.HealthFactor * Bot.HealthFactor != 1)
-            s = s with { MaxHealth = Math.Max(1, MathF.Round(s.MaxHealth * (float)(World.Config.Bots.HealthFactor * Bot.HealthFactor), MidpointRounding.AwayFromZero)) };
+        // StageN companions: Companions:HealthFactor instead of the world bots' Bots:Combat:HealthFactor.
+        var botHealth = Bot is null ? 1 : IsCompanion ? World.Config.Companions.HealthFactor
+            : World.Config.Bots.HealthFactor * World.Config.Bots.Difficulty * Bot.HealthFactor; // stageN botpower: Bots:Difficulty
+        if (botHealth != 1)
+            s = s with { MaxHealth = Math.Max(1, MathF.Round(s.MaxHealth * (float)botHealth, MidpointRounding.AwayFromZero)) };
         // No health regeneration in combat (stage 5b, SPEC §5b.5); knocked down (5e) the knockdown's own rate for the new maximum.
         var healthRegen = Combat.Down is not null ? Systems.Knockdown.Regeneration(this, s.MaxHealth) : Combat.InCombat ? 0 : s.HealthRegen;
         var changed = Health.Max != s.MaxHealth || Health.RegenPerSecond != healthRegen

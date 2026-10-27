@@ -9,6 +9,7 @@
     <!-- Golden references, world objects only: the client data slices (analysis/work/stage2/spec/slice_*.json) and the
          fixtures; capture-derived ones are not published. -->
     <None Include="Fixtures\*.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Fixtures\*.sql" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <PropertyGroup>

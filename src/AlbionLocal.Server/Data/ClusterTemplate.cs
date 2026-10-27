@@ -128,6 +128,12 @@ public sealed class ClusterTemplate
     /// <summary>StageH islands (SPEC §0.2, §1.5): the islandmanagement tiles of an island template (one, at (185.5, 64.5)); empty elsewhere.</summary>
     public IReadOnlyList<IslandManagementSpawn> IslandManagements { get; init; } = [];
 
+    /// <summary>StageP hideouts (SPEC §1.1): the hideoutmanagement tiles of a hideout template (HIDEOUT_MANAGEMENT, one); empty elsewhere.</summary>
+    public IReadOnlyList<HideoutManagementSpawn> HideoutManagements { get; init; } = [];
+
+    /// <summary>Islands phase 5 (stageN islands5 SPEC §1): the centres (world x/z) of the buildable 10 × 10 m ground cells of the active layers; empty off islands.</summary>
+    public IReadOnlyList<Vector2> BuildCells { get; init; } = [];
+
     /// <summary>
     /// StageL corrupted (SPEC §1.2, §4.4): the InvaderSpawnpoint tiles (tiles.xml namedmarkerpoint InvaderSpawnpoint) of the active layers,
     /// where an invader comes in; empty on every cluster but the corrupted dungeons.
@@ -154,6 +160,15 @@ public sealed class ClusterTemplate
     /// restricted area's centre, its radius and width at the start and the end); empty elsewhere.
     /// </summary>
     public IReadOnlyList<HellgateAreaSpawn> HellgateAreas { get; init; } = [];
+
+    /// <summary>
+    /// Stage N arena (analysis/work/stageN/arena/SPEC.md §3): the WarCamp_Arena tiles' &lt;warcamp&gt; spawn positions of an arena template, in
+    /// file order (the first camp team 1's, the second team 2's); empty elsewhere.
+    /// </summary>
+    public IReadOnlyList<WarcampSpawn> Warcamps { get; init; } = [];
+
+    /// <summary>StageP league-pvp (SPEC §3.2): an arena template's &lt;orb type&gt; tiles (ARENA-STANDARD: three ARENA_ORB of ORB_ARENA); empty elsewhere.</summary>
+    public IReadOnlyList<OrbSpawn> Orbs { get; init; } = [];
 
     /// <summary>
     /// StageL mists phase B (SPEC §2.5): the spots of a mists template's active layers by <see cref="MistsSpot.Kind"/>: the named markers
@@ -423,11 +438,15 @@ public sealed class ClusterTemplate
         public readonly List<PlacedCollider> Colliders = [];
         public readonly List<RoadLine> Roads = [];
         public readonly List<IslandManagementSpawn> IslandManagements = [];
+        public readonly List<HideoutManagementSpawn> HideoutManagements = [];
+        public readonly List<Vector2> BuildCells = [];
         public readonly List<NamedMarkerSpawn> InvaderSpawns = [];
         public readonly List<HellgateShrineSpawn> HellgateShrines = [];
         public List<BuffShrineSpawn> BuffShrines = [];
         public readonly List<NamedMarkerSpawn> HellgateMarkers = [];
         public readonly List<HellgateAreaSpawn> HellgateAreas = [];
+        public readonly List<WarcampSpawn> Warcamps = [];
+        public readonly List<OrbSpawn> Orbs = [];
         public readonly List<MistsSpot> MistsSpots = [];
 
         /// <summary>A dungeon floor's exits (<see cref="FromLayout"/>): the Guid and world exit of the n-th exit member (1-based, load order) at its position.</summary>
@@ -556,6 +575,12 @@ public sealed class ClusterTemplate
                 var (cx, _, cz) = place.Apply(c.X, 0, c.Z);
                 Colliders.Add(new PlacedCollider(c.Grid, cx, cz, TileMath.Mod360(place.Yaw + c.Yaw)));
             }
+            foreach (var cell in layout.BuildCells)
+            {
+                if (cell.Layer is not null && !active.Contains(cell.Layer)) continue;
+                var (bx, _, bz) = place.Apply(cell.X, 0, cell.Z);
+                BuildCells.Add(new Vector2((float)bx, (float)bz));
+            }
             foreach (var r in layout.Roads)
             {
                 if (r.Layer is not null && !active.Contains(r.Layer)) continue;
@@ -623,6 +648,10 @@ public sealed class ClusterTemplate
                     case "islandmanagement":
                         IslandManagements.Add(new IslandManagementSpawn { Key = key, Tile = t.Tile, Position = pos, Height = (float)y, Direction = dir, Component = c });
                         break;
+                    // StageP hideouts: the hideout management (NewHideoutManagement on a hideout instance).
+                    case "hideoutmanagement":
+                        HideoutManagements.Add(new HideoutManagementSpawn { Key = key, Tile = t.Tile, Position = pos, Height = (float)y, Direction = dir, Component = c });
+                        break;
                     // StageL corrupted (SPEC §4.4): where an invader comes in (the other named marker points are not used).
                     case "namedmarkerpoint" when A("name") == CorruptedData.InvaderSpawnTile:
                         InvaderSpawns.Add(new NamedMarkerSpawn { Key = key, Tile = t.Tile, Position = pos, Height = (float)y, Direction = dir, Component = c });
@@ -651,6 +680,16 @@ public sealed class ClusterTemplate
                         BuffShrines.Add(new BuffShrineSpawn { Key = key, Tile = t.Tile, Position = pos, Height = (float)y, Direction = dir, Component = c, ShrineType = A("shrinetype") ?? "" });
                         break;
                     // StageL hellgates phase B (SPEC §2.4): the HellgateFxManager's restricted area; its centre attribute is in the template's frame.
+                    // Stage N arena (SPEC §3): a team's camp and its spawn positions (template coordinates, placed as the tile).
+                    case "warcamp":
+                        var spawns = c.Descendants("position").Select(e => TileMath.V2((string?)e.Attribute("pos"))).OfType<Vector2>()
+                            .Select(v => place.Apply(v.X, t.Y, v.Y)).Select(w => new Vector2((float)w.X, (float)w.Z)).ToList();
+                        Warcamps.Add(new WarcampSpawn { Key = key, Tile = t.Tile, Position = pos, Height = (float)y, Direction = dir, Component = c, Spawns = spawns.Count > 0 ? spawns : [pos] });
+                        break;
+                    // StageP league-pvp (SPEC §3.2): an orb tile and its orbtypes.xml type.
+                    case "orb":
+                        Orbs.Add(new OrbSpawn { Key = key, Tile = t.Tile, Position = pos, Height = (float)y, Direction = dir, Component = c, OrbType = A("type") ?? "" });
+                        break;
                     case "arearestrictionsettings":
                         var (acx, acz) = TileMath.V2((string?)c.Attribute("center")) is { } ac ? (ac.X, ac.Y) : ((float)t.X, (float)t.Z);
                         var (ax, _, az) = place.Apply(acx, t.Y, acz);
@@ -819,9 +858,9 @@ public sealed class ClusterTemplate
                 Buildings = Buildings, Exits = Exits, Travelpoints = Travelpoints, FactionWarfarePortals = Portals, IslandAccessPoints = Islands,
                 ExpeditionAgents = Agents, LocationMarkers = Markers, TutorialBlockers = TutorialBlockers, Harvestables = Harvestables, MobSpawnPoints = Mobs, ResourceNodes = Nodes,
                 RealEstates = Estates, FishingZones = Fishing, RespawnPoints = Respawns, Resources = resources, DungeonMarkers = DungeonMarkers, LootChests = ChestPoints,
-                LocalQuestAreas = QuestAreas, PoiChestLimit = poiLimit, ExpeditionObjects = ExpeditionObjects, Colliders = Colliders, Roads = Roads, IslandManagements = IslandManagements,
+                LocalQuestAreas = QuestAreas, PoiChestLimit = poiLimit, ExpeditionObjects = ExpeditionObjects, Colliders = Colliders, Roads = Roads, IslandManagements = IslandManagements, HideoutManagements = HideoutManagements, BuildCells = BuildCells,
                 InvaderSpawns = InvaderSpawns, HellgateShrines = HellgateShrines, BuffShrines = BuffShrines, HellgateMarkers = HellgateMarkers,
-                HellgateAreas = HellgateAreas, SpawnBuffs = spawnBuffs, MistsSpots = MistsSpots,
+                HellgateAreas = HellgateAreas, Warcamps = Warcamps, Orbs = Orbs, SpawnBuffs = spawnBuffs, MistsSpots = MistsSpots,
                 Problems = [.. _problems.Select(p => p.Value == 1 ? p.Key : $"{p.Key} (x{p.Value})")],
                 LoadTime = watch.Elapsed, MobsBound = mobsBound, DangerType = danger, Pvp = pvp,
             };
@@ -1132,6 +1171,9 @@ public sealed record IslandAccessPointSpawn : ClusterObject
 /// <summary>An islandmanagement tile of an island template (&lt;BIOME&gt;_ISLAND_MANAGEMENT; stageH islands SPEC §0.2): NewIslandManagement 225 on an island instance.</summary>
 public sealed record IslandManagementSpawn : ClusterObject;
 
+/// <summary>A hideoutmanagement tile of a hideout template (HIDEOUT_MANAGEMENT; stageP hideouts): NewHideoutManagement 420 on a hideout instance.</summary>
+public sealed record HideoutManagementSpawn : ClusterObject;
+
 /// <summary>A namedmarkerpoint tile (stageL corrupted: InvaderSpawnpoint, where an invader comes in, SPEC §4.4; stageL hellgates: <see cref="Name"/> one of <see cref="HellgateData.Markers"/>).</summary>
 public sealed record NamedMarkerSpawn : ClusterObject
 {
@@ -1165,6 +1207,18 @@ public sealed record MistsSpot : ClusterObject
 /// A HellgateFxManager's &lt;arearestrictionsettings center startradius endradius startwidth endwidth&gt; (stageL hellgates SPEC §2.4; Hellgate_01:
 /// (14, 41), 154.6 → 25 m, width 20): the restricted area of phase B (HellgateRestrictedAreaUpdate 452 keys 3-7).
 /// </summary>
+/// <summary>A WarCamp_Arena tile's &lt;warcamp isattacker&gt; with its &lt;spawnpositions&gt; (stage N arena SPEC §3: 1 in the 1v1 arena, 20 in the others).</summary>
+public sealed record WarcampSpawn : ClusterObject
+{
+    public IReadOnlyList<Vector2> Spawns { get; init; } = [];
+}
+
+/// <summary>An arena template's &lt;orb type&gt; tile (stageP league-pvp SPEC §3.2): its orbtypes.xml uniquename.</summary>
+public sealed record OrbSpawn : ClusterObject
+{
+    public string OrbType { get; init; } = "";
+}
+
 public sealed record HellgateAreaSpawn : ClusterObject
 {
     public Vector2 Center { get; init; }

@@ -15,29 +15,52 @@ public static class MobCommands
     /// <summary>How far from the player .mob spawn puts its mobs (m), on a ring around it.</summary>
     public const float SpawnDistance = 3;
 
+    /// <summary>Farthest <c>dist</c> of .mob spawn (m).</summary>
+    public const float MaxDistance = 60;
+
     /// <summary>
-    /// <paramref name="count"/> GM mobs of <paramref name="mob"/> (a mobs.xml uniquename, ignoring case) on a ring of
-    /// <see cref="SpawnDistance"/> m around the player, facing it: NewMob to everyone in view at once. They belong to no
-    /// spawn point, so they never respawn.
+    /// <paramref name="count"/> GM mobs of <paramref name="mob"/> (a mobs.xml uniquename, ignoring case). Without <paramref name="dist"/>: on a
+    /// ring of <see cref="SpawnDistance"/> m around the player, facing it. With it (0-60 m, the checker's setups): <paramref name="dist"/> m in
+    /// front of the player along its facing, more than one on a 2 m ring around that point, each on the nearest walkable cell of the
+    /// cluster's walk grid within 6 m (the bots' grid; the point itself while it is being built or nothing is walkable there), facing
+    /// the player. NewMob to everyone in view at once. They belong to no spawn point, so they never respawn.
     /// </summary>
-    [Command("mob spawn", Level = AccountLevel.GameMaster, Help = "puts <count> mobs of a mobs.xml uniquename around the player (no respawn)")]
-    public static void Spawn(CommandContext ctx, MobTemplate mob, int count = 1)
+    [Command("mob spawn", Level = AccountLevel.GameMaster,
+        Help = "puts <count> mobs of a mobs.xml uniquename around the player, or [dist] m (0-60) in front of it on walkable ground (no respawn)")]
+    public static void Spawn(CommandContext ctx, MobTemplate mob, int count = 1, float? dist = null)
     {
         var player = ctx.RequirePlayer();
         if (count is < 1 or > MaxCount) throw new CommandError($"count: {count} is not 1..{MaxCount}");
+        if (dist is < 0 or > MaxDistance) throw new CommandError($"dist: {dist} is not 0..{MaxDistance}");
         var map = MapOf(player);
         var at = player.PositionAt(DateTime.UtcNow);
         var ids = new List<long>();
-        for (var i = 0; i < count; i++)
+        if (dist is not { } d)
         {
-            var angle = 2 * Math.PI * i / count;
-            var offset = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * SpawnDistance;
-            // Facing the player: the yaw of the way back (x = sin, z = cos, the convention of TileMath.Rotate).
-            var facing = (float)(Math.Atan2(-offset.X, -offset.Y) * 180 / Math.PI);
-            ids.Add(SpawnManager.SpawnAt(map, mob, at + offset, facing, ctx.World).Id);
+            for (var i = 0; i < count; i++)
+            {
+                var angle = 2 * Math.PI * i / count;
+                var offset = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * SpawnDistance;
+                // Facing the player: the yaw of the way back (x = sin, z = cos, the convention of TileMath.Rotate).
+                var facing = (float)(Math.Atan2(-offset.X, -offset.Y) * 180 / Math.PI);
+                ids.Add(SpawnManager.SpawnAt(map, mob, at + offset, facing, ctx.World).Id);
+            }
+        }
+        else
+        {
+            var (dx, dz) = TileMath.Rotate(0, d, player.Facing);
+            var centre = at + new Vector2((float)dx, (float)dz);
+            var nav = ctx.World.Bots.NavOf(map);
+            for (var i = 0; i < count; i++)
+            {
+                var angle = 2 * Math.PI * i / count;
+                var spot = count == 1 ? centre : centre + new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * 2;
+                if (nav?.Nearest(spot, 6) is { } walkable) spot = walkable;
+                ids.Add(SpawnManager.SpawnAt(map, mob, spot, AI.MotionMaster.Facing(spot, at), ctx.World).Id);
+            }
         }
         ctx.Reply(string.Create(CultureInfo.InvariantCulture,
-            $"{mob.Name} (type {mob.Id}, T{mob.Tier}, {mob.HitPointsMax:0} hp): {count} spawned, object{(count == 1 ? "" : "s")} {string.Join(", ", ids)}"));
+            $"{mob.Name} (type {mob.Id}, T{mob.Tier}, {mob.HitPointsMax:0} hp): {count} spawned{(dist is { } m ? $" {m:0.#} m ahead" : "")}, object{(count == 1 ? "" : "s")} {string.Join(", ", ids)}"));
     }
 
     /// <summary>

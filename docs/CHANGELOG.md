@@ -1,0 +1,174 @@
+# Changelog
+
+## 2026-10-26 (evening) — PvP end-game (the parts the client code and data settle)
+
+Everything below is on under `Preset: official`, where the official game has it; each system has its own switch.
+Fields that are only inferred are sent as neutral values and marked `[H]` in the code and in REFERENCE.md; captures
+of the official server will settle them. The database schema goes from v37 to v42 — back up your save first.
+
+**PvP details**
+- Death recap (op 492): mob and player hits, heals, crowd control and debuffs of the last 180 s (`DeathRecap:*`).
+- Healing sickness (`Pvp:HealingSickness`): 2+ distinct healers within 10 s give `HEALINGSICKNESS_n`.
+- Resilience / focus-fire protection (`Pvp:Resilience`): less damage from 2–30 attackers, with penetration.
+- Zone entry (`Pvp:SpawnBuffs`, `Pvp:EnterSpellCooldowns`): the worldsettings spawn buffs (spawn shield, speed) and
+  the 15 s spell cooldown on entering yellow, red and black zones.
+
+**Arena**
+- Official rules: item power caps (600 hard; 900 soft for 1v1 and the Crystal Arena), the double-healer penalty,
+  `ARENA_*` entry buffs, camp turret and camp invulnerability, personal season points (`Arena:ItemPowerCap`,
+  `DoubleHealerPenalty`, `EnterBuffs`, `WarcampDefense`, `Psp`).
+- Runestones (`Arena:Orbs`): zone orbs in the unranked arena (active after 60 s, a claim costs the enemy 10 tickets),
+  channel orbs in the Crystal Arena with the 120 s majority score.
+- Crystal Arena as its own mode on CrystalRealm03 (`Arena:CrystalArena`), and rank points with the 17 ranks from Iron 1
+  to Crystal and rank-up chests (`Arena:RankPoints`; the rank point formula is not in the client data, so it is a
+  configurable Elo-like placeholder).
+- The in-match HUD events stay off (`Arena:MatchHud` false) until captures confirm them.
+
+**Alliances** (`Alliances:*`): create (5 M from the guild account), disband, leave, member and detail info, invitations
+by mail, answer, cancel, kick, limits and cooldowns, the alliance chat channel; allies are friendly in PvP.
+
+**Guild territories and castles** (`Territories:*`, `Castles:*`)
+- The 268 watchtower territories, 23 castles and 95 castle outposts from the client data, with their monoliths and
+  castles in the world; guild season history, participation and the full season update.
+- Territory claims in the season's claimable window and prime time, giving up, access rights, monolith food, the
+  guild's territory list, the season schedule with its Tower Guardian, and season points for holding territories.
+- Castles and outposts: guards, elite guards and the lord in phases, the capture zone, ownership, and chests on the
+  treasure schedule for the owner.
+- The world-map territory info stays off (`Territories:WorldMapInfo` false): wrong array lengths crash the client's map.
+
+**Guild hideouts** (`Hideouts:*`): placing the construction kit by the data's rules, construction, the hideout
+instance with entry, exit and access rights, its own bank vault (separate from every city bank) and market, Make Home,
+respawn and Journey Back, food upkeep, upgrades and tribute to the territory owner.
+
+Not yet (they need captures): raids and conquest of territories, hideout sieges and destruction, power cores,
+fortifications, the Crystal League.
+
+Self-tests: 519 on `main`, 547 on `modifications`.
+
+## 2026-10-26 (later) — bots travel and play support roles
+
+Both features need `Bots:Enabled` (off under `official`, on under `pve`).
+
+**Travel between clusters** (`Bots:Travel:*`, `Bots:Gatherer:TripMinutes`, `Bots:Gatherer:BankAtHome`)
+- A world bot leaving through an exit appears 10-20 s later at the matching entrance next door, as the same character
+  (name, gear, health, bag). It only travels to a map that has a player on it and a free bot slot of its role;
+  otherwise it logs out at the exit as before. Bots never enter instances, islands, hellgates or the Roads.
+- Gatherers have a home city with a bank. When the bag is full or the trip time (30 min) is up, a gatherer walks home
+  cluster by cluster, goes to its city's bank door, pauses and banks its haul — per city, no global storage.
+
+**Support roles in patrol groups** (`Bots:Support:*`, `Bots:Patrol:Makeups`)
+- Patrol groups are drawn from weighted makeups per zone (`dps`, `healer`, `tank`); by default 9 in 10 stay all-dps
+  (8 in 10 in red and black zones and on the Roads).
+- Healers (holy or nature staff, cloth) heal and shield their own group, lowest health first, through the players'
+  cast rules; they never target players or other groups' bots (area heals behave like a player's).
+- Tanks (mace or hammer, shield, plate) open with taunts and turn on whoever hits their healer.
+- A healer bot in a player's party heals the party.
+
+Self-tests: 484 on `main`, 512 on `modifications`.
+
+## 2026-10-26 — official by default, switchable player bots
+
+The server now follows the course of emulators such as TrinityCore and AzerothCore: **`Preset: official` behaves like
+the official game**, and everything the server adds on top is behind a config key. The `pve` preset keeps the
+earlier PvE-friendly behaviour and is opt-in. All keys are documented in `config/world.jsonc` and in
+[REFERENCE.md](REFERENCE.md).
+
+### Official preset audit
+
+Every config key and every server-made system was checked against the official game. 404 keys: 199 already official,
+129 inert under official (their master switch is off), 30 deviating (now fixed), 46 whose official value is unknown
+(left as they are and marked in their descriptions).
+
+**Loading**
+- A configuration without `Preset` now means `official` (it used to fall back to `pve`).
+- A configuration without `Tutorial:Opening` now starts new characters in the opening tutorial.
+- `Progression:NewCharacters` is `FairStart` under official: a new character's destiny board is empty and grows with
+  fame. `pve` keeps `UnlockAll`.
+
+**Server additions now off under official** (each has its own key; `pve` keeps them on):
+
+| Key | Official | pve | What it controls |
+|---|---|---|---|
+| `Events:PlayerInvasions` | false | true | `.invasion`, invasion tickets in the shop and in drops |
+| `Bounties:Enabled` | false | true | `.bounty` tasks |
+| `PvpGoals:Enabled` | false | true | challenge points for PvP kills and duels |
+| `Dungeons:DailyBonus` | 1 | content | the dungeon of the day multiplier |
+| `Dungeons:GroupScaling` | false | true | random dungeons scaled to the party |
+| `Guilds:BossSeasonPoints` | false | true | guild season points for boss kills |
+| `Guilds:SeasonRewards` | Official | Content | bracket silver and items at season end, `.guild payout` |
+| `Season:Rules` | Official | Content | the Adventurer's Challenge as in the client data vs `goals.json` overrides |
+| `Expeditions:Rules` | Official | Content | solo group runs, auto-accept, hardcore carry, scaling, extra items |
+| `WorldBosses:ExtraSpawns` | false | true | the server's own extra world bosses |
+| `WorldBosses:Loot` | Killer | content | who gets a world boss's loot |
+| `Loot:TierCap` | false | true | common loot at most one tier above the content |
+| `Corrupted:LeaveCommand` | false | true | `.cd leave` |
+
+**Defaults changed to the official values**
+
+| Key | Official | pve |
+|---|---|---|
+| `Arena:CountdownSeconds` | 15 | 10 |
+| `Arena:Tickets2v2` / `Tickets5v5` | 150 / 150 | 6 / 15 |
+| `Arena:TicketsPerDeath` (new) | 2 | 1 |
+| `Arena:MatchMinutes` | 25 | 15 |
+| `Arena:Win/LossSilver`, `Win/LossFame` | 0 | 5000 / 1500, 30000 / 10000 |
+| `Arena:Bots` | false | true |
+| `Arena:DuelsRated` | false | true |
+| `Loot:BlackMarketSoftCap` | 0 | 4 |
+| `Roads:Rescue` | false | true |
+| `Corrupted:MapsOpenDungeons` | true (maps open a corrupted dungeon) | false (maps are invasion tickets) |
+
+Notes:
+- An arena match no longer starts, or pays out, against empty slots when no bots are available.
+- Orb ticket loss is not modelled yet, so official arena matches mostly run to the 25-minute limit. Arena season
+  points are not modelled either.
+- `Islands:BuyWithoutPremium` (new, true in both presets) is a temporary deviation: officially only premium players
+  buy islands, and this server has no premium for gold yet.
+- Cosmetics from content (`Vanity:*`) stay on in both presets by choice.
+
+**Commands**: `.who` (every player's position) and `.save` are GameMaster-only now.
+
+**Docs**: the commented examples in `config/world.jsonc` show official values with the `pve` value in the note; the
+orphaned chat example moved to `config/chat.jsonc`; stale descriptions were fixed.
+
+### Player bots — a switchable optional feature
+
+Player bots are not an official feature. Like AzerothCore's playerbots module they stay in the server, are **off
+under official** (master switch `Bots:Enabled` false) and on under `pve`.
+
+**Switches**
+- `Bots:Enabled` — master switch for every kind of bot.
+- `Bots:World:Enabled` — the open-world population, with one switch per role: `Bots:City`, `Bots:Gatherer`,
+  `Bots:Patrol`, `Bots:Drifter` (`…:Enabled`), and `Bots:Zones` (where world bots may spawn).
+- `Bots:Arena:Enabled`, `Bots:Hellgate:Enabled`, `Bots:Invader:Enabled` — content bots, which now work without the
+  world population.
+- `Bots:Pvp:Enabled` — false: bots never start a fight, they only fight back.
+- `Bots:Rewards:Enabled` — false: killing a bot gives no fame, silver, loot or goal credit.
+- Former hard-coded behaviour is configurable: city wander share and radius, exit vs logout share, gatherer flee
+  time and distance, patrol spacing, retarget and kite intervals.
+- `.bot on|off` says that it lasts until the restart.
+
+**Social presence and chat** (`Bots:Social:*`, `Bots:Chat:*`)
+- World bots count as online players by name: whispers get a delayed canned reply, friend requests are declined
+  after a delay, nothing is stored in the database.
+- City bots chatter now and then, wave back at emotes, and sometimes say "gg" or a taunt after a fight, with a
+  per-cluster rate limit. All lines are editable in `content/bots.json` (`Chat`).
+
+**Bots in your party** (`Bots:Party:*`)
+- A world bot near your tier can accept a party invite (`AcceptChance` 0.7, `TierRange` 1, `MaxPerParty` 2).
+- It plays like a hired companion: follows you across clusters and into dungeons, expeditions, hellgates and the
+  Mists, fights the party's mobs, takes its role (healer, tank, ranged, melee) from its gear.
+- It never loots. It leaves and despawns when kicked, when the party disbands, when you are away too long, or after
+  `MaxMinutes` (120).
+
+**Roster, hours and gear** (`Bots:Roster:*`, `Bots:Schedule:*`, `Bots:Gear:*`)
+- A stable roster built from a seed: the same names come back with the same look and gear across respawns and
+  restarts, and never collide with real characters. Nothing is stored in the database.
+- Population by hour of day: a 24-hour curve (or a few anchor points) scales each cluster's bot count; bots log in and
+  out gradually. The default curve is flat, i.e. unchanged behaviour.
+- More realistic gear: pieces of mixed tiers around the bot's tier, occasional .1–.3 enchantments by zone, artifacts
+  more likely in red and black zones.
+
+### Tests
+
+The self-test suite grew from 460 to 475 tests (the modifications branch: 503), all passing.

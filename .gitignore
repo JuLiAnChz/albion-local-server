@@ -13,10 +13,6 @@ data/characters/
 data/*.log*
 data/clientdata.json
 
-# Local educational laboratory settings and generated reports
-lab.local.json
-data/lab/
-
 # Generated data stays versioned: data/items.tsv (analysis/tools/gen_items.py), data/gamedata.json
 # (analysis/tools/gen_gamedata.py) and data/spells.json (gen_item_spells.py) as the self-test's golden references
 # (the server reads the client's GameData itself), Protocol/Generated (gen_protocol_cs.py).
@@ -27,9 +23,18 @@ data/spells.json
 data/items.tsv
 data/journal-ids.tsv
 
-# Machine-specific launch settings and configuration
+# Capture-derived self-test fixtures are never published
+tests/AlbionLocal.SelfTest/Fixtures/stage2_joins*.json
+tests/AlbionLocal.SelfTest/Fixtures/fishing_zones_*.json
+
+# Runtime folders
+data/backups/
+logs/
+
+# Private configuration and Visual Studio launch profiles
 /config.private/
 /src/AlbionLocal.Server/Properties/launchSettings.json
+/data/lab/
 /scripts/lab.ps1
 /scripts/start-client.ps1
 /lab.local.example.json

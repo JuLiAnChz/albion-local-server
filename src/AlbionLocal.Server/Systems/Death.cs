@@ -290,7 +290,7 @@ public static class Death
         var inventory = victim.Inventory;
         Part(inventory.Equipment, rule.EquipmentWear, rule.EquipmentStack);
         Part(inventory.Bag, rule.InventoryWear, rule.InventoryStack);
-        foreach (var item in worn.Where(i => !dropped.Contains(i))) victim.Session.Send(Network.WorldSession.ItemObject(item)); // what stays, worn
+        foreach (var item in worn.Where(i => !dropped.Contains(i))) Network.WorldSession.SendItemTo(victim, item); // what stays, worn
         if (rule.EquipmentDrops) victim.Session.Send(new InventoryStateEvent { ck0 = inventory.Equipment.ObjectIds(), ck2 = inventory.Equipment.Id });
         if (rule.InventoryDrops) victim.Session.Send(new InventoryStateEvent { ck0 = inventory.Bag.ObjectIds(), ck2 = inventory.Bag.Id });
         victim.SaveItems();
@@ -410,6 +410,8 @@ public static class Death
         world.Expeditions.DiedOut(p); // Expeditions:CheckpointRespawn off: out of the instance for good (263 kind 3), the city respawn follows
         world.Corrupted.DiedOut(p); // stageL corrupted: out of the run (its owner's early leave), the city respawn follows
         world.Hellgates.DiedOut(p); // stageL hellgates: no member any more (the official preset's lethal modes)
+        // StageP hideouts: the home hideout (Make Home, Hideouts:RespawnAtHome), but a death in a mists zone keeps its own respawn.
+        if (!Data.MistsIds.IsInstance(p.Map.Cluster) && world.Hideouts.RespawnHome(p, why)) return true;
         var cluster = world.Mists.RespawnOf(p) ?? RespawnCluster(p); // stageL mists: a death in a zone respawns in Mists:RespawnCluster (Brecilien)
         void Go(Vector2 spot)
         {
@@ -566,6 +568,7 @@ public static class Death
         if (p == target || p.Map is null || target.Map != p.Map) return "no target";
         if (target.Combat.Down is not { Kind: KnockdownKind.Pve or KnockdownKind.Pvp }) return "the target is not knocked down";
         if (p.World.Duels.OpponentOf(p) == target) return "the duel opponent";
+        if (p.World.Arenas.Find(p.Map.Cluster) is not null) return "no execute in the arena"; // stage N arena: a defeat is a knockdown there
         var relation = Pvp.Of(p, target);
         if (relation != Relation.Hostile) return "not hostile";
         var lethal = Pvp.RulesOf(p.World, p.Map).PlayersAreLethal;

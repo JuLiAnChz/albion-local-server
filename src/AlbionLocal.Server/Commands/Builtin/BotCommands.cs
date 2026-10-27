@@ -25,6 +25,7 @@ public static class BotCommands
         var lines = new List<string>
         {
             $"bots {(bots.Enabled ? "on" : "off")}: {bots.Count} in the world (cap {bots.Options.MaxTotal}), {bots.Nav.Count} walk grid(s) kept, {bots.Nav.Building} being built",
+            Switches(bots.Options),
         };
         foreach (var map in ctx.World.Maps.Maps.Where(m => m.HumanCount > 0 || m.Bots.Count > 0))
         {
@@ -58,13 +59,17 @@ public static class BotCommands
     /// <paramref name="count"/> GM bots of <paramref name="role"/> 3-8 m around the walkable cell nearest to the player (within 6 m; on that
     /// cell when no spot is found), gear tier <paramref name="tier"/> (0: by the zone): NewCharacter to everyone in view at once. Refused until
     /// the walk grid is built, and where nothing within 6 m is walkable: a bot is never put in a wall. Extra to the population, they never
-    /// respawn; .bot clear takes them. City and gatherer bots (a gatherer gathers what the map has of its tier, which may move its tier to
+    /// respawn; .bot clear takes them. <paramref name="elite"/> "elite": every one an elite (BotInfo.Elite: Bots:Gear:EliteEnchant and EliteQuality)
+    /// instead of the Bots:Gear:EliteChance roll of the population's patrols. City and gatherer bots (a gatherer gathers what the map has of its tier, which may move its tier to
     /// the nodes there; refused on a map without harvestables) and patrol bots (in groups of up to Bots:Patrol:GroupSize's most, on the
     /// route nearest to the player; refused where the rule keeps no Red player: a city, a green zone).
     /// </summary>
-    [Command("bot spawn", Level = AccountLevel.GameMaster, Help = "puts <count> GM bots of a role (city, gatherer, patrol) 3-8 m around the player, gear tier [tier] (0 = by the zone)")]
-    public static void Spawn(CommandContext ctx, string role, int count = 1, int tier = 0)
+    [Command("bot spawn", Level = AccountLevel.GameMaster,
+        Help = "puts <count> GM bots of a role (city, gatherer, patrol) 3-8 m around the player, gear tier [tier] (0 = by the zone); 'elite' last: elites (enchanted gear)")]
+    public static void Spawn(CommandContext ctx, string role, int count = 1, int tier = 0, string elite = "")
     {
+        if (elite.Length > 0 && !elite.Equals("elite", StringComparison.OrdinalIgnoreCase)) throw new CommandError($"'{elite}': only the word elite may follow the tier");
+        var forceElite = elite.Length > 0 ? true : (bool?)null;
         var player = ctx.RequirePlayer();
         var bots = ctx.World.Bots;
         if (!bots.Enabled) throw new CommandError("bots are off (.bot on)");
@@ -86,9 +91,9 @@ public static class BotCommands
             var facing = AI.MotionMaster.Facing(spot, at);
             var t = tier > 0 ? tier : bots.Factory.TierFor(bots.ZoneOf(map) ?? "Safe", map.Template?.Name.Tier ?? 0, bots.Random);
             if (group is { } g && g.Members.Count >= size) group = null; // the next group
-            if (bots.Spawn(map, r, t, spot, facing, group: group) is not { } bot) continue;
+            if (bots.Spawn(map, r, t, spot, facing, group: group, elite: forceElite) is not { } bot) continue;
             group = bot.Bot!.Group;
-            names.Add(Inv($"'{bot.Character.Name}' T{t} (object {bot.Id})"));
+            names.Add(Inv($"'{bot.Character.Name}' T{t}{(bot.Bot!.Elite ? " elite" : "")} (object {bot.Id})"));
         }
         if (names.Count == 0)
             throw new CommandError(r == BotRole.Gatherer && bots.NodesOf(map).Count == 0 ? $"nothing to gather on {map.Cluster}"
@@ -110,21 +115,33 @@ public static class BotCommands
         ctx.Reply($"{n} bot(s) despawned");
     }
 
-    /// <summary>Bots on (Bots:Enabled for this run, not saved).</summary>
-    [Command("bot on", Level = AccountLevel.GameMaster, Help = "switches the bots on for this run (Bots:Enabled)")]
+    /// <summary>The switch matrix of world.jsonc (bot-switches): the kinds and behaviours on or off under the master.</summary>
+    private static string Switches(BotOptions o)
+    {
+        static string On(bool on) => on ? "on" : "off";
+        return $"switches: world {On(o.WorldEnabled)} (city {On(o.CityEnabled)}, gatherer {On(o.GathererEnabled)}, patrol {On(o.PatrolEnabled)}, drifter {On(o.DrifterEnabled)}; "
+            + $"zones {(o.Zones.Count == 0 ? "all" : string.Join("/", o.Zones))}), arena {On(o.ArenaEnabled)}, hellgate {On(o.HellgateEnabled)}, invader {On(o.InvaderEnabled)}, "
+            + $"pvp {On(o.PvpEnabled)}, rewards {On(o.RewardsEnabled)}, travel {On(o.TravelEnabled)} (bank at home {On(o.GathererBankAtHome)})";
+    }
+
+    /// <summary>
+    /// Bots on for this run only (the master, Bots:Enabled): not saved, the next start reads world.jsonc again. The other switches
+    /// (Bots:World:Enabled, the roles, Bots:Zones, ...) are not changed at run time: there is no .bot reload, edit world.jsonc and restart.
+    /// </summary>
+    [Command("bot on", Level = AccountLevel.GameMaster, Help = "switches the bots on for this run only (Bots:Enabled; not saved, world.jsonc decides at the next start)")]
     public static void On(CommandContext ctx)
     {
         ctx.World.Bots.Enabled = true;
-        ctx.Reply("bots on");
+        ctx.Reply("bots on for this run (not saved)");
     }
 
-    /// <summary>Bots off for this run: every bot goes, no population pass spawns, .bot spawn is refused.</summary>
-    [Command("bot off", Level = AccountLevel.GameMaster, Help = "switches the bots off for this run: every bot goes")]
+    /// <summary>Bots off for this run only (not saved): every bot goes, no population pass spawns, .bot spawn is refused.</summary>
+    [Command("bot off", Level = AccountLevel.GameMaster, Help = "switches the bots off for this run only: every bot goes (not saved, world.jsonc decides at the next start)")]
     public static void Off(CommandContext ctx)
     {
         var n = ctx.World.Bots.Count;
         ctx.World.Bots.Enabled = false;
-        ctx.Reply($"bots off ({n} despawned)");
+        ctx.Reply($"bots off for this run, not saved ({n} despawned)");
     }
 
     /// <summary>The bot nearest to the player on its map: role, tier, persona, flag, health, what it does, its path and stay; a patrol's group and route.</summary>

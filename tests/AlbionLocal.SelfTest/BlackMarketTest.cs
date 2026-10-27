@@ -30,7 +30,7 @@ public static class BlackMarketTest
 
     private static void SharedBank()
     {
-        var pve = LoadTestConfig(Path.Combine(NewDir(), "none.json"), []);
+        var pve = LoadTestConfig(Path.Combine(NewDir(), "none.json"), ["--Preset=pve"]);
         var official = LoadTestConfig(Path.Combine(NewDir(), "none.json"), ["--Preset=official"]);
         Check(!pve.BankShared && !official.BankShared && pve is { BmBuyFactor: 5, BmDailyLimit: 1_000_000 } && official is { BmBuyFactor: 0, BmDailyLimit: 1_000_000 }
               && LoadTestConfig(Path.Combine(NewDir(), "none.json"), ["--Bank:Shared=true"]).BankShared,

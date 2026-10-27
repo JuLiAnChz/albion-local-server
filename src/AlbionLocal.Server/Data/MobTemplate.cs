@@ -166,6 +166,11 @@ public sealed record MobTemplate
     /// <summary>namelocatag (the "@MOB_..." text key; KnockedDown key 3, NewLoot key 3).</summary>
     public string? NameLocaTag { get; init; }
 
+    /// <summary>avatar (its portrait, UNDEADARCHER5) and avatarring (RING_MOB_VETERAN): the death recap's keys 4 and 5 (stageP SPEC §2.1); "" without.</summary>
+    public string Avatar { get; init; } = "";
+
+    public string AvatarRing { get; init; } = "";
+
     /// <summary>The &lt;Loot&gt; element (5c), detached; null without one.</summary>
     public XElement? Loot { get; init; }
 
@@ -180,6 +185,14 @@ public sealed record MobTemplate
 
     /// <summary>&lt;KillRewardBuff name target="threathistory"&gt;: applied to the players of its threat list at its death (the dragons' curse).</summary>
     public IReadOnlyList<(string Spell, string Target)> KillRewardBuffs { get; init; } = [];
+
+    /// <summary>
+    /// &lt;EscapeSpellSequence&gt;&lt;escapespell name target&gt; (self, escapeposition): what a tracking mob casts in order as it flees
+    /// (stageN spells2, <see cref="AI.BehaviourAI.Escape"/>); empty without one. <see cref="EscapeReference"/>: the mob whose sequence it uses.
+    /// </summary>
+    public IReadOnlyList<(string Spell, string Target)> EscapeSpells { get; init; } = [];
+
+    public string? EscapeReference { get; init; }
 
     public override string ToString() => $"{Name} ({Id})";
 }
@@ -292,6 +305,8 @@ public sealed class MobStore
                 ImmuneToForcedMovement = B("immunetoforcedmovement"),
                 CollisionRadius = F("collisionradius"),
                 NameLocaTag = S("namelocatag"),
+                Avatar = S("avatar") ?? "",
+                AvatarRing = S("avatarring") ?? "",
                 Loot = e.Element("Loot") is { } loot ? new XElement(loot) : null,
                 AI = e.Element("AI") is { } ai ? new XElement(ai) : null,
                 DeathSpells = [.. (e.Element("DeathSpells")?.Elements("deathspell") ?? []).Select(d => ((string?)d.Attribute("name") ?? "", ((string?)d.Attribute("target") ?? "self").ToLowerInvariant()))
@@ -299,6 +314,9 @@ public sealed class MobStore
                 SpawnSpells = [.. (e.Element("SpawnSpells")?.Elements("spawnspell") ?? []).Select(d => (string?)d.Attribute("name") ?? "").Where(n => n.Length > 0)],
                 KillRewardBuffs = [.. e.Elements("KillRewardBuff").Select(d => ((string?)d.Attribute("name") ?? "", ((string?)d.Attribute("target") ?? "threathistory").ToLowerInvariant()))
                     .Where(d => d.Item1.Length > 0)],
+                EscapeSpells = [.. (e.Element("EscapeSpellSequence")?.Elements("escapespell") ?? []).Select(d => ((string?)d.Attribute("name") ?? "", ((string?)d.Attribute("target") ?? "self").ToLowerInvariant()))
+                    .Where(d => d.Item1.Length > 0)],
+                EscapeReference = (string?)e.Element("EscapeSpellSequence")?.Attribute("reference"),
             });
         }
         numbers.Report();

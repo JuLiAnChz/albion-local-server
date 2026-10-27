@@ -57,7 +57,7 @@ public sealed partial class WorldSession(IPeer peer, World world) : AlbionSessio
     /// passives</b> (a passive's pulses and on-hit procs would cast areas with the bot as caster that hit mobs, and mobs never fight bots).
     /// Not sent.
     /// </summary>
-    internal Item NewBotItem(ItemTemplate type)
+    internal Item NewBotItem(ItemTemplate type, Func<Data.SpellTemplate, bool>? prefer = null, int quality = 1)
     {
         var usable = SpellUsable(world.UnlockAll);
         var (active, _) = Selection(type.Name, new InventoryItem(type.Name, 1), usable);
@@ -67,10 +67,12 @@ public sealed partial class WorldSession(IPeer peer, World world) : AlbionSessio
                 if (active[i] >= 0) continue;
                 // StageM bots: never a spell it may not cast in a fight (OUTOFCOMBATHEAL), and a fighting one (damage, cc, movement) first.
                 var choice = slots.Active[i].Where(c => usable(c) && spells.Template(c) is not { UsableInCombat: false }).ToArray();
-                if (choice.Where(c => spells.Template(c) is { } t && FightingSpell(t)).ToArray() is { Length: > 0 } fighting) choice = fighting;
+                // StageN companions: a kit by role (a tank's taunt, a healer's heals) before the rest.
+                if (prefer is not null && choice.Where(c => spells.Template(c) is { } t && prefer(t)).ToArray() is { Length: > 0 } preferred) choice = preferred;
+                else if (choice.Where(c => spells.Template(c) is { } t && FightingSpell(t)).ToArray() is { Length: > 0 } fighting) choice = fighting;
                 if (choice.Length > 0) active[i] = choice[world.Bots.Random.Next(choice.Length)];
             }
-        return new Item(world.ObjectIds.Next(), type, 1, 1, type.FullDurabilityRaw, active, [], null);
+        return new Item(world.ObjectIds.Next(), type, 1, Math.Clamp(quality, 1, 5), type.FullDurabilityRaw, active, [], null); // stageN botpower: Bots:Gear:Quality
     }
 
     /// <summary>
@@ -258,10 +260,13 @@ public sealed partial class WorldSession(IPeer peer, World world) : AlbionSessio
         world.Expeditions.Joined(player); // stageH: in an instance 263 kind 7, 260, 261; reward items that wait
         world.Corrupted.Joined(player); // stageL: in a corrupted instance 450 (the tracker), the arrival buff, the chat line
         world.Hellgates.Joined(player); // stageL: in a hellgate 454 and 453 (the tracker)
+        Systems.SpawnBuffs.Joined(player, _arrived, _respawned); // stageP: the zone-entry protection and the spell cooldowns on entering
+        world.Arenas.Joined(player); // stage N: in an arena match its arrival (the countdown once all are in)
         world.Mists.Joined(player); // stageL: in a mists zone 521 (the return portal, the border exits' target, the shutdown), the chat line
         world.StaticDungeons.Joined(player); // stageN: 499, the events and values of the dungeon here and of those entered from here
         world.Roads.Joined(player); // stageL roads phase B: the thrown-out line
         world.Dungeons.Arrived(player); // stageH: the dungeon of the day's chat line on its floor
+        world.Islands.Joined(player); // stageN labourers: on an island the houses unlocked for the build menu (224)
     }
 
     /// <summary>Whether the last Join was the arrival of a cluster change (a PendingTransfer, and not the first Join after a Login).</summary>

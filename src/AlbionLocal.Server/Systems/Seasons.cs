@@ -39,7 +39,7 @@ public static class Seasons
     /// premiumDays = <see cref="Premium.Days"/>. Under Premium:Mode Free the premium and boughtpremium rewards become claimable and the
     /// nonpremium-only ones (the 12 learningpointsreward entries among them) do not, as officially for a premium player.
     /// </summary>
-    public static bool Eligible(Player p, PersonalSeasonData.Reward r) => Premium.Is(p) ? r.Eligible(isPremium: true, premiumDays: Premium.Days(p.World)) : Eligible(r);
+    public static bool Eligible(Player p, PersonalSeasonData.Reward r) => Premium.Is(p) ? r.Eligible(isPremium: true, premiumDays: Premium.Days(p)) : Eligible(r);
 
     /// <summary>
     /// The state of <paramref name="r"/> in <paramref name="log"/> as of now: an unlocked, unclaimed one is judged again by
@@ -181,6 +181,7 @@ public static class Seasons
             if (!log.Rewards.ContainsKey(r.Id)) log.Rewards[r.Id] = Eligible(p, r) ? Claimable : Ineligible;
         p.Session.Send(new NewUnlockedPersonalSeasonRewardsEvent { dcr = id, dcs = [.. unlocked.Select(r => r.Id)] });
         Log.Info("season", $"'{p.Character.Name}' unlocked {string.Join(", ", unlocked.Select(r => r.Id))} of {id}");
+        p.World.Vanity.SeasonRewards(p, unlocked.Count); // stageN vanity
         foreach (var r in unlocked)
             if (settings.GrantPremiumRewards && log.Rewards[r.Id] == Ineligible && r.BoughtPremium)
             {

@@ -945,28 +945,31 @@ public sealed class RandomDungeons(World world)
     /// <summary>
     /// <paramref name="p"/> opens <paramref name="chest"/> (<see cref="UseChest"/>, or RegisterToObject on it): the first opening rolls its loot,
     /// the rare state's &lt;LootByTier&gt; of the dungeon's tier (else the nearest tier below) as a mob's &lt;Loot&gt;
-    /// (<see cref="LootTables.RollMob"/>) with the floor level's lootfactor × Rates:Loot as the loot factor and Loot:BlackMarketChance
-    /// × Rates:Loot for the useblackmarket items; a stackable item one stack of its amount, equipment one item per piece. An open-world
-    /// chest (stageH bosses SPEC §4.6) rolls the cluster's tier with the cluster's moblootfactor × globalmoblootfactor × Rates:Loot, and a
-    /// personal one once per player into the player's own container (<see cref="LootChest.RollFor"/>, the Update to that player
-    /// alone); × the chest's <see cref="LootChest.LootFactor"/> (a world event's reward). Null, or why not.
+    /// (<see cref="LootTables.RollMob"/>) with the floor level's lootfactor × Rates:Loot as the loot factor, Loot:BlackMarketChance and
+    /// Loot:BlackMarketSoftCap for the useblackmarket items and the tier as the content tier; a stackable item one stack of its amount,
+    /// equipment one item per piece. Any other chest (open world, corrupted, hellgate, mists, expedition; stageH bosses SPEC §4.6) rolls
+    /// its tier with Rates:Loot alone: no cluster moblootfactor × globalmoblootfactor (a mob's factor; the chest lists carry their own
+    /// per-tier and per-rarity chances, loot-balance SPEC §1.2). A personal one rolls once per player into the player's own container
+    /// (<see cref="LootChest.RollFor"/>, the Update to that player alone); × the chest's <see cref="LootChest.LootFactor"/> (a world
+    /// event's reward, a corrupted run's infamy bonus, a hellgate chain). Null, or why not.
     /// </summary>
     public string? OpenChest(Player p, LootChest chest)
     {
         if (!chest.MayOpen(p)) return $"locked (ChestState {chest.ViewerState(p).State})";
         if (world.Corrupted.ChestRefused(p, chest) is { } refused) return refused; // stageL corrupted: a run's chests are its owner's
         if (world.Hellgates.ChestRefused(p, chest) is { } lost) return lost; // stageL hellgates phase B: a match's chests are the winners'
+        if (world.Territories.ChestRefused(p, chest) is { } notOwner) return notOwner; // stageP P5: a castle chest is its owner guild's (Castles:ChestNeedsOwnership)
         if (chest.RolledFor(p)) return null;
         var map = chest.Map!;
         var floor = Find(map.Cluster);
         var tier = chest.LootTier ?? (floor is { } f ? f.Group.Tier : map.Template?.Name.Tier ?? 4); // stage I: a player invasion's chest has its own
-        var factor = floor is not null ? map.Difficulty?.Loot ?? 1 // with the dungeon of the day's bonus (FillFactors)
-            : (Combat.DangerOf(world, map)?.MobLootFactor ?? 1) * (world.GameData?.GlobalMobLootFactor ?? 1);
-        factor *= chest.LootFactor; // a world event's reward chest: × RewardFactor
+        var factor = floor is not null ? map.Difficulty?.Loot ?? 1 : 1; // a floor's with the dungeon of the day's bonus (FillFactors)
+        factor *= chest.LootFactor; // a world event's reward chest: × RewardFactor; a corrupted run's 1 + bonus; a hellgate chain's
         var loot = chest.State.LootFor(tier);
         IReadOnlyList<(string Item, int Amount)> drops = loot is not null && world.Clusters?.LootIfLoaded is { } tables
-            ? tables.RollMob(loot, map.Random, factor * world.Rates.Loot, Math.Min(1, world.Config.LootBlackMarketChance * world.Rates.Loot),
-                name => Combat.LogOnce("loot:" + name, $"loot list {name} of chest {chest.Template.Name} is not in loot.xml"))
+            ? tables.RollMob(loot, map.Random, factor * world.Rates.Loot, world.Config.LootBlackMarketChance,
+                name => Combat.LogOnce("loot:" + name, $"loot list {name} of chest {chest.Template.Name} is not in loot.xml"),
+                world.Config.LootTierCap ? tier : 0, world.Config.LootBlackMarketSoftCap)
             : [];
         // Stage I: a player invasion's chest moves its items to its ItemTier and adds its Enchant, and a won ticket is one item more.
         if (chest.ItemTier is not null || chest.Enchant > 0) drops = [.. drops.Select(d => (Shift(world.Items, d.Item, chest.ItemTier, chest.Enchant), d.Amount))];
@@ -987,6 +990,7 @@ public sealed class RandomDungeons(World world)
         if (chest.Personal) p.Session.Send(chest.Update(p)); // its own Open (or Empty); the others keep theirs
         else foreach (var o in map.ObserversOf(chest)) o.Session.Send(chest.Update(o)); // Open (or Empty) for all at once, the full state per viewer
         world.WorldChests.Opened(chest, p);
+        world.Vanity.ChestOpened(p, chest); // stageN vanity: a boss chest's first roll may drop a cosmetic
         world.Hellgates.Opened(chest); // stageL: a hellgate's objective chest claims its reward (state 4, the exit portal)
         Log.Info("world", $"'{p.Character.Name}' opened {chest} (T{tier}): {(items.Count == 0 ? "nothing" : string.Join(", ", items.Select(i => $"{i.Template.Name} x{i.Count}")))}");
         return null;

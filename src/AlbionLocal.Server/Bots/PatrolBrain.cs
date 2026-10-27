@@ -117,6 +117,24 @@ public sealed class BotGroup(PatrolRoute route)
     public List<Player> Members { get; } = [];
 
     /// <summary>
+    /// Bot support roles: the parts its members take as they spawn (Bots:Patrol:Makeups, drawn for a new population group); empty = every
+    /// member a damage dealer.
+    /// </summary>
+    public IReadOnlyList<PatrolPart> Makeup { get; set; } = [];
+
+    /// <summary>
+    /// The part of its next member: the first one of <see cref="Makeup"/> its live members do not hold yet (a fallen healer's place goes to
+    /// its replacement), else a damage dealer.
+    /// </summary>
+    public PatrolPart NextPart()
+    {
+        var held = Members.Where(m => m.Map is not null && m.Bot is { Fight.Defeated: false }).Select(m => m.Bot!.Part).ToList();
+        foreach (var part in Makeup)
+            if (!held.Remove(part)) return part;
+        return PatrolPart.Dps;
+    }
+
+    /// <summary>
     /// The road portals one of it passed through (stageL roads phase B): link → the GameTimeStamp its recently-used window ends, inside which
     /// the other members follow free (BotManager.PassAs).
     /// </summary>
@@ -242,6 +260,7 @@ public sealed class PatrolBrain(BotManager bots, BotGroup group) : IBotBrain
                 if (now >= _until) bots.Despawn(bot, "logged out", BotRefill.Arrival);
                 return;
         }
+        if (BotCombat.Support(bots, bot)) return; // bot support roles: a healer heals a member left hurt
         if (BotCombat.Scan(bots, bot, nav) is { } target)
         {
             BotCombat.Engage(bots, bot, target);
@@ -309,7 +328,7 @@ public sealed class PatrolBrain(BotManager bots, BotGroup group) : IBotBrain
     }
 
     /// <summary>
-    /// A follower: to <see cref="FollowSpacing"/> m × its place behind the leader along its facing (on walkable ground near it), straight when
+    /// A follower: to Bots:Patrol:FollowSpacing (<see cref="FollowSpacing"/>) m × its place behind the leader along its facing (on walkable ground near it), straight when
     /// the line is clear, else along a path; on the leader's mount when it rides, off it when the leader stands unmounted. Every second.
     /// </summary>
     private void Follow(Player bot, Player leader, ClusterNav nav, Vector2 here, TimeSpan now)
@@ -326,7 +345,7 @@ public sealed class PatrolBrain(BotManager bots, BotGroup group) : IBotBrain
         }
         if (!leader.IsMounted && bot.IsMounted && !moving) Mounts.Dismount(bot);
         var angle = leader.Facing * Math.PI / 180;
-        var behind = lead - new Vector2((float)Math.Sin(angle), (float)Math.Cos(angle)) * FollowSpacing * Math.Max(1, group.SlotOf(bot));
+        var behind = lead - new Vector2((float)Math.Sin(angle), (float)Math.Cos(angle)) * (float)bots.Options.FollowSpacing * Math.Max(1, group.SlotOf(bot));
         var goal = nav.Grid.Walkable(behind) ? behind : nav.Grid.Nearest(behind, 4) ?? lead;
         if (Vector2.Distance(here, goal) <= FollowReach)
         {

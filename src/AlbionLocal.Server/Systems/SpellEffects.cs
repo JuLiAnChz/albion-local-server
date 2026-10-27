@@ -149,6 +149,14 @@ public sealed class EffectList
 
     public int Count => _spells.Count;
 
+    /// <summary>
+    /// GameTimeStamp and type of the last damage on its health (stageN spells2: the &lt;AI&gt; IfTargetTookDamage); 0 = none yet. Set by
+    /// <see cref="SpellEffects.Damaged"/> from the three damage paths (player → mob, mob → player, player → player).
+    /// </summary>
+    public long DamagedAt { get; internal set; }
+
+    public EffectType DamagedType { get; internal set; }
+
     /// <summary>A player's worn passives as last worked out (<see cref="Passives.Of"/>); null until then and for mobs.</summary>
     internal PassiveSet? Passive { get; set; }
 
@@ -381,6 +389,7 @@ public static class SpellEffects
             entry = new ActiveSpell
             {
                 Spell = spell, Caster = caster, Subs = [.. spell.Effects.Select((node, i) => new SubEffect(node, i))], Pending = pending,
+                Stacks = (byte)Math.Clamp(Math.Min(spell.StartCharges, spell.StackLimit), 1, byte.MaxValue), // startcharges (the bait's 10 charges)
             };
             list.Add(entry);
         }
@@ -401,6 +410,7 @@ public static class SpellEffects
         if (unit.Map is { } map)
             foreach (var end in entry.Subs.Where(s => s.Active && s.DurationMs > 0).Select(entry.EndOf).Distinct())
                 SpellCasts.At(world, map, end, () => Expired(world, unit));
+        if (unit is Player victim && entry.Subs.Any(s => s.Active)) DeathRecaps.Effect(victim, entry, start); // stageP: crowd control and debuffs in the death recap
         if (!entry.Pending) Interrupt(unit, world.GameNow);
         return entry;
     }
@@ -527,7 +537,7 @@ public static class SpellEffects
         var e = attacker.Effects;
         var boss = attacker is Mob { DamageFactor: var f } ? f : 1;
         var name = $"{(type == EffectType.Magic ? "magic" : "physical")}{(spell ? "spell" : "attack")}damagebonus";
-        var worn = spell && attacker is Player { World.Config.GearDamageBonus: true } p && (p.Bot is null || p.World.Config.Bots.GearDamageBonus)
+        var worn = spell && attacker is Player { World.Config.GearDamageBonus: true } p && (p.Bot is null || (p.IsCompanion ? p.World.Config.Companions.GearDamageBonus : p.World.Config.Bots.GearDamageBonus))
             ? Combat.Worn(p, name) : 0;
         if (e.Idle) return Math.Max(0, 1 + worn) * boss;
         var bonus = worn + e.Sum(name, now);
@@ -556,8 +566,9 @@ public static class SpellEffects
         return 1 / Math.Max(0.01, 1 + sum);
     }
 
-    /// <summary>Heals received × (1 + Σ healmodifier) (MOB_UNDEAD_DECAY); not below 0.</summary>
-    public static double HealFactor(IUnit target, long now) => target.Effects.Idle ? 1 : Math.Max(0, 1 + target.Effects.Sum("healmodifier", now));
+    /// <summary>Heals received × (1 + Σ healmodifier) (MOB_UNDEAD_DECAY) × (1 − Σ healingsicknessmodifier) (HEALINGSICKNESS_n, stageP); neither below 0.</summary>
+    public static double HealFactor(IUnit target, long now) => target.Effects.Idle ? 1
+        : Math.Max(0, 1 + target.Effects.Sum("healmodifier", now)) * Math.Max(0, 1 - target.Effects.Sum("healingsicknessmodifier", now));
 
     /// <summary>A mob's walk speed factor: 0 while stunned or rooted, else max(0, 1 + Σ movespeedbonus) (SPEC §3.1).</summary>
     public static float SpeedFactor(IUnit unit, long now)
@@ -721,6 +732,14 @@ public static class SpellEffects
 
     /// <summary>No auto-attack: stunned or cannotattack.</summary>
     public static bool CannotAttack(IUnit unit, long now) => unit.Effects.Count > 0 && (unit.Effects.Has("cannotattack", now) || unit.Effects.Has("stun", now));
+
+    /// <summary>Damage of <paramref name="type"/> came off <paramref name="unit"/>'s health at <paramref name="ticks"/> (IfTargetTookDamage).</summary>
+    public static void Damaged(IUnit unit, EffectType type, long ticks)
+    {
+        if (ticks < unit.Effects.DamagedAt) return;
+        unit.Effects.DamagedAt = ticks;
+        unit.Effects.DamagedType = type;
+    }
 
     /// <summary>invincibility: damage on the unit is ignored (no HealthUpdate).</summary>
     public static bool Invincible(IUnit unit, long now) => unit.Effects.Count > 0 && unit.Effects.Has("invincibility", now);

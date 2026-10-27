@@ -7,7 +7,7 @@ namespace AlbionLocal.Server.Network;
 
 /// <summary>
 /// The character list: sent with the Login response, then select, create and delete. All need a logged-in
-/// connection (Authed); the client sends them only after Login on the same connection (captures/albion_103829:
+/// connection (Authed); the client sends them only after Login on the same connection (capture 103829:
 /// after a refused Login the client opens a new connection and sends Login again, the same encrypted
 /// 5730-byte request, before SelectCharacter).
 /// </summary>
@@ -34,7 +34,7 @@ public sealed partial class LoginSession
         r.bde = Each(c => Systems.OpeningTutorial.ClientCluster(c, world)); // [10] client instance id
         r.bdf = Strings();                    // [11] c.d
         r.bdg = Strings();                    // [12] c.e
-        r.bdh = Each(c => world?.Islands.WorldOf(c.Cluster) ?? world?.Expeditions.WorldOf(c.Cluster)
+        r.bdh = Each(c => world?.Islands.WorldOf(c.Cluster) ?? world?.Hideouts.WorldOf(c.Cluster) ?? world?.Expeditions.WorldOf(c.Cluster)
             ?? world?.Corrupted.Find(c.Cluster)?.World ?? world?.Hellgates.WorldOf(c.Cluster) ?? c.Cluster); // [13] base world map
         r.bdi = Each(c => c.Template);        // [14] avatar lookup (creation key 1)
         r.bdj = Ints();                       // [15] c.g  appearance lookup
@@ -92,9 +92,11 @@ public sealed partial class LoginSession
         World?.Expeditions.ReturnIfClosed(c);
         World?.Corrupted.ReturnIfClosed(c); // stageL: a corrupted dungeon that is gone → the way back
         World?.Hellgates.ReturnIfClosed(c); // stageL: a hellgate that is gone (closed, or a restart) → the way back
+        World?.Arenas.ReturnIfClosed(c); // stage N: an arena match that is gone → the way back
         World?.Mists.ReturnIfClosed(c); // stageL: a mists zone that is gone (closed, or a restart) → the way back
         World?.Roads.ThrowOutIfStale(c); // stageL roads phase B: offline in a road past Roads:ThrowOutAfterMinutes → the respawn city, ThrownOutAvalonRoads
         World?.Islands.ReturnIfGone(c); // stageH islands SPEC §1.6: an island that is gone → its city's travel point
+        World?.Hideouts.ReturnIfGone(c); // stageP hideouts: a hideout that is gone (or without an interior now) → in front of it
         var floor = World?.Dungeons.Floor(c.Cluster);
         Character = c;
         var token = World?.Accounts.Select(_account.Id, c.Id);
@@ -121,10 +123,14 @@ public sealed partial class LoginSession
         if (World?.Corrupted.Find(c.Cluster) is { } corrupted) (r.blp, r.bls) = (corrupted.World, corrupted.Difficulty.ClusterType);
         // StageL hellgates (SPEC §3.5): inside a live hellgate, key 2 = its world.xml map (as an expedition's).
         if (World?.Hellgates.WorldOf(c.Cluster) is { } hellgate) r.blp = hellgate;
+        // Stage N arena (SPEC §1.4): inside a live arena match, key 2 = its world.xml map (as a hellgate's).
+        if (World?.Arenas.WorldOf(c.Cluster) is { } arena) r.blp = arena;
         // StageL mists (SPEC §3.4, §6.6): inside a live zone, key 4 = its a9i layout, key 5 = the mode's clustertype, key 6 = the tier.
         if (World?.Mists.Find(c.Cluster) is { } zone) (r.blr, r.bls, r.blt) = (zone.Bytes, zone.Mode.ClusterType, zone.Tier);
         // StageH islands (SPEC §1.6): on an island, key 2 = the template of its level (ciy.a_9 clones it under "@ISLAND@<guid>").
         if (World?.Islands.WorldOf(c.Cluster) is { } island) r.blp = island;
+        // StageP hideouts: in a hideout, key 2 = the world.xml cluster of its level (cloned under "@HIDEOUT@<guid>", as an island).
+        if (World?.Hideouts.WorldOf(c.Cluster) is { } hideout) r.blp = hideout;
         return r;
     }
 
